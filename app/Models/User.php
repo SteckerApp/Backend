@@ -8,10 +8,12 @@ use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
+use Spatie\Permission\Traits\HasRoles;
+
 
 class User extends Authenticatable
 {
-    use HasApiTokens, HasFactory, Notifiable;
+    use HasRoles, HasApiTokens, HasFactory, Notifiable;
 
     /**
      * The attributes that are mass assignable.
@@ -57,5 +59,15 @@ class User extends Authenticatable
     public function companies(): HasMany
     {
         return $this->hasMany(Company::class);
+    }
+
+    public function userSubscription(): HasMany
+    {
+        return $this->hasMany(UserSubscription::class);
+    }
+
+    public function coupon(): HasMany
+    {
+        return $this->hasMany(Coupon::class);
     }
 }

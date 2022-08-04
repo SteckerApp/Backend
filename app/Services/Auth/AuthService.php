@@ -191,7 +191,7 @@ class AuthService
 
     public function logout($request)
     {
-        $request->user()->currentAccessToken()->delete();;
+        $request->user()->currentAccessToken()->delete();
         return $this->successResponse(null, 'Logout successful');
     }
 
