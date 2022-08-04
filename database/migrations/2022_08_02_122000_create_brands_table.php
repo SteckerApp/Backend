@@ -25,6 +25,8 @@ return new class extends Migration
             $table->longText('guideline')->nullable();
             $table->enum('status', ['active','in-active'])->default('active')->nullable();
             $table->timestamps();
+            $table->softDeletes();
+
         });
     }
 

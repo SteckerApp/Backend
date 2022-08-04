@@ -28,6 +28,8 @@ return new class extends Migration
             $table->date('date')->nullable();
             $table->enum('status', ['pending','on-going', 'in-progress', 'designer-approved', 'pm-approved','completed'])->default('pending');
             $table->timestamps();
+            $table->softDeletes();
+
         });
     }
 
