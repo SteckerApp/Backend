@@ -78,7 +78,7 @@ class ProjectRequestController extends Controller
     public function show($id)
     {
         $project =  ProjectRequest::find($id);
-        return $this->successResponse($project->get(), '', 200);
+        return $this->successResponse($project->first(), '', 200);
     }
 
     /**

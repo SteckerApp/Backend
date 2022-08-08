@@ -71,7 +71,7 @@ class BrandController extends Controller
     public function show(Request $request, $id)
     {
         $brand = Brand::find($id);
-        return $this->successResponse($brand->get(), '', 200);
+        return $this->successResponse($brand->first(), '', 200);
     }
 
     /**

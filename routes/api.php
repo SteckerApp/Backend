@@ -1,13 +1,14 @@
 <?php
 
-use App\Http\Controllers\api\v1\auth\UserController;
-use App\Http\Controllers\api\v1\TestController;
-use App\Http\Controllers\BrandController;
-use App\Http\Controllers\ProjectRequestController;
-use App\Http\Controllers\UserSubcriptionController;
-use App\Models\ProjectRequest;
 use Illuminate\Http\Request;
+use App\Models\ProjectRequest;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\BrandController;
+use App\Http\Controllers\api\v1\TestController;
+use App\Http\Controllers\SubscriptionController;
+use App\Http\Controllers\ProjectRequestController;
+use App\Http\Controllers\api\v1\auth\UserController;
+use App\Http\Controllers\UserSubscriptionController;
 
 /*
 |--------------------------------------------------------------------------
@@ -61,9 +62,17 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::delete('/{id}', [BrandController::class, 'destroy']);
     });
 
-    Route::prefix('user_subscription')->group(function () {
-        Route::post('/', [UserSubcriptionController::class, 'store']);
+    Route::prefix('subscription')->group(function () {
+        Route::get('/', [SubscriptionController::class, 'index']);
+        Route::get('/{id}', [SubscriptionController::class, 'show']);
+        Route::post('/', [SubscriptionController::class, 'store']);
+        Route::put('/{id}', [SubscriptionController::class, 'update']);
+        Route::delete('/{id}', [SubscriptionController::class, 'destroy']);
+    });
 
+
+    Route::prefix('user_subscription')->group(function () {
+        Route::post('/', [UserSubscriptionController::class, 'store']);
     });
 
     // Route::resource('requests', ProjectRequestController::class);
