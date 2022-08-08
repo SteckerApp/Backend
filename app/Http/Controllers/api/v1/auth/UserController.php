@@ -60,6 +60,6 @@ class UserController extends Controller
     {
         return $this->authService->logout($request);
     }
-    
-    
+
+
 }
