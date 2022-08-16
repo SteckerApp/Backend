@@ -8,6 +8,10 @@ use App\Http\Controllers\api\v1\TestController;
 use App\Http\Controllers\SubscriptionController;
 use App\Http\Controllers\ProjectRequestController;
 use App\Http\Controllers\api\v1\auth\UserController;
+use App\Http\Controllers\CartController;
+use App\Http\Controllers\CouponController;
+use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\UserSubscriptionController;
 
 /*
@@ -70,12 +74,29 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::delete('/{id}', [SubscriptionController::class, 'destroy']);
     });
 
+    Route::prefix('cart')->group(function(){
+        Route::post('create', [CartController::class, 'store']);
+        Route::get('/{reference}', [CartController::class, 'show']);
+        Route::put('/{reference}', [CartController::class, 'update']);
+        Route::delete('/item/{transaction}', [CartController::class, 'removeItem']);
+        Route::post('/coupon/apply', [CouponController::class, 'verify']);
+        Route::delete('/coupon/remove', [CouponController::class, 'remove']);
+    });
 
+    
     Route::prefix('user_subscription')->group(function () {
         Route::post('/attach_user_subscription', [UserSubscriptionController::class, 'attachUserSubscription']);
         Route::post('/activate_subscription/{id}', [UserSubscriptionController::class, 'activatePayment']);
     });
-
+    
     // Route::resource('requests', ProjectRequestController::class);
     // Route::resource('brands', BrandController::class);
+
+    Route::prefix('dashboard')->group(function (){
+        Route::get('/', [DashboardController::class, 'home']);
+    });
 });
+
+
+Route::post('/payment/webhook', [PaymentController::class, 'webhook']);
+Route::get('/test', [PaymentController::class, 'test']);

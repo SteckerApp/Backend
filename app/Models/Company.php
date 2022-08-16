@@ -31,14 +31,9 @@ class Company extends Model
         'created_at' => 'datetime',
     ];
 
-    /**
-     * Get the user that owns the Company
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
-     */
-    public function user(): BelongsTo
+    public function users()
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsToMany(User::class);
     }
 
     public function brands(): HasMany

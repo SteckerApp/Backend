@@ -21,10 +21,13 @@ return new class extends Migration
             $table->enum('type', ['monthly', 'quarterly', 'yearly'])->default('monthly');
             $table->json('metadata')->nullable();
             $table->string('default')->nullable();
+            $table->boolean('info')->default(false);
+            $table->string('discounted')->nullable();
             $table->string('currency')->nullable();
             $table->integer('order')->nullable();
             $table->integer('user_limit')->nullable();
             $table->integer('design_limit')->nullable();
+            $table->string('category')->default('main');
             $table->timestamps();
         });
     }
