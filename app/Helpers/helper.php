@@ -33,17 +33,17 @@ function generateReference(): string
 }
 
 
-function getActiveWorkSpeace()
+function getActiveWorkSpace()
 {
     return Session::get('current_workspace') ?? false;
 }
 
-function setActiveWorkSpeace($workspeace, $change = false)
+function setActiveWorkSpace($workspace, $change = false)
 {
     if ($change) {
-        Session::put('current_workspace', $workspeace);
+        Session::put('current_workspace', $workspace);
     }
-    
-    $current = getActiveWorkSpeace();
+
+    $current = getActiveWorkSpace();
     return $current;
 }

@@ -3,8 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Models\Brand;
+use App\Models\Company;
 use Illuminate\Http\Request;
 use App\Trait\HandleResponse;
+use Illuminate\Support\Facades\Session;
 
 
 class BrandController extends Controller
@@ -39,11 +41,9 @@ class BrandController extends Controller
     {
         $this->validate($request, [
             'name' => 'required',
-            'company_id' => 'required',
-            'subscription_id' => 'required',
             'guideline' => 'mimes:jpg,jpeg,png,svg,pdf,eps,gif,adobe|max:5000',
         ]);
-
+        // Session::put('current_workspace', Company::find(1));
        if($request->guideline){
         $path = "/".auth()->user()->id."/brands/".$request->name."/guidelines/";
         $name = $request->guideline->getClientOriginalName();
@@ -51,8 +51,7 @@ class BrandController extends Controller
        }
         $brand = Brand::create([
             'name' => $request->name,
-            'company_id' => $request->company_id,
-            'subscription_id' => $request->subscription_id,
+            'company_id' => getActiveWorkSpace()->id,
             'description' => $request->description,
             'website' => $request->website,
             'industry' => $request->industry,
@@ -90,27 +89,25 @@ class BrandController extends Controller
 
     public function update(Request $request, $id)
     {
-        $this->validate($request, [
-            'name' => 'required',
-            'company_id' => 'required',
-            'subscription_id' => 'required',
-            'guideline' => 'mimes:jpg,jpeg,png,svg,pdf,eps,gif,adobe|max:5000',
-        ]);
 
         $brand = Brand::where('id',$id);
-        $updated = $brand->update(
-            [
-                'name' => $request->name,
-                'company_id' => $request->company_id,
-                'subscription_id' => $request->subscription_id,
-                'description' => $request->description,
-                'website' => $request->website,
-                'industry' => $request->industry,
-                'guideline' => $request->guidelines,
-            ]
+        $brand->fill(
+            $request->only([
+                'name',
+                'company_id',
+                'subscription_id',
+                'description',
+                'website',
+                'industry',
+                'guideline'
+            ])
         );
 
-        return $this->successResponse($updated, 'Brand updated successfully', 200);
+        tap($brand, function($collection){
+            return $collection->save();
+        });
+
+        return $this->successResponse($brand, 'Brand updated successfully', 200);
     }
 
     /**

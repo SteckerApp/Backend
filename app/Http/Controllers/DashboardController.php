@@ -27,7 +27,7 @@ class DashboardController extends Controller
 
         $current = $workspaces->shift();
 
-        setActiveWorkSpeace($current, true);
+        setActiveWorkSpace($current, true);
 
         // personal details
         $personal = [
