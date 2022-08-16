@@ -18,7 +18,8 @@ class subscriptionController extends Controller
      */
     public function index(Request $request,)
     {
-        $subscriptions = Subscription::all();
+        $subscriptions = Subscription::all()->groupBy('type');
+
 
         return $this->successResponse($subscriptions, '', 200);
     }
@@ -53,6 +54,7 @@ class subscriptionController extends Controller
         return $this->successResponse($subscription, 'Brand created successfully', 201);
 
     }
+
 
     /**
      * Display the specified resource.

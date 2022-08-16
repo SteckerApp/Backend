@@ -9,5 +9,6 @@ return [
     'password' => [
         'reset' => Str::random(15)
     ],
+    'payment'=> 'TRAN' .random_int(1000000000000, 9999999999999) ,
 ]
 ?>
