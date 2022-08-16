@@ -44,18 +44,19 @@ class BrandController extends Controller
             'guideline' => 'mimes:jpg,jpeg,png,svg,pdf,eps,gif,adobe|max:5000',
         ]);
 
+       if($request->guideline){
         $path = "/".auth()->user()->id."/brands/".$request->name."/guidelines/";
         $name = $request->guideline->getClientOriginalName();
         $doc_link = uploadDocument($request->guideline, $path, $name);
-
+       }
         $brand = Brand::create([
             'name' => $request->name,
-            'company_id' => $request->name,
-            'subscription_id' => $request->name,
+            'company_id' => $request->company_id,
+            'subscription_id' => $request->subscription_id,
             'description' => $request->description,
             'website' => $request->website,
             'industry' => $request->industry,
-            'guideline' => $doc_link,
+            'guideline' => $request->guideline ? $doc_link : null,
         ]);
 
         return $this->successResponse($brand, 'Brand created successfully', 201);
@@ -70,8 +71,14 @@ class BrandController extends Controller
      */
     public function show(Request $request, $id)
     {
-        $brand = Brand::find($id);
-        return $this->successResponse($brand->first(), '', 200);
+        $brand = Brand::where('id',$id)->first();
+
+        if($brand){
+            return $this->successResponse($brand, '', 200);
+        }
+
+        return $this->errorResponse($brand);
+
     }
 
     /**
@@ -83,17 +90,23 @@ class BrandController extends Controller
 
     public function update(Request $request, $id)
     {
-        $brand = Brand::find($id);
+        $this->validate($request, [
+            'name' => 'required',
+            'company_id' => 'required',
+            'subscription_id' => 'required',
+            'guideline' => 'mimes:jpg,jpeg,png,svg,pdf,eps,gif,adobe|max:5000',
+        ]);
 
+        $brand = Brand::where('id',$id);
         $updated = $brand->update(
             [
                 'name' => $request->name,
-                'company_id' => $request->name,
-                'subscription_id' => $request->name,
+                'company_id' => $request->company_id,
+                'subscription_id' => $request->subscription_id,
                 'description' => $request->description,
                 'website' => $request->website,
                 'industry' => $request->industry,
-                'guidelines' => $request->guidelines,
+                'guideline' => $request->guidelines,
             ]
         );
 
@@ -109,9 +122,12 @@ class BrandController extends Controller
     public function destroy(Request $request, $id)
     {
         $brand = Brand::find($id);
-        $deleted = $brand->delete();
+        if($brand){
+            $deleted = $brand->delete();
+            return $this->successResponse($deleted, 'Brand deleted successfully', 200);
+        }
 
-        return $this->successResponse($deleted, 'Brand deleted successfully', 200);
+        return $this->errorResponse($brand);
     }
 
     public function restore($id)

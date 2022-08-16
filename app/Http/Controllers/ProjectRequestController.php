@@ -77,8 +77,14 @@ class ProjectRequestController extends Controller
      */
     public function show($id)
     {
-        $project =  ProjectRequest::find($id);
-        return $this->successResponse($project->first(), '', 200);
+        $project =  ProjectRequest::where('id',$id)->first();
+
+        if( $project){
+            return $this->successResponse($project);
+        }
+
+        return $this->errorResponse($brand);
+
     }
 
     /**
@@ -90,7 +96,7 @@ class ProjectRequestController extends Controller
      */
     public function update(Request $request, $id)
     {
-        $project =  ProjectRequest::find($id)->update(
+        $project =  ProjectRequest::where('id',$id)->update(
             [
                 'brand_id' => $request->brand_id ?? $request->brand_id,
                 'title' => $request->title,
@@ -110,8 +116,15 @@ class ProjectRequestController extends Controller
      * @param  \App\Models\ProjectRequest  $projectRequest
      * @return \Illuminate\Http\Response
      */
-    public function destroy(ProjectRequest $projectRequest)
+    public function destroy(Request $request, $id)
     {
-        //
+        $projectRequest = ProjectRequest::find($id);
+
+        if($projectRequest){
+            $deleted = $projectRequest->delete();
+            return $this->successResponse($deleted, 'Project deleted successfully', 200);
+        }
+        return $this->errorResponse($projectRequest);
+
     }
 }
