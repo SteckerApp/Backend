@@ -36,4 +36,10 @@ class Brand extends Model
         return $this->belongsTo(Company::class);
     }
 
+
+    public function requests(): BelongsTo
+    {
+        return $this->belongsTo(ProjectRequest::class);
+    }
+
 }

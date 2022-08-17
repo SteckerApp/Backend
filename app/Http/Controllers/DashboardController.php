@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Brand;
 use App\Models\Company;
 use App\Models\ProjectRequest;
 use App\Trait\HandleResponse;
@@ -41,6 +42,10 @@ class DashboardController extends Controller
         //product manager
         $projects = ProjectRequest::latest()->limit(5)->get();
 
+        $projects->each(function($project){
+            $project->revivsion_count = $project->uploadedFiles()->count();
+        });
+
         $stat = [
             'todo' => $projects->where('status', 'pending')->count(),
             'ongoing' => $projects->where('status', 'on-going')->count(),
@@ -49,6 +54,27 @@ class DashboardController extends Controller
 
         // workspace details
 
+
+
+
+        // if admin
+        $projects = ProjectRequest::query();
+        $workspaces = Company::count();
+        $brands = Brand::count();
+        
+        $latest = Company::latest()->limit(6)->with("users.userSubscription")->get();
+        $latest->each(function($record){
+            $allRequest = $record->brands()->requests();
+            $allRequest->each(function($singleReq){
+                return $singleReq->groupBy('status')->count();
+            });
+        });
+
+        $stat = [
+            'todo' => $projects->where('status', 'pending')->count(),
+            'ongoing' => $projects->where('status', 'on-going')->count(),
+            'completed' => $projects->where('status', 'completed')->count(),
+        ];
 
         return $this->successResponse($personal);
     }
