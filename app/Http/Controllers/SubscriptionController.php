@@ -51,7 +51,7 @@ class subscriptionController extends Controller
             'design_limit' =>  $request->design_limit,
         ]);
 
-        return $this->successResponse($subscription, 'Brand created successfully', 201);
+        return $this->successResponse($subscription, 'Subscription created successfully', 201);
 
     }
 
@@ -94,7 +94,7 @@ class subscriptionController extends Controller
             ]
         );
 
-        return $this->successResponse($updated, 'Brand updated successfully', 200);
+        return $this->successResponse($updated, 'Subscription updated successfully', 200);
     }
 
     /**
@@ -108,7 +108,7 @@ class subscriptionController extends Controller
         $subscription = Subscription::find($id);
         $deleted =  $subscription->delete();
 
-        return $this->successResponse($deleted, 'Brand deleted successfully', 200);
+        return $this->successResponse($deleted, 'Subscription deleted successfully', 200);
     }
 
 }

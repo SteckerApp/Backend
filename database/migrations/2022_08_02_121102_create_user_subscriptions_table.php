@@ -14,7 +14,7 @@ return new class extends Migration
     public function up()
     {
         Schema::create('user_subscriptions', function (Blueprint $table) {
-            $table->string('reference')->unique();
+            $table->string('reference')->unique()->nullable();
             $table->id();
             $table->foreignId('user_id')->constrained();
             $table->foreignId('subscription_id')->constrained();
@@ -22,7 +22,8 @@ return new class extends Migration
             $table->dateTime('start_date');
             $table->dateTime('end_date');
             $table->enum('duration', ['monthly', 'bi-annually','annually'])->default('monthly');
-            $table->enum('status', ['active', 'inactive'])->default('active');
+            $table->enum('payment_status', ['pending', 'paid', 'cancelled'])->default('pending');
+            $table->enum('status', ['active','inactive'])->default('inactive');
             $table->timestamps();
         });
     }

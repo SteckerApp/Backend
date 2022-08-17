@@ -85,7 +85,8 @@ Route::middleware('auth:sanctum')->group(function () {
 
     
     Route::prefix('user_subscription')->group(function () {
-        Route::post('/', [UserSubscriptionController::class, 'store']);
+        Route::post('/attach_user_subscription', [UserSubscriptionController::class, 'attachUserSubscription']);
+        Route::post('/activate_subscription/{id}', [UserSubscriptionController::class, 'activatePayment']);
     });
     
     // Route::resource('requests', ProjectRequestController::class);

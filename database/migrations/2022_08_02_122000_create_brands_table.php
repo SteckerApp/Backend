@@ -16,7 +16,7 @@ return new class extends Migration
         Schema::create('brands', function (Blueprint $table) {
             $table->id();
             $table->foreignId('company_id')->constrained();
-            $table->foreignId('subscription_id')->constrained();
+            // $table->foreignId('subscription_id')->constrained();
             $table->string('name');
             $table->longText('colors')->nullable();
             $table->longText('description')->nullable();
