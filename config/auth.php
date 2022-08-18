@@ -108,4 +108,7 @@ return [
 
     'password_timeout' => 10800,
 
+    'admin_start' =>['client', 'affilate'],
+    'admin_middle' => ['pm', 'designer'],
+    'admin' => ['admin', 'super-admin']
 ];

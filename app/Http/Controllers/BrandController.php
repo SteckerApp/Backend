@@ -18,17 +18,22 @@ class BrandController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
+
+     public function __construct()
+     {
+        // $this->authorizeResource(Brand::class, 'brand' );
+     }
+     
     public function index(Request $request,)
     {
-        $perPage = ($request->perPage) ?? 10;
+        $perPage = ($request->perPage) ?? 20;
+        $brands = Brand::whereCompanyId(
+            getActiveWorkSpace()->id
+        );
 
-        $brands = Brand::with('company')->whereHas('company', function ($q) {
-            $q->where('user_id', auth()->user()->id);
-        });
+        $brands = $brands->paginate($perPage);
 
-        ($request->page) ? $brands =  $brands->paginate($perPage) : $brands =  $brands->get();
-
-        return $this->successResponse($brands, '', 200);
+        return $this->successResponse($brands, 'Brand fetch successfully', 200);
     }
 
     /**
@@ -41,25 +46,22 @@ class BrandController extends Controller
     {
         $this->validate($request, [
             'name' => 'required',
-            'guideline' => 'mimes:jpg,jpeg,png,svg,pdf,eps,gif,adobe|max:5000',
+            'industry' => 'required',
+            'description' => 'sometimes|string',
+            'website' => 'sometimes|string|max:100',
+            'colors' => "sometimes|array"
         ]);
-        // Session::put('current_workspace', Company::find(1));
-       if($request->guideline){
-        $path = "/".auth()->user()->id."/brands/".$request->name."/guidelines/";
-        $name = $request->guideline->getClientOriginalName();
-        $doc_link = uploadDocument($request->guideline, $path, $name);
-       }
+
         $brand = Brand::create([
             'name' => $request->name,
             'company_id' => getActiveWorkSpace()->id,
             'description' => $request->description,
             'website' => $request->website,
             'industry' => $request->industry,
-            'guideline' => $request->guideline ? $doc_link : null,
+            'colors' => $request->colors
         ]);
 
         return $this->successResponse($brand, 'Brand created successfully', 201);
-
     }
 
     /**
@@ -70,14 +72,9 @@ class BrandController extends Controller
      */
     public function show(Request $request, $id)
     {
-        $brand = Brand::where('id',$id)->first();
+        $brand = Brand::whereIdAndCompanyId($id, getActiveWorkSpace()->id)->firstOrFail();
 
-        if($brand){
-            return $this->successResponse($brand, '', 200);
-        }
-
-        return $this->errorResponse($brand);
-
+        return $this->successResponse($brand, 'Brand fetch successfully', 200);
     }
 
     /**
@@ -90,20 +87,21 @@ class BrandController extends Controller
     public function update(Request $request, $id)
     {
 
-        $brand = Brand::where('id',$id);
-        $brand->fill(
-            $request->only([
-                'name',
-                'company_id',
-                'subscription_id',
-                'description',
-                'website',
-                'industry',
-                'guideline'
-            ])
-        );
+        $brand = Brand::whereIdAndCompanyId($id, getActiveWorkSpace()->id)
+            ->firstOrFail();
 
-        tap($brand, function($collection){
+        tap($brand, function ($collection) use ($brand, $request) {
+            $brand->fill(
+                $request->only([
+                    'name',
+                    'company_id',
+                    'subscription_id',
+                    'description',
+                    'website',
+                    'industry',
+                    'guideline'
+                ])
+            );
             return $collection->save();
         });
 
@@ -118,13 +116,12 @@ class BrandController extends Controller
      */
     public function destroy(Request $request, $id)
     {
-        $brand = Brand::find($id);
-        if($brand){
-            $deleted = $brand->delete();
-            return $this->successResponse($deleted, 'Brand deleted successfully', 200);
-        }
+        $brand = Brand::whereIdAndCompanyId($id, getActiveWorkSpace()->id)
+            ->firstOrFail();
 
-        return $this->errorResponse($brand);
+        $brand->delete();
+        
+        return $this->successResponse($brand, 'Brand deleted successfully', 200);
     }
 
     public function restore($id)

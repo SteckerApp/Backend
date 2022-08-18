@@ -10,9 +10,12 @@ use App\Http\Requests\auth\RegisterRequest;
 use App\Http\Requests\auth\VerifyEmailRequest;
 use App\Http\Requests\auth\PasswordResetRequest;
 use App\Http\Requests\auth\ChangePasswordRequest;
+use App\Trait\HandleResponse;
+use Illuminate\Support\Facades\Hash;
 
 class UserController extends Controller
 {
+    use HandleResponse;
     private $authService;
 
     public function __construct(AuthService $authService)
@@ -61,5 +64,34 @@ class UserController extends Controller
         return $this->authService->logout($request);
     }
 
+    public function profile(Request $request)
+    {
+        return $request->user();
+    }
 
+    public function updateProfile(Request $request)
+    {
+        $this->validate($request, [
+            'first_name' => 'sometimes|string',
+            'last_name' => 'sometimes|string',
+            'password' => 'sometimes|string'
+        ]);
+
+        $user = $request->user();
+
+        if ($request->has('password')) {
+            $user->password = Hash::make($request->password);
+        }
+        $user->fill($request->only([
+            'first_name',
+            'last_name',
+            'name',
+            'phone_number',
+            'currency',
+        ]));
+
+        $user->update();
+
+        return $this->successResponse(null, 'User profile updated successfully');
+    }
 }

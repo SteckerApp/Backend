@@ -24,6 +24,7 @@ return new class extends Migration
             $table->string('verification_token')->nullable();
             $table->string('password');
             $table->string('user_type',100);
+            $table->string('referral_code',100)->nullable();
             $table->string('phone_number')->nullable();
             $table->string('currency',10)->nullable();
             $table->rememberToken();

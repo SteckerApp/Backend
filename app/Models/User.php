@@ -30,6 +30,8 @@ class User extends Authenticatable
         'phone_number',
         'user_type',
         'currency',
+        'referral_code',
+        'verification_token',
     ];
 
     /**
@@ -75,5 +77,20 @@ class User extends Authenticatable
     public function coupon(): HasMany
     {
         return $this->hasMany(Coupon::class);
+    }
+
+    public function referrals(): HasMany
+    {
+        return $this->hasMany(Affiliate::class, 'referral_id');
+    }
+
+    public function bank()
+    {
+        return $this->hasOne(UserBank::class);
+    }
+
+    public function brands()
+    {
+        return $this->hasManyThrough(Brand::class, Company::class);
     }
 }

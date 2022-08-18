@@ -3,10 +3,11 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\SoftDeletes;
 
 
 class ProjectRequest extends Model
@@ -33,6 +34,16 @@ class ProjectRequest extends Model
     public function uploadedFiles(): HasMany
     {
         return $this->hasMany(ProjectDeliverables::class, 'project_id');
+    }
+
+    /**
+     * Get the pm associated with the ProjectRequest
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasOne
+     */
+    public function pm(): HasOne
+    {
+        return $this->hasOne(User::class, 'id', 'pm_id');
     }
 
 }

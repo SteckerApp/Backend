@@ -14,6 +14,7 @@ class Affiliate extends Model
 
     protected $casts = [
         'created_at' => 'datetime',
+        'payment' => 'array',
     ];
 
     public function user(): BelongsTo

@@ -13,15 +13,18 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('user_subscriptions', function (Blueprint $table) {
-            $table->string('reference')->unique()->nullable();
+        Schema::create('company_subscription', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('user_id')->constrained();
-            $table->foreignId('subscription_id')->constrained();
+            $table->string('reference')->unique()->nullable();
+            $table->foreignId('user_id')->references('id')->on('users');
+            $table->foreignId('company_id')->references('id')->on('companies');
+            $table->foreignId('subscription_id')->references('id')->on('subscriptions');
             $table->dateTime('payment_date')->nullable();
             $table->dateTime('start_date');
             $table->dateTime('end_date');
-            $table->enum('duration', ['monthly', 'bi-annually','annually'])->default('monthly');
+            $table->enum('defualt', ['yes', 'no'])->default('no');
+            $table->enum('type', ['monthly', 'bi-annually','annually'])->default('monthly');
+            $table->integer('duration');
             $table->enum('payment_status', ['pending', 'paid', 'cancelled'])->default('pending');
             $table->enum('status', ['active','inactive'])->default('inactive');
             $table->timestamps();
@@ -35,6 +38,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('user_subscriptions');
+        Schema::dropIfExists('company_subscription');
     }
 };

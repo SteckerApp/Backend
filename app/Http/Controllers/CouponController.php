@@ -152,4 +152,10 @@ class CouponController extends Controller
             return $this->errorResponse(null, $th->getMessage(), 500);
         }
     }
+
+
+    public function index(Request $request)
+    {
+        Cart::whereNotNull('discounted')->where("");
+    }
 }

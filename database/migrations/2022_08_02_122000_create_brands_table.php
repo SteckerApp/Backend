@@ -15,14 +15,13 @@ return new class extends Migration
     {
         Schema::create('brands', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('company_id')->constrained();
-            // $table->foreignId('subscription_id')->constrained();
+            $table->foreignId('company_id')->references('id')->on('companies');
             $table->string('name');
-            $table->longText('colors')->nullable();
+            $table->json('colors')->nullable();
             $table->longText('description')->nullable();
             $table->string('website')->nullable();
             $table->string('industry')->nullable();
-            $table->longText('guideline')->nullable();
+            $table->string('audience')->nullable();
             $table->enum('status', ['active','in-active'])->default('active')->nullable();
             $table->timestamps();
             $table->softDeletes();

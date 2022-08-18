@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Company;
 use App\Models\Subscription;
 use Illuminate\Http\Request;
 use App\Trait\HandleResponse;
@@ -52,7 +53,6 @@ class subscriptionController extends Controller
         ]);
 
         return $this->successResponse($subscription, 'Subscription created successfully', 201);
-
     }
 
 
@@ -111,4 +111,22 @@ class subscriptionController extends Controller
         return $this->successResponse($deleted, 'Subscription deleted successfully', 200);
     }
 
+    public function activeSub(Request $request)
+    {
+        $company = Company::whereId(getActiveWorkSpace()->id)->first();
+        return $this->successResponse(
+            [
+                'subscription' => $company->activeSubscripitions()->where('default', 'yes')->first(),
+                'history' => $company->activeSubscripitions()->limit(5)->get()
+            ]
+        );
+    }
+
+    public function list(Request $request)
+    {
+        $company = Company::whereId(getActiveWorkSpace()->id)->first();
+        return $this->successResponse(
+            $company->activeSubscripitions()->paginate(20)
+        );
+    }
 }

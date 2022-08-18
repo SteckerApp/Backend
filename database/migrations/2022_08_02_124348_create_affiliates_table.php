@@ -15,14 +15,9 @@ return new class extends Migration
     {
         Schema::create('affiliates', function (Blueprint $table) {
             $table->id();
-            $table->string('referral_id');
-            $table->foreignId('user_id')->constrained();
-            $table->foreignId('company_id')->nullable()->constrained();
-            $table->foreignId('coupon_id')->nullable()->constrained();
-            $table->integer('amount');
-            $table->integer('total_amount');
-            $table->foreignId('subscription_id')->constrained();
-            $table->enum('status', ['active','in-active'])->nullable();
+            $table->foreignId('referral_id')->references('id')->on('users');
+            $table->foreignId('user_id')->references('id')->on('users');
+            $table->enum('status', ['active','pending', 'paid'])->default("pending");
             $table->timestamps();
         });
     }

@@ -12,7 +12,7 @@ class CompanyService
 
     public function createCompany($request)
     {
-        DB::transaction();
+        DB::beginTransaction();
 
         try {
 
@@ -49,4 +49,52 @@ class CompanyService
             return $this->errorResponse(null);
         }
     }
+
+
+    public function listCompany($request)
+    {
+            return $this->successResponse($request->user()->ownCompanies);
+    }
+
+    public function showCompany($company)
+    {
+        if ($company->user_id != auth()->user()->id && in_array(auth()->user()->user_type, config( 'auth.admin_start'))) {
+            return abort(401);
+        };
+        
+        return $this->successResponse($company);
+    }
+
+    public function updateCompany($company, $request)
+    {
+        if ($company->user_id != auth()->user()->id && in_array(auth()->user()->user_type, config( 'auth.admin_start'))) {
+            return abort(401);
+        };
+
+        $company = $company->fill($request->only([
+            'avatar',
+            'name',
+            'discription' ,
+            'hear_about_us',
+            'phone_number',
+        ]));
+
+        $company->update();
+        
+        return $this->successResponse($company);
+    }
+
+
+    public function deleteCompany($company)
+    {
+        if ($company->user_id != auth()->user()->id && in_array(auth()->user()->user_type, config( 'auth.admin_start'))) {
+            return abort(401);
+        };
+
+        $company->delete();
+        
+        return $this->successResponse($company, 'Company delete successfully');
+    }
+
+    
 }

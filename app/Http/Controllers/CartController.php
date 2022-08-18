@@ -2,13 +2,14 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\StoreCartRequest;
-use App\Http\Requests\UpdateCartRequest;
 use App\Models\Cart;
-use App\Models\subscription;
 use App\Models\Transaction;
+use App\Models\subscription;
+use Illuminate\Http\Request;
 use App\Trait\HandleResponse;
 use Illuminate\Support\Facades\DB;
+use App\Http\Requests\StoreCartRequest;
+use App\Http\Requests\UpdateCartRequest;
 
 class CartController extends Controller
 {
@@ -41,6 +42,7 @@ class CartController extends Controller
 
             $cart = Cart::create([
                 'reference' => $reference,
+                'user_id' => $request->user()->id,
                 'subtotal' => $subscription->price,
                 'total' => $subscription->price,
                 'status' => Cart::STATUS[0]
@@ -84,15 +86,18 @@ class CartController extends Controller
         ));
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\Models\Cart  $cart
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(Cart $cart)
+   
+    public function create(Request $request)
     {
-        //
+        $reference = generateReference();
+
+        $cart = Cart::create([
+            'reference' => $reference,
+            'user_id' => $request->user()->id,
+            'subtotal' => 0,
+            'total' => 0,
+            'status' => Cart::STATUS[0]
+        ]);
     }
 
     /**

@@ -13,7 +13,7 @@ class UpdateCompanyRequest extends FormRequest
      */
     public function authorize()
     {
-        return false;
+        return true;
     }
 
     /**
@@ -24,7 +24,11 @@ class UpdateCompanyRequest extends FormRequest
     public function rules()
     {
         return [
-            //
+            'avatar' => 'sometimes|image|mimes:jpeg,png,jpg,gif,svg|max:4048',
+            'name' => 'sometimes|string|max:255',
+            'discription' => 'sometimes|nullable|string|max:255',
+            'hear_about_us' => 'sometimes|nullable|string|max:255',
+            'phone_number' => 'sometimes|string|max:255',
         ];
     }
 }

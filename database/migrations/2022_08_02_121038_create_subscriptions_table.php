@@ -19,6 +19,7 @@ return new class extends Migration
             $table->longText('description');
             $table->integer('price');
             $table->enum('type', ['monthly', 'quarterly', 'yearly'])->default('monthly');
+            $table->integer('days')->nullable();
             $table->json('metadata')->nullable();
             $table->string('default')->nullable();
             $table->boolean('info')->default(false);

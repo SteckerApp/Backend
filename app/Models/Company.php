@@ -40,4 +40,13 @@ class Company extends Model
     {
         return $this->hasMany(Brand::class);
     }
+
+    public function activeSubscripitions()
+    {
+        return $this->belongsToMany(subscription::class)->orderBy('payment_date', 'desc')->where(['status' => 'active' , 'payment_status' => 'paid']);
+    }
+    public function Subscripitions()
+    {
+        return $this->belongsToMany(subscription::class)->orderBy('payment_date', 'desc');
+    }
 }

@@ -13,15 +13,11 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('carts', function (Blueprint $table) {
+        Schema::create('brand_documents', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('brand_id')->references('id')->on('brands');
+            $table->string('upload');
             $table->foreignId('user_id')->references('id')->on('users');
-            $table->string('reference')->unique();
-            $table->string('subtotal')->nullable();
-            $table->string('promo_code')->nullable();
-            $table->string('discounted')->nullable();
-            $table->string('total')->nullable();
-            $table->string("status")->nullable();
             $table->timestamps();
         });
     }
@@ -33,6 +29,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('carts');
+        Schema::dropIfExists('brand_documents');
     }
 };

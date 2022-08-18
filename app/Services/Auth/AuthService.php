@@ -2,8 +2,12 @@
 
 namespace App\Services\Auth;
 
+use Carbon\Carbon;
 use App\Models\User;
+use App\Models\Invite;
 use App\Enums\UserType;
+use App\Models\Affiliate;
+use Illuminate\Support\Str;
 use App\Trait\HandleResponse;
 use App\Mail\VerificationMail;
 use App\Mail\PasswordResetMail;
@@ -14,7 +18,6 @@ use App\Jobs\sendVerificationMailSync;
 use App\Jobs\SendPasswordResetMailSync;
 use App\Http\Resources\RegisterdResource;
 use App\Http\Requests\auth\RegisterRequest;
-use Carbon\Carbon;
 
 class AuthService
 {
@@ -34,11 +37,60 @@ class AuthService
                 'user_type' => UserType::CLIENT
             ]);
 
+            // create user
+            $user = User::create($request->all());
+
+            //take of invited
+            if ($request->has('invited')) {
+
+                if ($request->invited == 'company' && !empty($request->invited_code)) {
+                    $invite = Invite::where('id', $request->invited_code)->first();
+
+                    $user->syncPermissions($invite->preset);
+
+                    DB::table('company_user')->insert([
+                        'user_id' => $user->id,
+                        'company_id' => $invite->company_id,
+                        'role' => 'member',
+                    ]);
+
+                    $invite->update([
+                        'status' => 'joined'
+                    ]);
+                }
+
+
+
+                if ($request->invited == 'affilate' && !empty($request->invited_code)) {
+
+                    $referral = User::where('referral_code', $request->invited_code)->first();
+
+                    if ($referral) {
+                        Affiliate::create([
+                            'referral_id' => $referral->id,
+                            'user_id' => $user->id,
+                        ]);
+                    }
+
+                    $user->assignRole('client');
+                }
+            } else {
+                $user->assignRole('client');
+            }
+
+            //set referral code
+
+            $code = $user->first_name . Str::random(3) . time();
+
+            tap($user, function ($collection) use ($code) {
+                return $collection->update([
+                    'referral_code' => $code
+                ]);
+            });
+
             // send mail of verification code
             $this->sendVerificationMail($request->email, $verificationCode, $request->firstName);
 
-            // create user
-            $user = User::create($request->all());
 
             //login
             $token = $user->createToken($user->id . '-' . $user->email)->plainTextToken;

@@ -6,6 +6,7 @@ use App\Models\Company;
 use App\Services\Company\CompanyService;
 use App\Http\Requests\auth\StoreCompanyRequest;
 use App\Http\Requests\auth\UpdateCompanyRequest;
+use Illuminate\Http\Request;
 
 class CompanyController extends Controller
 {
@@ -20,9 +21,9 @@ class CompanyController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
-        //
+        return $this->companyService->listCompany($request);
     }
 
 
@@ -45,7 +46,7 @@ class CompanyController extends Controller
      */
     public function show(Company $company)
     {
-        //
+        return $this->companyService->showCompany($company);
     }
 
     /**
@@ -68,7 +69,7 @@ class CompanyController extends Controller
      */
     public function update(UpdateCompanyRequest $request, Company $company)
     {
-        //
+        return $this->companyService->updateCompany($company, $request);
     }
 
     /**
@@ -79,6 +80,6 @@ class CompanyController extends Controller
      */
     public function destroy(Company $company)
     {
-        //
+        return $this->companyService->deleteCompany($company);
     }
 }
