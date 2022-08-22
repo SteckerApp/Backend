@@ -93,4 +93,9 @@ class User extends Authenticatable
     {
         return $this->hasManyThrough(Brand::class, Company::class);
     }
+
+    public function messages()
+    {
+        return $this->hasMany(ProjectMessage::class);
+    }
 }

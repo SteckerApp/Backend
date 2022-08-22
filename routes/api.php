@@ -1,20 +1,22 @@
 <?php
 
-use App\Http\Controllers\AffiliateController;
 use Illuminate\Http\Request;
 use App\Models\ProjectRequest;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\CartController;
+use App\Http\Controllers\TeamController;
 use App\Http\Controllers\BrandController;
+use App\Http\Controllers\CouponController;
+use App\Http\Controllers\CompanyController;
+use App\Http\Controllers\PaymentController;
+use App\Http\Controllers\AffiliateController;
+use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\PortfolioController;
 use App\Http\Controllers\api\v1\TestController;
 use App\Http\Controllers\SubscriptionController;
+use App\Http\Controllers\ProjectMessageController;
 use App\Http\Controllers\ProjectRequestController;
 use App\Http\Controllers\api\v1\auth\UserController;
-use App\Http\Controllers\CartController;
-use App\Http\Controllers\CompanyController;
-use App\Http\Controllers\CouponController;
-use App\Http\Controllers\DashboardController;
-use App\Http\Controllers\PaymentController;
-use App\Http\Controllers\TeamController;
 use App\Http\Controllers\UserSubscriptionController;
 
 /*
@@ -57,8 +59,14 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/', [ProjectRequestController::class, 'index']);
         Route::get('/{id}', [ProjectRequestController::class, 'show']);
         Route::post('/', [ProjectRequestController::class, 'store']);
+        Route::post('/upload_deliverables', [ProjectRequestController::class, 'uploadDeliverables']);
         Route::put('/{id}', [ProjectRequestController::class, 'update']);
         Route::delete('/{id}', [ProjectRequestController::class, 'destroy']);
+    });
+
+    Route::prefix('messages')->group(function () {
+        Route::get('/{project_id}', [ProjectMessageController::class, 'fetchMessages']);
+        Route::post('/', [ProjectMessageController::class, 'sendMessage']);
     });
 
     Route::prefix('subscription')->group(function () {
@@ -122,14 +130,14 @@ Route::middleware('auth:sanctum')->group(function () {
             Route::put('/{company}', [CompanyController::class, 'update']);
             Route::delete('/{company}', [CompanyController::class, 'destroy']);
         });
-    
-        
+
+
 
         Route::get('/profile', [UserController::class, 'profile']);
         Route::put('/profile', [UserController::class, 'updateProfile']);
     });
 
-    
+
     Route::prefix('admin')->group(function () {
         Route::get('/', [DashboardController::class, 'home']);
 
@@ -140,7 +148,7 @@ Route::middleware('auth:sanctum')->group(function () {
             Route::post('/', [BrandController::class, 'store'])->middleware('can:create,App\Models\Brand');
             Route::delete('/{id}', [BrandController::class, 'destroy']);
         });
-        
+
         Route::get('/profile', [UserController::class, 'profile']);
         Route::put('/profile', [UserController::class, 'updateProfile']);
     });
@@ -149,6 +157,12 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/dashboard', [DashboardController::class, 'affilate']);
         Route::post('/withdrawal/bank', [AffiliateController::class, 'withdrawal']);
         Route::get('/withdrawal', [AffiliateController::class, 'history']);
+    });
+
+    Route::prefix('brand')->group(function () {
+        Route::get('/', [PortfolioController::class, 'index']);
+        Route::post('/', [PortfolioController::class, 'store']);
+        Route::delete('/{id}', [PortfolioController::class, 'destroy']);
     });
 });
 
