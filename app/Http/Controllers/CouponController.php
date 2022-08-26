@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Carbon\Carbon;
 use App\Models\Cart;
 use App\Models\Coupon;
+
 use Illuminate\Http\Request;
 use App\Trait\HandleResponse;
 use Illuminate\Support\Facades\DB;
@@ -23,10 +24,13 @@ class CouponController extends Controller
         DB::beginTransaction();
         try {
             //check the coupon
-            $code = Coupon::whereCode($request->code)->firstOrFail();
+            $code = Coupon::whereCode($request->code)->first();
             $today = Carbon::now();
             $authUser = $request->user();
 
+            if(!$code){
+                return $this->errorResponse('Invalid Coupon code', 422);
+            }
             //check coupon if is valid for a user or company
             if ($code && ($code->user_id != null ||  $code->company_id != null)) {
                 if ($code->user_id != null &&  $code->user_id != $authUser->id) {
@@ -55,12 +59,14 @@ class CouponController extends Controller
 
                     switch ($code->type) {
                         case 'flat':
-                            $cart->total = ($cart->total - $code->amount);
+                            $amount = ($code->amount > $code->cap)? $code->cap : $code->amount;
+                            $cart->total = ($cart->total - $amount);
                             $cart->discounted = [
-                                'amount' =>  $code->amount,
+                                'amount' =>  $amount,
                                 'coupon_reference' =>  $code->id,
-                                'flat' =>  $code->amount,
+                                'flat' =>  $amount,
                                 'percentage' => null,
+                                'cap' => $code->cap,
                                 'total_before_discount' => $old_total,
                                 'total_after_discount' => $cart->total,
                             ];
@@ -68,13 +74,14 @@ class CouponController extends Controller
 
                         case 'percentage':
                             $percentage_value = (($code->percentage / 100) * $cart->total);
-
-                            $cart->total = ($cart->total - $percentage_value);
+                            $amount = ($percentage_value > $code->cap)? $code->cap : $percentage_value;
+                            $cart->total = ($cart->total - $amount);
                             $cart->discounted = [
-                                'amount' => $percentage_value,
+                                'amount' => $amount,
                                 'coupon_reference' =>  $code->id,
                                 'flat' =>  null,
                                 'percentage' => $code->percentage,
+                                'cap' => $code->cap,
                                 'total_before_discount' => $old_total,
                                 'total_after_discount' => $cart->total,
                             ];
@@ -82,14 +89,19 @@ class CouponController extends Controller
 
                         case 'both':
                             $percentage_value = (($code->percentage / 100) * $cart->total);
-                            $total_discount = (($cart->total - $code->amount) - $percentage_value);
+                            $total_value = $percentage_value + $code->amount;
+
+                            $amount = ($total_value > $code->cap)? $code->cap : $total_value;
+
+                            $total_discount = ($cart->total - $amount);
 
                             $cart->total = $total_discount;
                             $cart->discounted = [
-                                'amount' => $total_discount,
+                                'amount' => $amount,
                                 'coupon_reference' =>  $code->id,
                                 'flat' =>  $code->amount,
                                 'percentage' => $code->percentage,
+                                'cap' => $code->cap,
                                 'total_before_discount' => $old_total,
                                 'total_after_discount' => $cart->total,
                             ];
@@ -118,7 +130,7 @@ class CouponController extends Controller
             }
         } catch (\Throwable $th) {
             DB::rollBack();
-            $this->errorResponse($th->getMessage(), 500);
+            return $this->errorResponse('Please Try again later', 500);
         }
     }
 
@@ -131,7 +143,11 @@ class CouponController extends Controller
         DB::beginTransaction();
         try {
             $cart = Cart::whereReference($request->reference)->first();
+
             $cart->promo_code = null;
+            if (!$cart->discounted) {
+                return $this->errorResponse(null, 'No coupon code is apply on this transaction');
+            }
             $cart->total = $cart->discounted['total_before_discount'];
 
             $coupon_id = $cart->discounted['coupon_reference'];
@@ -140,8 +156,9 @@ class CouponController extends Controller
             $cart->update();
 
             DB::table('coupon_transaction')
-                ->where('id', $request->user()->id)
+                ->where('user_id', $request->user()->id)
                 ->where('coupon_id', $coupon_id)
+                ->where('transaction_id', $cart->id)
                 ->delete();
 
             DB::commit();
@@ -156,6 +173,97 @@ class CouponController extends Controller
 
     public function index(Request $request)
     {
-        Cart::whereNotNull('discounted')->where("");
+        $redemption = Cart::whereNotNull('discounted')->where("status", 'paid');
+        $response = [
+            'redemption_amount'  => $redemption->sum('discounted->amount'),
+            'redemption_total' => $redemption->count(),
+            'redemption_new' => $redemption->whereBetween('created_at', [
+                Carbon::now()->subDays(30)->startOfDay()->toDateString(),
+                Carbon::now()->addDay(1)->endOfDay()->toDateString()
+            ])->count(),
+            'coupons' => Coupon::limit(10)->get()
+        ];
+
+        return $this->successResponse($response);
     }
+    public function store(Request $request)
+    {
+        $this->validate($request, [
+            'user_id' => 'sometimes|exists:users,id',
+            'company_id' => 'sometimes|exists:companies,id',
+            'code' => 'required|string',
+            'type' => 'required|string',
+            'amount' => 'sometimes|string|nullable',
+            'percentage' => 'sometimes|integer|nullable|max:100',
+            'cap' => 'sometimes|string',
+            'start' => 'required|date',
+            'ends' => 'sometimes|date|nullable',
+        ]);
+
+        $request->merge([
+            'created_by' => $request->user()->id
+        ]);
+
+        $created = Coupon::create($request->only([
+            'created_by',
+            'user_id',
+            'company_id',
+            'code',
+            'type',
+            'amount',
+            'percentage',
+            'cap',
+            'start',
+            'ends',
+            'status',
+        ]));
+
+        return $this->successResponse($created);
+    }
+
+    
+    public function update(Request $request, Coupon $coupon)
+    {
+        $this->validate($request, [
+            'user_id' => 'sometimes|exists:users,id',
+            'company_id' => 'sometimes|exists:companies,id',
+            'code' => 'sometimes|string',
+            'type' => 'sometimes|string',
+            'amount' => 'sometimes|string',
+            'percentage' => 'sometimes|integer|max:100',
+            'cap' => 'sometimes|string',
+            'start' => 'sometimes|date',
+            'ends' => 'sometimes|date',
+            'status' => 'sometimes|string',
+        ]);
+
+        $coupon->fill(
+            $request->only([
+                'user_id',
+                'company_id',
+                'code',
+                'type',
+                'amount',
+                'percentage',
+                'cap',
+                'start',
+                'ends',
+                'status',
+            ])
+        );
+        $coupon->update();
+        return $this->successResponse($coupon);
+    }
+
+    public function destroy(Coupon $coupon)
+    {
+        $coupon->delete();
+        return $this->successResponse($coupon);
+    }
+
+    public function show(Coupon $coupon)
+    {
+        return $this->successResponse($coupon);
+    }
+
 }

@@ -6,6 +6,7 @@ use App\Models\User;
 use App\Models\Invite;
 use App\Models\Company;
 use App\Mail\InvitationMail;
+use App\Models\CompanyUser;
 use Illuminate\Http\Request;
 use App\Trait\HandleResponse;
 use Illuminate\Support\Facades\DB;
@@ -56,11 +57,45 @@ class TeamController extends Controller
     }
 
 
-    public function check($id)
+    public function check(Request $request, $id)
     {
-        $check = Invite::where('id', $id)->where('status', 'pending')->exists();
+        $this->validate($request, [
+            'email' => 'required|string|email|max:255|exists:invites,email'
+        ]);
+
+        $check = Invite::where('id', $id)->where(['status' => 'pending', 'email' => $request->email])->exists();
 
         return $this->successResponse(['status' => $check]);
+    }
+
+    public function link(Request $request, $id)
+    {
+        $check = Invite::where('id', $id)->where(['status' => 'pending', 'email' => $request->email, 'platform' => 'registered'])->first();
+
+        if ($check) {
+            $user = User::whereEmail($check->email)->firstOrFail();
+
+            // $user->assignRole('client_team_member');
+
+            CompanyUser::updateOrCreate(
+                [
+                    'user_id' => $user->id,
+                    'company_id' => $check->company_id,
+                ],
+                [
+                    'role' => 'member',
+                ]
+            );
+
+            $check->update([
+                'status' => 'joined'
+            ]);
+
+
+            return $this->successResponse([null, 'User added to company workspace successfully']);
+        } else {
+            return $this->errorResponse(null, 'invitation not found', 404);
+        }
     }
 
 
@@ -80,7 +115,7 @@ class TeamController extends Controller
             return $this->errorResponse(null, 'User already added to this workspace');
         }
 
-        $register = (User::where('email', $request->email)->exists())?  'register': 'new-user';
+        $register = (User::where('email', $request->email)->exists()) ?  'registered' : 'new-user';
 
         Invite::updateOrCreate(
             [

@@ -12,9 +12,9 @@ class subscription extends Model
 
     protected $guarded = [];
 
-    public function userSubscription(): HasMany
+    public function companySubscription(): HasMany
     {
-        return $this->hasMany(UserSubscription::class);
+        return $this->hasMany(CompanySubscription::class);
     }
 
 }

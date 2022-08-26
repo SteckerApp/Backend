@@ -29,10 +29,20 @@ class RolesAndPermissionsSeeder extends Seeder
         Permission::create(['name' => 'client can managment teams']);
         Permission::create(['name' => 'client can managment subscription']);
 
+        Permission::create(['name' => 'admin can view workspace']);
+        Permission::create(['name' => 'admin can manage coupons']);
+        Permission::create(['name' => 'admin can manage subscription']);
+        Permission::create(['name' => 'admin can manage staff']);
+        Permission::create(['name' => 'admin can manage protifolio']);
+        Permission::create(['name' => 'admin can view analytics']);
+
         // create roles and assign created permissions
 
         // this can be done as separate statements
         $role = Role::create(['name' => 'client']);
+        $role = Role::create(['name' => 'pm']);
+        $role = Role::create(['name' => 'designer']);
+        $role = Role::create(['name' => 'admin']);
         Permission::all()->each(function($permission) use($role) {
             $role->givePermissionTo($permission->name);
         });

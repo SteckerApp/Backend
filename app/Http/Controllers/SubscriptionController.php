@@ -38,6 +38,9 @@ class subscriptionController extends Controller
             'description' => 'required',
             'price' => 'required|integer',
             'type' => 'required|in:monthly,quarterly,yearly',
+            'default' => 'sometimes|boolean',
+            'info' => 'sometimes|boolean',
+            'discounted' => 'sometimes|integer'
         ]);
 
         $subscription = Subscription::create([
@@ -46,6 +49,9 @@ class subscriptionController extends Controller
             'price' => $request->price,
             'type' => $request->type,
             'metadata' => $request->metadata,
+            'default' => $request->default,
+            'info' => $request->info,
+            'discounted' => $request->discounted,
             'currency' => $request->currency,
             'order' => $request->order,
             'user_limit' =>  $request->user_limit,
@@ -78,23 +84,37 @@ class subscriptionController extends Controller
 
     public function update(Request $request, $id)
     {
+
+        $this->validate($request, [
+            'title' => 'sometimes|string',
+            'description' => 'sometimes|string',
+            'price' => 'sometimes|integer',
+            'type' => 'sometimes|in:monthly,quarterly,yearly',
+            'default' => 'sometimes|boolean',
+            'info' => 'sometimes|boolean',
+            'discounted' => 'sometimes|integer'
+        ]);
+
         $subscription = Subscription::find($id);
 
-        $updated = $subscription->update(
-            [
-                'title' => $request->title,
-                'description' => $request->description,
-                'price' => $request->price,
-                'type' => $request->type,
-                'metadata' => $request->metadata,
-                'currency' => $request->currency,
-                'order' => $request->order,
-                'user_limit' =>  $request->user_limit,
-                'design_limit' =>  $request->design_limit,
-            ]
-        );
+        $subscription->fill($request->only([
+            'title',
+            'description',
+            'price',
+            'type',
+            'metadata',
+            'default',
+            'info',
+            'discounted',
+            'currency',
+            'order',
+            'user_limit',
+            'design_limit',
+        ]));
 
-        return $this->successResponse($updated, 'Subscription updated successfully', 200);
+        $subscription->update();
+
+        return $this->successResponse($subscription, 'Subscription updated successfully', 200);
     }
 
     /**
@@ -108,7 +128,7 @@ class subscriptionController extends Controller
         $subscription = Subscription::find($id);
         $deleted =  $subscription->delete();
 
-        return $this->successResponse($deleted, 'Subscription deleted successfully', 200);
+        return $this->successResponse($subscription, 'Subscription deleted successfully', 200);
     }
 
     public function activeSub(Request $request)

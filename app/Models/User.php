@@ -69,9 +69,9 @@ class User extends Authenticatable
         return $this->belongsToMany(Company::class);
     }
 
-    public function userSubscription(): HasMany
+    public function companySubscription(): HasMany
     {
-        return $this->hasMany(UserSubscription::class);
+        return $this->hasMany(CompanySubscription::class);
     }
 
     public function coupon(): HasMany

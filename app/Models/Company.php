@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 
 class Company extends Model
 {
@@ -45,8 +46,39 @@ class Company extends Model
     {
         return $this->belongsToMany(subscription::class)->orderBy('payment_date', 'desc')->where(['status' => 'active' , 'payment_status' => 'paid']);
     }
+
+    public function activeDefaultSubscripition()
+    {
+        return $this->belongsToMany(subscription::class)->orderBy('payment_date', 'desc')->where(['status' => 'active' , 'payment_status' => 'paid', 'default' => true]);
+    }
+
     public function Subscripitions()
     {
         return $this->belongsToMany(subscription::class)->orderBy('payment_date', 'desc');
+    }
+
+    /**
+     * Get all of the allCompanyRequest for the Company
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasManyThrough
+     */
+    public function allCompanyRequest(): HasManyThrough
+    {
+        return $this->hasManyThrough(ProjectRequest::class, Brand::class);
+    }
+
+    public function pm()
+    {
+        return $this->hasOne(AdminCompany::class,'user_id')->where('role', 'PM')->with('user');
+    }
+
+    public function designer()
+    {
+        return $this->hasOne(AdminCompany::class,'user_id')->where('role', 'DESIGNER')->with('user');
+    }
+
+    public function owner()
+    {
+        return $this->belongsToMany(User::class)->where("role", "admin");
     }
 }

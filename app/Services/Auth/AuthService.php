@@ -80,7 +80,7 @@ class AuthService
 
             //set referral code
 
-            $code = $user->first_name . Str::random(3) . time();
+            $code = Str::random(4) . time();
 
             tap($user, function ($collection) use ($code) {
                 return $collection->update([
@@ -88,25 +88,24 @@ class AuthService
                 ]);
             });
 
-            // send mail of verification code
-            $this->sendVerificationMail($request->email, $verificationCode, $request->firstName);
-
-
             //login
             $token = $user->createToken($user->id . '-' . $user->email)->plainTextToken;
             DB::commit();
-
-            return $this->successResponse(
-                [
-                    'token' => $token,
-                    'user' =>  new RegisterdResource($user)
-                ],
-                'Account Registration successful'
-            );
         } catch (\Throwable $th) {
             DB::rollback();
-            return $this->errorResponse(null, 'Internal Server Error', 500);
+            return $this->errorResponse($th->getMessage(), 'Internal Server Error', 500);
         }
+
+        // send mail of verification code
+        $this->sendVerificationMail($request->email, $verificationCode, $request->firstName);
+            
+        return $this->successResponse(
+            [
+                'token' => $token,
+                'user' =>  new RegisterdResource($user)
+            ],
+            'Account Registration successful'
+        );
     }
 
     protected function sendVerificationMail($email, $verificationCode, $firstName)

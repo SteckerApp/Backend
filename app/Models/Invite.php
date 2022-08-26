@@ -23,4 +23,5 @@ class Invite extends Model
     protected $casts = [
         'preset' => 'array'
     ];
+
 }
