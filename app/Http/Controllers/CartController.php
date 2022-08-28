@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Cart;
 use App\Models\Transaction;
-use App\Models\subscription;
+use App\Models\Subscription;
 use Illuminate\Http\Request;
 use App\Trait\HandleResponse;
 use Illuminate\Support\Facades\DB;
