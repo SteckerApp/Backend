@@ -66,7 +66,7 @@ class CartController extends Controller
             );
         } catch (\Throwable $th) {
             DB::rollBack();
-            return $this->errorResponse(null, 'Error processing request, try again', 500);
+            return $this->errorResponse($th->getMessage(), 'Error processing request, try again', 500);
         }
     }
 

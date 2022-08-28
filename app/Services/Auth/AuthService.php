@@ -120,7 +120,11 @@ class AuthService
 
     public function sendVerificationCode($email, $verificationCode, $firstName)
     {
-        Mail::to($email)->send(new VerificationMail($verificationCode, $firstName));
+        try {
+            Mail::to($email)->send(new VerificationMail($verificationCode, $firstName));
+        } catch (\Throwable $th) {
+        }
+        
     }
 
     public function resendVerification($request)
