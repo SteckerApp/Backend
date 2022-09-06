@@ -17,12 +17,6 @@ use App\Http\Controllers\SubscriptionController;
 use App\Http\Controllers\ProjectMessageController;
 use App\Http\Controllers\ProjectRequestController;
 use App\Http\Controllers\api\v1\auth\UserController;
-use App\Http\Controllers\CartController;
-use App\Http\Controllers\CompanyController;
-use App\Http\Controllers\CouponController;
-use App\Http\Controllers\DashboardController;
-use App\Http\Controllers\PaymentController;
-use App\Http\Controllers\TeamController;
 use App\Http\Controllers\WorkspaceController;
 
 /*

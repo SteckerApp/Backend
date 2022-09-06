@@ -40,7 +40,6 @@ class AuthService
 
             // create user
             $user = User::create($request->all());
-            dd(234);
 
             //take of invited
             if ($request->has('invited')) {
