@@ -55,4 +55,9 @@ class ProjectRequest extends Model
         return $this->hasOne(User::class, 'id', 'pm_id');
     }
 
+    public function designer(): HasOne
+    {
+        return $this->hasOne(User::class, 'id', 'designer_id');
+    }
+    
 }

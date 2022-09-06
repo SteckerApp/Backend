@@ -1,6 +1,7 @@
 <?php
 
 use App\Models\Cart;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Session;
 
@@ -47,3 +48,4 @@ function setActiveWorkSpace($workspace, $change = false)
     $current = getActiveWorkSpace();
     return $current;
 }
+

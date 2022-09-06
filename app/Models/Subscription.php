@@ -6,15 +6,15 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
-class subscription extends Model
+class Subscription extends Model
 {
     use HasFactory;
 
     protected $guarded = [];
 
-    public function userSubscription(): HasMany
+    public function companySubscription(): HasMany
     {
-        return $this->hasMany(UserSubscription::class);
+        return $this->hasMany(CompanySubscription::class);
     }
 
 }

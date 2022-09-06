@@ -3,14 +3,10 @@
 namespace App\Http\Middleware;
 
 use Closure;
-use Carbon\Carbon;
 use Illuminate\Http\Request;
-use App\Trait\HandleResponse;
-use Illuminate\Support\Facades\DB;
 
-class EnsureActiveSubscription
+class EnsureSubscription
 {
-    use HandleResponse;
     /**
      * Handle an incoming request.
      *
@@ -20,16 +16,17 @@ class EnsureActiveSubscription
      */
     public function handle(Request $request, Closure $next)
     {
-        $activeSubscriber = DB::table('company_subscription')::where([
-            'user_id'=> auth()->user()->id,
-            'company_id'=>getActiveWorkSpace()->id,
-            'status'=> 'active',
-        ])->where('end_date', '>=', Carbon::now())->exists();
 
-        if ($activeSubscriber) {
+        $checkSub = $request->user()->companySubscription()
+        ->where([
+            'company_id' => getActiveWorkSpace()->id, 'status' => 'active', 'payment_status' => 'paid'
+            ])->exists();
+        if($checkSub) {
             return $next($request);
         }
-
-        return $this->errorResponse(false,"No Active Subscription");
+        return response()->json([
+            'message' => 'User subscription expired',
+            'reason' => 'subscription'
+        ], 308);
     }
 }

@@ -21,7 +21,7 @@ return new class extends Migration
             $table->enum('type', ['monthly', 'quarterly', 'yearly'])->default('monthly');
             $table->integer('days')->nullable();
             $table->json('metadata')->nullable();
-            $table->string('default')->nullable();
+            $table->boolean('default')->default(false);
             $table->boolean('info')->default(false);
             $table->string('discounted')->nullable();
             $table->string('currency')->nullable();

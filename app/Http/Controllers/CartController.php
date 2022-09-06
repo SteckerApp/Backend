@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Cart;
 use App\Models\Transaction;
-use App\Models\subscription;
+use App\Models\Subscription;
 use Illuminate\Http\Request;
 use App\Trait\HandleResponse;
 use Illuminate\Support\Facades\DB;
@@ -66,7 +66,7 @@ class CartController extends Controller
             );
         } catch (\Throwable $th) {
             DB::rollBack();
-            return $this->errorResponse(null, 'Error processing request, try again', 500);
+            return $this->errorResponse($th->getMessage(), 'Error processing request, try again', 500);
         }
     }
 

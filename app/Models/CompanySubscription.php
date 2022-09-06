@@ -7,9 +7,11 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 
-class UserSubscription extends Model
+class CompanySubscription extends Model
 {
     use HasFactory;
+
+    protected $table = 'company_subscription';
 
     protected $guarded = [];
 

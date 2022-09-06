@@ -17,7 +17,13 @@ use App\Http\Controllers\SubscriptionController;
 use App\Http\Controllers\ProjectMessageController;
 use App\Http\Controllers\ProjectRequestController;
 use App\Http\Controllers\api\v1\auth\UserController;
-use App\Http\Controllers\UserSubscriptionController;
+use App\Http\Controllers\CartController;
+use App\Http\Controllers\CompanyController;
+use App\Http\Controllers\CouponController;
+use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\PaymentController;
+use App\Http\Controllers\TeamController;
+use App\Http\Controllers\WorkspaceController;
 
 /*
 |--------------------------------------------------------------------------
@@ -59,9 +65,9 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::prefix('subscription')->group(function () {
         Route::get('/', [SubscriptionController::class, 'index']);
         Route::get('/{id}', [SubscriptionController::class, 'show']);
-        Route::post('/', [SubscriptionController::class, 'store']);
-        Route::put('/{id}', [SubscriptionController::class, 'update']);
-        Route::delete('/{id}', [SubscriptionController::class, 'destroy']);
+        Route::post('/', [SubscriptionController::class, 'store'])->middleware(['permission:admin can manage subscription']);
+        Route::put('/{id}', [SubscriptionController::class, 'update'])->middleware(['permission:admin can manage subscription']);
+        Route::delete('/{id}', [SubscriptionController::class, 'destroy'])->middleware(['permission:admin can manage subscription']);
     });
 
     Route::prefix('cart')->group(function () {
@@ -75,18 +81,14 @@ Route::middleware('auth:sanctum')->group(function () {
     });
 
 
-    Route::prefix('user_subscription')->group(function () {
-        Route::post('/attach_user_subscription', [UserSubscriptionController::class, 'attachUserSubscription']);
-        Route::post('/activate_subscription/{id}', [UserSubscriptionController::class, 'activatePayment']);
-    });
 
     // Route::resource('requests', ProjectRequestController::class);
     // Route::resource('brands', BrandController::class);
 
-    Route::prefix('dashboard')->group(function () {
+    Route::prefix('dashboard')->middleware('check_workspace')->group(function () {
         Route::get('/', [DashboardController::class, 'home']);
 
-        Route::prefix('brand')->middleware('can:viewAny,App\Models\Brand')->group(function () {
+        Route::prefix('brand')->middleware(['can:viewAny,App\Models\Brand' , 'check_subscription'])->group(function () {
             Route::get('/', [BrandController::class, 'index']);
             Route::put('/{id}', [BrandController::class, 'update']);
             Route::get('/{id}', [BrandController::class, 'show']);
@@ -94,7 +96,7 @@ Route::middleware('auth:sanctum')->group(function () {
             Route::delete('/{id}', [BrandController::class, 'destroy']);
         });
 
-        Route::prefix('teams')->middleware('can:teams-managment')->group(function () {
+        Route::prefix('teams')->middleware(['can:teams-managment', 'check_subscription'])->group(function () {
             Route::get('/', [TeamController::class, 'index']);
             Route::post('/invite', [TeamController::class, 'invite']);
             Route::post('/invite/check/{id}', [TeamController::class, 'check']);
@@ -102,9 +104,13 @@ Route::middleware('auth:sanctum')->group(function () {
 
             Route::delete('/{id}', [TeamController::class, 'delete']);
             Route::put('/{id}', [TeamController::class, 'update']);
+
+
+            Route::post('/link/{id}', [TeamController::class, 'link']);
+
         });
 
-        Route::prefix('plan')->group(function () {
+        Route::prefix('plan')->middleware(['permission:client can managment subscription'])->group(function () {
             Route::get('/', [SubscriptionController::class, 'activeSub']);
             Route::get('/history', [SubscriptionController::class, 'list']);
             // Route::post('/withdrawal/bank', [AffiliateController::class, 'withdrawal']);
@@ -121,7 +127,7 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::prefix('requests')->group(function () {
             Route::get('/', [ProjectRequestController::class, 'index']);
             Route::get('/{id}', [ProjectRequestController::class, 'show']);
-            Route::post('/', [ProjectRequestController::class, 'store'])->middleware('ensure_active_subscription');
+            Route::post('/', [ProjectRequestController::class, 'store'])->middleware('check_subscription');
             Route::post('/upload_deliverables', [ProjectRequestController::class, 'uploadDeliverables']);
             Route::put('/{id}', [ProjectRequestController::class, 'update']);
             Route::delete('/{id}', [ProjectRequestController::class, 'destroy']);
@@ -132,20 +138,25 @@ Route::middleware('auth:sanctum')->group(function () {
             });
         });
 
-        Route::get('/profile', [UserController::class, 'profile']);
-        Route::put('/profile', [UserController::class, 'updateProfile']);
     });
 
+    Route::get('/auth/user/profile', [UserController::class, 'profile']);
+    Route::put('/auth/user/profile', [UserController::class, 'updateProfile']);
 
     Route::prefix('admin')->group(function () {
         Route::get('/', [DashboardController::class, 'home']);
 
-        Route::prefix('promo')->group(function () {
+        Route::prefix('promo')->middleware(['permission:admin can manage coupons'])->group(function () {
             Route::get('/', [CouponController::class, 'index']);
-            Route::put('/{id}', [BrandController::class, 'update']);
-            Route::get('/{id}', [BrandController::class, 'show']);
-            Route::post('/', [BrandController::class, 'store'])->middleware('can:create,App\Models\Brand');
-            Route::delete('/{id}', [BrandController::class, 'destroy']);
+            Route::put('/{coupon}', [CouponController::class, 'update']);
+            Route::get('/{coupon}', [CouponController::class, 'show']);
+            Route::post('/create', [CouponController::class, 'store']);
+            Route::delete('/{coupon}', [CouponController::class, 'destroy']);
+        });
+
+        Route::prefix('workspace')->middleware(['permission:admin can view workspace'])->group(function(){
+            Route::get('/', [WorkspaceController::class, 'index']);
+            Route::get('/company', [WorkspaceController::class, 'list']);
         });
 
         Route::prefix('portfolio')->group(function () {
@@ -153,9 +164,6 @@ Route::middleware('auth:sanctum')->group(function () {
             Route::post('/', [PortfolioController::class, 'store']);
             Route::delete('/{id}', [PortfolioController::class, 'destroy']);
         });
-
-        Route::get('/profile', [UserController::class, 'profile']);
-        Route::put('/profile', [UserController::class, 'updateProfile']);
     });
 
     Route::prefix('affilate')->group(function () {
