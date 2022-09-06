@@ -55,19 +55,6 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::delete('/{id}', [UserController::class, 'destroy']);
     });
 
-    Route::prefix('requests')->group(function () {
-        Route::get('/', [ProjectRequestController::class, 'index']);
-        Route::get('/{id}', [ProjectRequestController::class, 'show']);
-        Route::post('/', [ProjectRequestController::class, 'store']);
-        Route::post('/upload_deliverables', [ProjectRequestController::class, 'uploadDeliverables']);
-        Route::put('/{id}', [ProjectRequestController::class, 'update']);
-        Route::delete('/{id}', [ProjectRequestController::class, 'destroy']);
-    });
-
-    Route::prefix('messages')->group(function () {
-        Route::get('/{project_id}', [ProjectMessageController::class, 'fetchMessages']);
-        Route::post('/', [ProjectMessageController::class, 'sendMessage']);
-    });
 
     Route::prefix('subscription')->group(function () {
         Route::get('/', [SubscriptionController::class, 'index']);
@@ -131,7 +118,19 @@ Route::middleware('auth:sanctum')->group(function () {
             Route::delete('/{company}', [CompanyController::class, 'destroy']);
         });
 
+        Route::prefix('requests')->group(function () {
+            Route::get('/', [ProjectRequestController::class, 'index']);
+            Route::get('/{id}', [ProjectRequestController::class, 'show']);
+            Route::post('/', [ProjectRequestController::class, 'store'])->middleware('ensure_active_subscription');
+            Route::post('/upload_deliverables', [ProjectRequestController::class, 'uploadDeliverables']);
+            Route::put('/{id}', [ProjectRequestController::class, 'update']);
+            Route::delete('/{id}', [ProjectRequestController::class, 'destroy']);
 
+            Route::prefix('messages')->group(function () {
+                Route::get('/{project_id}', [ProjectMessageController::class, 'fetchMessages']);
+                Route::post('/', [ProjectMessageController::class, 'sendMessage']);
+            });
+        });
 
         Route::get('/profile', [UserController::class, 'profile']);
         Route::put('/profile', [UserController::class, 'updateProfile']);
@@ -149,6 +148,12 @@ Route::middleware('auth:sanctum')->group(function () {
             Route::delete('/{id}', [BrandController::class, 'destroy']);
         });
 
+        Route::prefix('portfolio')->group(function () {
+            Route::get('/', [PortfolioController::class, 'index'])->withoutMiddleware('auth:sanctum');
+            Route::post('/', [PortfolioController::class, 'store']);
+            Route::delete('/{id}', [PortfolioController::class, 'destroy']);
+        });
+
         Route::get('/profile', [UserController::class, 'profile']);
         Route::put('/profile', [UserController::class, 'updateProfile']);
     });
@@ -159,11 +164,7 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/withdrawal', [AffiliateController::class, 'history']);
     });
 
-    Route::prefix('brand')->group(function () {
-        Route::get('/', [PortfolioController::class, 'index']);
-        Route::post('/', [PortfolioController::class, 'store']);
-        Route::delete('/{id}', [PortfolioController::class, 'destroy']);
-    });
+
 });
 
 Route::get('/test', [PaymentController::class, 'test']);

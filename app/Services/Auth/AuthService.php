@@ -25,6 +25,7 @@ class AuthService
 
     public function createUser(RegisterRequest $request)
     {
+
         try {
             DB::beginTransaction();
 
@@ -39,6 +40,7 @@ class AuthService
 
             // create user
             $user = User::create($request->all());
+            dd(234);
 
             //take of invited
             if ($request->has('invited')) {
@@ -80,6 +82,7 @@ class AuthService
 
             //set referral code
 
+
             $code = $user->first_name . Str::random(3) . time();
 
             tap($user, function ($collection) use ($code) {
@@ -87,7 +90,6 @@ class AuthService
                     'referral_code' => $code
                 ]);
             });
-
             // send mail of verification code
             $this->sendVerificationMail($request->email, $verificationCode, $request->firstName);
 
