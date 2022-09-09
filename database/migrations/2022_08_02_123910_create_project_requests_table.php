@@ -15,9 +15,9 @@ return new class extends Migration
     {
         Schema::create('project_requests', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('pm_id');
+            $table->unsignedBigInteger('pm_id')->nullable();
             $table->foreign('pm_id')->references('id')->on('users');
-            $table->unsignedBigInteger('designer_id');
+            $table->unsignedBigInteger('designer_id')->nullable();
             $table->foreign('designer_id')->references('id')->on('users');
             $table->foreignId('brand_id')->nullable()->constrained();
             $table->foreignId('user_id')->constrained();

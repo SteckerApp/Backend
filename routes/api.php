@@ -1,20 +1,22 @@
 <?php
 
-use App\Http\Controllers\AffiliateController;
 use Illuminate\Http\Request;
 use App\Models\ProjectRequest;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\CartController;
+use App\Http\Controllers\TeamController;
 use App\Http\Controllers\BrandController;
+use App\Http\Controllers\CouponController;
+use App\Http\Controllers\CompanyController;
+use App\Http\Controllers\PaymentController;
+use App\Http\Controllers\AffiliateController;
+use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\PortfolioController;
 use App\Http\Controllers\api\v1\TestController;
 use App\Http\Controllers\SubscriptionController;
+use App\Http\Controllers\ProjectMessageController;
 use App\Http\Controllers\ProjectRequestController;
 use App\Http\Controllers\api\v1\auth\UserController;
-use App\Http\Controllers\CartController;
-use App\Http\Controllers\CompanyController;
-use App\Http\Controllers\CouponController;
-use App\Http\Controllers\DashboardController;
-use App\Http\Controllers\PaymentController;
-use App\Http\Controllers\TeamController;
 use App\Http\Controllers\WorkspaceController;
 
 /*
@@ -53,13 +55,6 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::delete('/{id}', [UserController::class, 'destroy']);
     });
 
-    Route::prefix('requests')->group(function () {
-        Route::get('/', [ProjectRequestController::class, 'index']);
-        Route::get('/{id}', [ProjectRequestController::class, 'show']);
-        Route::post('/', [ProjectRequestController::class, 'store']);
-        Route::put('/{id}', [ProjectRequestController::class, 'update']);
-        Route::delete('/{id}', [ProjectRequestController::class, 'destroy']);
-    });
 
     Route::prefix('subscription')->group(function () {
         Route::get('/', [SubscriptionController::class, 'index']);
@@ -122,12 +117,26 @@ Route::middleware('auth:sanctum')->group(function () {
             Route::put('/{company}', [CompanyController::class, 'update']);
             Route::delete('/{company}', [CompanyController::class, 'destroy']);
         });
-    
+
+        Route::prefix('requests')->group(function () {
+            Route::get('/', [ProjectRequestController::class, 'index']);
+            Route::get('/{id}', [ProjectRequestController::class, 'show']);
+            Route::post('/', [ProjectRequestController::class, 'store'])->middleware('check_subscription');
+            Route::post('/upload_deliverables', [ProjectRequestController::class, 'uploadDeliverables']);
+            Route::put('/{id}', [ProjectRequestController::class, 'update']);
+            Route::delete('/{id}', [ProjectRequestController::class, 'destroy']);
+
+            Route::prefix('messages')->group(function () {
+                Route::get('/{project_id}', [ProjectMessageController::class, 'fetchMessages']);
+                Route::post('/', [ProjectMessageController::class, 'sendMessage']);
+            });
+        });
+
     });
 
     Route::get('/auth/user/profile', [UserController::class, 'profile']);
     Route::put('/auth/user/profile', [UserController::class, 'updateProfile']);
-    
+
     Route::prefix('admin')->group(function () {
         Route::get('/', [DashboardController::class, 'home']);
 
@@ -143,6 +152,12 @@ Route::middleware('auth:sanctum')->group(function () {
             Route::get('/', [WorkspaceController::class, 'index']);
             Route::get('/company', [WorkspaceController::class, 'list']);
         });
+
+        Route::prefix('portfolio')->group(function () {
+            Route::get('/', [PortfolioController::class, 'index'])->withoutMiddleware('auth:sanctum');
+            Route::post('/', [PortfolioController::class, 'store']);
+            Route::delete('/{id}', [PortfolioController::class, 'destroy']);
+        });
     });
 
     Route::prefix('affilate')->group(function () {
@@ -150,6 +165,8 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::post('/withdrawal/bank', [AffiliateController::class, 'withdrawal']);
         Route::get('/withdrawal', [AffiliateController::class, 'history']);
     });
+
+
 });
 
 Route::get('/test', [PaymentController::class, 'test']);

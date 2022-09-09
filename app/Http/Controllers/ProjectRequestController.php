@@ -26,14 +26,18 @@ class ProjectRequestController extends Controller
     public function index(Request $request,)
     {
         $perPage = ($request->perPage) ?? 10;
-        $projects = ProjectRequest::where('user_id', auth()->user()->id);
+        $projects = ProjectRequest::whereHas('brand', function($q){
+            $q->whereCompanyId(getActiveWorkSpace()->id);
+        })
+        ->where('user_id', auth()->user()->id)->withCount('projectDeliverables');
+
         ($request->todo) ? $projects =  $projects->where('status', 'pending') :"";
         ($request->ongoing) ? $projects =  $projects->where('status', 'on-going') :"";
         ($request->in_review) ? $projects =  $projects->where('status', 'designer-approved'):"";
         ($request->approved) ? $projects =  $projects->where('status', 'pm-approved'):"";
         ($request->page) ? $projects =  $projects->paginate($perPage) : $projects = $projects->get();
 
-        return $this->successResponse($projects, '', 200);
+        return $this->successResponse($projects, 'Projects Fetched Succesfully', 200);
     }
 
     /**
@@ -77,14 +81,13 @@ class ProjectRequestController extends Controller
      */
     public function show($id)
     {
-        $project =  ProjectRequest::where('id',$id)->first();
+        $project =  ProjectRequest::with(['brand','projectMessage','projectDeliverables'])->
+        whereHas('brand', function($q){
+            $q->whereCompanyId(getActiveWorkSpace()->id);
+        })
+        ->whereId($id)->firstOrFail();
 
-        if( $project){
-            return $this->successResponse($project);
-        }
-
-        return $this->errorResponse($brand);
-
+        return $this->successResponse( $project, 'Project fetched successfully', 200);
     }
 
     /**
@@ -96,16 +99,22 @@ class ProjectRequestController extends Controller
      */
     public function update(Request $request, $id)
     {
-        $project =  ProjectRequest::where('id',$id)->update(
-            [
-                'brand_id' => $request->brand_id ?? $request->brand_id,
-                'title' => $request->title,
-                'description' => $request->description ?? $request->description,
-                'dimension' => json_encode($request->dimension),
-                'colors' => json_encode($request->colors),
-                'deliverables' => $request->deliverables,
-            ]
-        );
+
+        $project =  ProjectRequest::whereId($id)->firstOrFail();
+
+        tap( $project, function ($collection) use ( $project, $request) {
+             $project->fill(
+                $request->only([
+                    'brand_id',
+                    'title',
+                    'description',
+                    'dimension',
+                    'colors',
+                    'deliverables',
+                ])
+            );
+            return $collection->save();
+        });
 
         return $this->successResponse($project, 'Project updated successfully', 200);
     }
@@ -127,4 +136,15 @@ class ProjectRequestController extends Controller
         return $this->errorResponse($projectRequest);
 
     }
+
+    public function uploadDeliverables(Request $request)
+    {
+        $this->validate($request, [
+            'project_id' => 'required',
+            'attachments.*' => 'mimes:jpg,jpeg,png,svg,pdf,eps,gif,adobe|max:5000',
+        ]);
+
+        return $this->projectRequestService->uploadDeliverables($request);
+    }
+
 }
