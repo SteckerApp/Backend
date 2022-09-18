@@ -20,8 +20,6 @@ class subscriptionController extends Controller
     public function index(Request $request,)
     {
         $subscriptions = Subscription::all()->groupBy('type');
-
-
         return $this->successResponse($subscriptions, '', 200);
     }
 

@@ -25,6 +25,7 @@ class AuthService
 
     public function createUser(RegisterRequest $request)
     {
+
         try {
             DB::beginTransaction();
 
@@ -98,7 +99,7 @@ class AuthService
 
         // send mail of verification code
         $this->sendVerificationMail($request->email, $verificationCode, $request->firstName);
-            
+
         return $this->successResponse(
             [
                 'token' => $token,
@@ -124,7 +125,7 @@ class AuthService
             Mail::to($email)->send(new VerificationMail($verificationCode, $firstName));
         } catch (\Throwable $th) {
         }
-        
+
     }
 
     public function resendVerification($request)

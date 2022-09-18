@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Cart;
 use App\Models\Transaction;
+use Illuminate\Support\Arr;
 use App\Models\Subscription;
 use Illuminate\Http\Request;
 use App\Trait\HandleResponse;
@@ -78,15 +79,22 @@ class CartController extends Controller
      */
     public function show($reference)
     {
+        $carts =  Cart::whereReference($reference)
+        ->with('transactions')->get();
+
+        foreach($carts as $cart){
+            $cart->info  =  $cart->transactions->where('default', 1);
+           $cart->services  =  $cart->transactions->where('default', 0);
+        }
+
         return ($this->successResponse(
-            Cart::whereReference($reference)
-                ->with('transactions')->get(),
+            $carts,
             'Cart transaction retrive successfully',
             200
         ));
     }
 
-   
+
     public function create(Request $request)
     {
         $reference = generateReference();
@@ -178,5 +186,5 @@ class CartController extends Controller
         return $this->successResponse(null, 'Cart item successfully deleted');
     }
 
-    
+
 }
