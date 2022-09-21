@@ -40,11 +40,11 @@ class RolesAndPermissionsSeeder extends Seeder
 
         // this can be done as separate statements
         $role = Role::create(['name' => 'client']);
-        $role = Role::create(['name' => 'pm']);
-        $role = Role::create(['name' => 'designer']);
-        $role = Role::create(['name' => 'admin']);
         Permission::all()->each(function($permission) use($role) {
             $role->givePermissionTo($permission->name);
         });
+        $role = Role::create(['name' => 'pm']);
+        $role = Role::create(['name' => 'designer']);
+        $role = Role::create(['name' => 'admin']);
     }
 }
