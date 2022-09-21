@@ -29,7 +29,7 @@ class ProjectRequestController extends Controller
         $projects = ProjectRequest::whereHas('brand', function($q){
             $q->whereCompanyId(getActiveWorkSpace()->id);
         })
-        ->where('user_id', auth()->user()->id)->withCount('projectDeliverables');
+        ->where('user_id', auth()->user()->id)->with(['uploadedFiles', 'pm', 'designer']);
 
         ($request->todo) ? $projects =  $projects->where('status', 'pending') :"";
         ($request->ongoing) ? $projects =  $projects->where('status', 'on-going') :"";

@@ -32,9 +32,9 @@ class DashboardController extends Controller
             });
 
             $current = $workspaces->shift();
-            
+
             setActiveWorkSpace($current, true);
-            
+
             $userRole = DB::table('company_user')->where(['company_id' => getActiveWorkSpace()->id, 'user_id' => $authUser->id])->first();
 
             // personal details
@@ -80,6 +80,7 @@ class DashboardController extends Controller
                 $workspacePermission->push([
                     'company_id' => $company->company->id,
                     'company_name' => $company->company->name,
+                    
                     'company_subscription' => $company->company->activeDefaultSubscripition()->first(),
                     'company_stats' => [
                         "todo" => collect($company->company->toArray()['all_company_request'])->where('status', 'pending')->count(),
@@ -87,7 +88,7 @@ class DashboardController extends Controller
                         "completed" => collect($company->company->toArray()['all_company_request'])->where('status', 'completed')->count()
                     ],
                     'company_pm' => $company->company->pm,
-                    "company_desinger" => $company->company->desinger,
+                    "company_desinger" => $company->company->designer,
                     "company_owner" => $company->company->owner->shift()
                 ]);
             });
