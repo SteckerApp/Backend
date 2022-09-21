@@ -103,8 +103,8 @@ Route::middleware('auth:sanctum')->group(function () {
             Route::post('/link/{id}', [TeamController::class, 'link']);
 
         });
-
-        Route::prefix('plan')->middleware(['permission:client can managment subscription'])->group(function () {
+        // ->middleware(['permission:client can managment subscription'])
+        Route::prefix('plan')->group(function () {
             Route::get('/', [SubscriptionController::class, 'activeSub']);
             Route::get('/history', [SubscriptionController::class, 'list']);
             // Route::post('/withdrawal/bank', [AffiliateController::class, 'withdrawal']);

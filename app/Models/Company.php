@@ -44,17 +44,17 @@ class Company extends Model
 
     public function activeSubscripitions()
     {
-        return $this->belongsToMany(subscription::class)->orderBy('payment_date', 'desc')->where(['status' => 'active' , 'payment_status' => 'paid']);
+        return $this->belongsToMany(Subscription::class)->orderBy('payment_date', 'desc')->where(['status' => 'active' , 'payment_status' => 'paid']);
     }
 
     public function activeDefaultSubscripition()
     {
-        return $this->belongsToMany(subscription::class)->orderBy('payment_date', 'desc')->where(['status' => 'active' , 'payment_status' => 'paid', 'default' => true]);
+        return $this->belongsToMany(Subscription::class, 'company_Subscription')->orderBy('payment_date', 'desc')->where(['status' => 'active' , 'payment_status' => 'paid', 'default' => 'yes']);
     }
 
     public function Subscripitions()
     {
-        return $this->belongsToMany(subscription::class)->orderBy('payment_date', 'desc');
+        return $this->belongsToMany(Subscription::class)->orderBy('payment_date', 'desc');
     }
 
     /**
@@ -69,12 +69,12 @@ class Company extends Model
 
     public function pm()
     {
-        return $this->hasOne(AdminCompany::class,'user_id')->where('role', 'PM')->with('user');
+        return $this->hasOne(AdminCompany::class,'company_id')->where('role', 'PM')->with('user');
     }
 
     public function designer()
     {
-        return $this->hasOne(AdminCompany::class,'user_id')->where('role', 'DESIGNER')->with('user');
+        return $this->hasOne(AdminCompany::class,'company_id')->where('role', 'DESIGNER')->with('user');
     }
 
     public function owner()

@@ -39,11 +39,6 @@ class ProjectRequest extends Model
     {
         return $this->hasMany(ProjectMessage::class, 'project_id');
     }
-    public function projectDeliverables(): HasMany
-    {
-        return $this->hasMany(ProjectDeliverables::class, 'project_id');
-    }
-
 
     /**
      * Get the pm associated with the ProjectRequest
