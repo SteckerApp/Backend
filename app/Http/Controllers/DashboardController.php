@@ -23,7 +23,7 @@ class DashboardController extends Controller
         if ($authUser->user_type == 'client') {
 
             //set workspace
-            $workspaces = $authUser->companies;
+            $workspaces = $authUser->allAttachedCompany;
 
             $workspaces->each(function ($workspace) {
                 $workspace->staffs = $workspace->users()->limit(5)->get();
