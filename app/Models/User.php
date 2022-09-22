@@ -63,13 +63,18 @@ class User extends Authenticatable
     {
         return $this->hasMany(Company::class);
     }
-    
+
     /**
      * The test that belong to the User
      *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
      */
     public function companies(): BelongsToMany
+    {
+        return $this->belongsToMany(Company::class, 'company_user');
+    }
+    
+    public function allAttachedCompany(): BelongsToMany
     {
         return $this->belongsToMany(Company::class, 'company_user');
     }
