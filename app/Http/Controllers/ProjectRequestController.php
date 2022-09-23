@@ -35,7 +35,7 @@ class ProjectRequestController extends Controller
         ($request->ongoing) ? $projects =  $projects->where('status', 'on-going') :"";
         ($request->in_review) ? $projects =  $projects->where('status', 'designer-approved'):"";
         ($request->approved) ? $projects =  $projects->where('status', 'pm-approved'):"";
-        ($request->page) ? $projects =  $projects->paginate($perPage) : $projects = $projects->get();
+        ($request->perPage) ? $projects =  $projects->paginate($perPage) : $projects = $projects->get();
 
         return $this->successResponse($projects, 'Projects Fetched Succesfully', 200);
     }
@@ -137,14 +137,5 @@ class ProjectRequestController extends Controller
 
     }
 
-    public function uploadDeliverables(Request $request)
-    {
-        $this->validate($request, [
-            'project_id' => 'required',
-            'attachments.*' => 'mimes:jpg,jpeg,png,svg,pdf,eps,gif,adobe|max:5000',
-        ]);
-
-        return $this->projectRequestService->uploadDeliverables($request);
-    }
 
 }

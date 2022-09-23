@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 
-class ProjectDeliverables extends Model
+class ProjectDeliverable extends Model
 {
     use HasFactory, SoftDeletes;
     protected $guarded = [];

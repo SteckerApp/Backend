@@ -17,7 +17,7 @@ class ProjectMessage extends Model
 
     public function projectRequest()
     {
-        return $this->belongsTo(ProjectRequest::class);
+        return $this->belongsTo(ProjectRequest::class, 'project_id');
     }
 
 

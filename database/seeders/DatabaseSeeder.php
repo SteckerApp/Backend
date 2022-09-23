@@ -24,7 +24,19 @@ class DatabaseSeeder extends Seeder
         $this->call([
             // CountrySeeder::class,
             SubscriptionSeeder::class,
-            RolesAndPermissionsSeeder::class
+            RolesAndPermissionsSeeder::class,
+            UsersTableSeeder::class,
+            CompanySeeder::class,
+            CompanySubscriptionTableSeeder::class,
+            CompanyUserTableSeeder::class,
+            BrandTableSeeder::class,
+            ProjectRequestTableSeeder::class,
+            ProjectDeliverableTableSeeder::class,
+            ProjectMessageTableSeeder::class,
+            NotificationTableSeeder::class,
+            CartsTableSeeder::class,
+            TranxTableSeeder::class,
+
         ]);
     }
 }

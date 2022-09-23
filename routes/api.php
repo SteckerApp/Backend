@@ -12,12 +12,13 @@ use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\AffiliateController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\PortfolioController;
+use App\Http\Controllers\WorkspaceController;
 use App\Http\Controllers\api\v1\TestController;
 use App\Http\Controllers\SubscriptionController;
 use App\Http\Controllers\ProjectMessageController;
 use App\Http\Controllers\ProjectRequestController;
 use App\Http\Controllers\api\v1\auth\UserController;
-use App\Http\Controllers\WorkspaceController;
+use App\Http\Controllers\ProjectDeliverablesController;
 
 /*
 |--------------------------------------------------------------------------
@@ -122,7 +123,6 @@ Route::middleware('auth:sanctum')->group(function () {
             Route::get('/', [ProjectRequestController::class, 'index']);
             Route::get('/{id}', [ProjectRequestController::class, 'show']);
             Route::post('/', [ProjectRequestController::class, 'store'])->middleware('check_subscription');
-            Route::post('/upload_deliverables', [ProjectRequestController::class, 'uploadDeliverables']);
             Route::put('/{id}', [ProjectRequestController::class, 'update']);
             Route::delete('/{id}', [ProjectRequestController::class, 'destroy']);
 
@@ -130,6 +130,12 @@ Route::middleware('auth:sanctum')->group(function () {
                 Route::get('/{project_id}', [ProjectMessageController::class, 'fetchMessages']);
                 Route::post('/', [ProjectMessageController::class, 'sendMessage']);
             });
+        });
+
+        Route::prefix('deliverables')->group(function () {
+            Route::get('/', [ProjectDeliverablesController::class, 'index']);
+            Route::post('/upload_deliverables', [ProjectDeliverablesController::class, 'uploadDeliverables']);
+            Route::delete('/{id}', [ProjectDeliverablesController::class, 'destroy']);
         });
 
     });
