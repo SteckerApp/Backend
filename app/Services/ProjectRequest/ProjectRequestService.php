@@ -4,7 +4,7 @@ namespace App\Services\ProjectRequest;
 use Carbon\Carbon;
 use App\Trait\HandleResponse;
 use App\Models\ProjectRequest;
-use App\Models\ProjectDeliverables;
+use App\Models\ProjectDeliverable;
 use App\Events\NewProjectRequestCreated;
 
 class ProjectRequestService
@@ -54,7 +54,6 @@ class ProjectRequestService
     {
 
         $user = auth()->user();
-        $attachments = [];
 
 
         if($request->hasfile('attachments'))
@@ -62,19 +61,21 @@ class ProjectRequestService
             foreach($request->file('attachments') as $key => $file)
             {
                 $key++;
-                $path = "/".$user->id."/projects/deliverables/".$request->title."/";
+                $path = "/".$user->id."/projects/deliverables/".$request->title;
                 $name = $file->getClientOriginalName();
                 $doc_link = uploadDocument($file, $path, $name);
 
-                $record = ProjectDeliverables::create([
+                $record = ProjectDeliverable::create([
                     'project_id' => $request->project_id,
-                    'location' => $path.$name,
+                    'location' => $doc_link,
                     'user_id' => auth()->user()->id,
                 ]);
             }
+            return $this->successResponse(true, 'Project uploaded successfully', 201);
+
          }
 
-        return $this->successResponse(true, 'Project uploaded successfully', 201);
+        return $this->errorResponse(true, 'No deliverables attached');
     }
 }
 ?>

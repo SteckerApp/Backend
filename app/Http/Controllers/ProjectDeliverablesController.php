@@ -2,85 +2,48 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\StoreProjectDeliverablesRequest;
-use App\Http\Requests\UpdateProjectDeliverablesRequest;
-use App\Models\ProjectDeliverables;
+use Illuminate\Http\Request;
+use App\Models\ProjectDeliverable;
+use App\Services\ProjectRequest\ProjectRequestService;
+use App\Trait\HandleResponse;
+
+
 
 class ProjectDeliverablesController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function index()
+    use HandleResponse;
+
+    public $projectRequestService;
+
+    public function __construct(ProjectRequestService $projectRequestService)
     {
-        //
+        $this->projectRequestService = $projectRequestService;
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
+    public function index(Request $request)
     {
-        //
+
+       $data = ProjectDeliverable::select('id', 'project_id', 'location','created_at')->where('project_id', $request->project_id)->orderBy('created_at', 'desc')->get();
+
+        return $this->successResponse($data, 'success', 200);
     }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \App\Http\Requests\StoreProjectDeliverablesRequest  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function store(StoreProjectDeliverablesRequest $request)
+    public function uploadDeliverables(Request $request)
     {
-        //
+        $this->validate($request, [
+            'project_id' => 'required',
+            'attachments.*' => 'mimes:jpg,jpeg,png,svg,pdf,eps,gif,adobe|max:5000',
+        ]);
+
+        return $this->projectRequestService->uploadDeliverables($request);
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  \App\Models\ProjectDeliverables  $projectDeliverables
-     * @return \Illuminate\Http\Response
-     */
-    public function show(ProjectDeliverables $projectDeliverables)
-    {
-        //
-    }
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\Models\ProjectDeliverables  $projectDeliverables
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(ProjectDeliverables $projectDeliverables)
+    public function destroy(Request $request, $id)
     {
-        //
-    }
+        $data = ProjectDeliverable::whereId($id)->firstOrFail();
+        $data->delete();
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \App\Http\Requests\UpdateProjectDeliverablesRequest  $request
-     * @param  \App\Models\ProjectDeliverables  $projectDeliverables
-     * @return \Illuminate\Http\Response
-     */
-    public function update(UpdateProjectDeliverablesRequest $request, ProjectDeliverables $projectDeliverables)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  \App\Models\ProjectDeliverables  $projectDeliverables
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy(ProjectDeliverables $projectDeliverables)
-    {
-        //
+        return $this->successResponse(true, 'Deleted successfully', 200);
     }
 }

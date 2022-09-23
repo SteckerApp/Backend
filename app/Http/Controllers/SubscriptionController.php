@@ -20,7 +20,17 @@ class subscriptionController extends Controller
     public function index(Request $request,)
     {
         $subscriptions = Subscription::all()->groupBy('type');
-        return $this->successResponse($subscriptions, '', 200);
+
+        $data = [];
+        foreach ( $subscriptions as $subscription){
+         $sub = (object)[];
+         $sub->name = $subscription[0]->type;
+         $sub->plans = $subscription;
+         array_push($data,$sub);
+        }
+
+        return $this->successResponse($data, '', 200);
+
     }
 
     /**

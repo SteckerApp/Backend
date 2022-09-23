@@ -3,13 +3,17 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Trait\HandleResponse;
+use App\Models\ProjectMessage;
 use Illuminate\Support\Facades\Auth;
+
 
 class ProjectMessageController extends Controller
 {
+    use HandleResponse;
     public function fetchMessages($project_id)
     {
-        $messages = Message::with('user')->where('project_id',$project_id)->get();
+        $messages = ProjectMessage::with('user:id,avatar')->where('project_id',$project_id)->get();
 
         return $this->successResponse($messages , '', 200);
     }

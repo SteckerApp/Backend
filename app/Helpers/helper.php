@@ -21,7 +21,7 @@ function uploadDocument($file, $path, $name = null)
 
     file_put_contents($destination . $filename, $file);
 
-    return  url('/') . '/storage' . $path . $filename;
+    return  '/storage' . $path . $filename;
 }
 
 function generateReference(): string

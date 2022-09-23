@@ -33,7 +33,7 @@ class ProjectRequest extends Model
 
     public function uploadedFiles(): HasMany
     {
-        return $this->hasMany(ProjectDeliverables::class, 'project_id');
+        return $this->hasMany(ProjectDeliverable::class, 'project_id');
     }
     public function projectMessage(): HasMany
     {
@@ -54,5 +54,5 @@ class ProjectRequest extends Model
     {
         return $this->hasOne(User::class, 'id', 'designer_id');
     }
-    
+
 }
