@@ -16,7 +16,9 @@ class CompanySeeder extends Seeder
     public function run()
     {
         $companies = array(
-            array('id' => '1','user_id' => '1','name' => 'TesComany','avatar' => '/storage/1/projects/deliverables/land.jpg','description' => 'ths ds csdn','hear_about_us' => 'linkedin','created_at' => '2022-09-21 20:20:38','updated_at' => '2022-09-21 20:20:38')
+            array('id' => '1','user_id' => '1','name' => 'TesComany','avatar' => '/storage/1/projects/deliverables/land.jpg','description' => 'ths ds csdn','hear_about_us' => 'linkedin','created_at' => '2022-09-21 20:20:38','updated_at' => '2022-09-21 20:20:38'),
+            array('id' => '2','user_id' => '1','name' => 'Toyota','avatar' => '/storage/1/projects/deliverables/land.jpg','description' => 'ths ds toyota factory','hear_about_us' => 'linkedin','created_at' => '2022-09-21 20:20:38','updated_at' => '2022-09-21 20:20:38'),
+            array('id' => '3','user_id' => '1','name' => 'BMW','avatar' => '/storage/1/projects/deliverables/land.jpg','description' => 'ths ds bmw factory','hear_about_us' => 'linkedin','created_at' => '2022-09-21 20:20:38','updated_at' => '2022-09-21 20:20:38')
           );
           DB::table('companies')->insert($companies);
 
