@@ -36,6 +36,7 @@ class DatabaseSeeder extends Seeder
             NotificationTableSeeder::class,
             CartsTableSeeder::class,
             TranxTableSeeder::class,
+            ProjectUserTableSeeder::class
 
         ]);
     }

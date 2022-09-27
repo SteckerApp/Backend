@@ -47,7 +47,7 @@ class DashboardController extends Controller
             ];
 
             //product manager
-            $projects = ProjectRequest::latest()->with('pm')->limit(5)->get();
+            $projects = ProjectRequest::latest()->with('pm')->with('projectUser:id,avatar')->limit(5)->get();
 
             $projects->each(function ($project) {
                 $project->file_uploads = $project->uploadedFiles()->count();
@@ -80,7 +80,7 @@ class DashboardController extends Controller
                 $workspacePermission->push([
                     'company_id' => $company->company->id,
                     'company_name' => $company->company->name,
-                    
+
                     'company_subscription' => $company->company->activeDefaultSubscripition()->first(),
                     'company_stats' => [
                         "todo" => collect($company->company->toArray()['all_company_request'])->where('status', 'pending')->count(),

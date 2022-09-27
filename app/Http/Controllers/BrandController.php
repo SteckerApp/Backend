@@ -6,6 +6,7 @@ use App\Models\Brand;
 use App\Models\Company;
 use Illuminate\Http\Request;
 use App\Trait\HandleResponse;
+use App\Models\BrandDocuments;
 use Illuminate\Support\Facades\Session;
 
 
@@ -23,11 +24,11 @@ class BrandController extends Controller
      {
         // $this->authorizeResource(Brand::class, 'brand' );
      }
-     
+
     public function index(Request $request,)
     {
         $perPage = ($request->perPage) ?? 20;
-        $brands = Brand::whereCompanyId(
+        $brands = Brand::with('brandDocuments')->whereCompanyId(
             getActiveWorkSpace()->id
         );
 
@@ -46,8 +47,9 @@ class BrandController extends Controller
     {
         $this->validate($request, [
             'name' => 'required',
-            'industry' => 'required',
+            'industry' => 'sometimes|string|max:100',
             'description' => 'sometimes|string',
+            'audience' => 'sometimes|string',
             'website' => 'sometimes|string|max:100',
             'colors' => "sometimes|array"
         ]);
@@ -61,6 +63,24 @@ class BrandController extends Controller
             'colors' => $request->colors
         ]);
 
+        //Upload Brand Documents
+        if($request->hasfile('attachments'))
+         {
+            foreach($request->file('attachments') as $key => $file)
+            {
+                $key++;
+                $path = "/companies/brands/".$brand->id."/documents";
+                $name = $file->getClientOriginalName();
+                $doc_link = uploadDocument($file, $path, $name);
+
+                $record = BrandDocuments::create([
+                    'brand_id' => $brand->id,
+                    'upload' => $doc_link,
+                    'user_id' => auth()->user()->id,
+                ]);
+            }
+         }
+
         return $this->successResponse($brand, 'Brand created successfully', 201);
     }
 
@@ -72,7 +92,7 @@ class BrandController extends Controller
      */
     public function show(Request $request, $id)
     {
-        $brand = Brand::whereIdAndCompanyId($id, getActiveWorkSpace()->id)->firstOrFail();
+        $brand = Brand::with('brandDocuments')->whereIdAndCompanyId($id, getActiveWorkSpace()->id)->firstOrFail();
 
         return $this->successResponse($brand, 'Brand fetch successfully', 200);
     }
@@ -120,7 +140,7 @@ class BrandController extends Controller
             ->firstOrFail();
 
         $brand->delete();
-        
+
         return $this->successResponse($brand, 'Brand deleted successfully', 200);
     }
 
