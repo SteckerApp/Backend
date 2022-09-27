@@ -2,6 +2,7 @@
 namespace App\Services\ProjectRequest;
 
 use Carbon\Carbon;
+use App\Models\ProjectUser;
 use App\Trait\HandleResponse;
 use App\Models\ProjectRequest;
 use App\Models\ProjectDeliverable;
@@ -43,6 +44,11 @@ class ProjectRequestService
             'deliverables' => $request->deliverables,
             'date' => Carbon::now(),
 
+        ]);
+
+        $project = ProjectUser::create([
+            'project_id' => $project->id,
+            'user_id' => $user->id,
         ]);
 
         // event(new NewProjectRequestCreated($project));

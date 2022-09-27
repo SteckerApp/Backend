@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 
 class ProjectRequest extends Model
@@ -40,7 +41,7 @@ class ProjectRequest extends Model
         return $this->hasMany(ProjectMessage::class, 'project_id');
     }
 
-    /**
+      /**
      * Get the pm associated with the ProjectRequest
      *
      * @return \Illuminate\Database\Eloquent\Relations\HasOne
@@ -53,6 +54,11 @@ class ProjectRequest extends Model
     public function designer(): HasOne
     {
         return $this->hasOne(User::class, 'id', 'designer_id');
+    }
+
+    public function projectUser()
+    {
+        return $this->belongsToMany(User::class, 'project_user','project_id', 'user_id');
     }
 
 }
