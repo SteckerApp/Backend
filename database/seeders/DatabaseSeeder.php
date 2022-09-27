@@ -30,6 +30,7 @@ class DatabaseSeeder extends Seeder
             CompanySubscriptionTableSeeder::class,
             CompanyUserTableSeeder::class,
             BrandTableSeeder::class,
+            BrandDocumentTableSeeder::class,
             ProjectRequestTableSeeder::class,
             ProjectDeliverableTableSeeder::class,
             ProjectMessageTableSeeder::class,

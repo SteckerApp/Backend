@@ -16,7 +16,8 @@ class BrandTableSeeder extends Seeder
     public function run()
     {
         $brands = array(
-            array('id' => '1','company_id' => '1','name' => 'TopeBrand','colors' => '["#34b343","#34b343"]','description' => 'food and rice','website' => 'google.com','industry' => 'food','audience' => NULL,'status' => 'active','created_at' => '2022-09-22 23:34:31','updated_at' => '2022-09-22 23:34:31','deleted_at' => NULL)
+            array('id' => '1','company_id' => '1','name' => 'TopeBrand','colors' => '["#34b343","#34b343"]','description' => 'food and rice','website' => 'google.com','industry' => 'food','audience' => NULL,'status' => 'active','created_at' => '2022-09-22 23:34:31','updated_at' => '2022-09-22 23:34:31','deleted_at' => NULL),
+            array('id' => '2','company_id' => '1','name' => 'TopeBrand','colors' => '["[\\"#34b343\\",\\"#34b343\\"]"]','description' => 'food and rice','website' => 'google.com','industry' => 'food','audience' => NULL,'status' => 'active','created_at' => '2022-09-27 09:56:10','updated_at' => '2022-09-27 09:56:10','deleted_at' => NULL)
           );
           DB::table('brands')->insert($brands);
 
