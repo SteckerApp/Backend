@@ -20,6 +20,7 @@ class RegisterdResource extends JsonResource
             'email' => $this->email,
             'phone_number' => $this->phone_number,
             'currency' => $this->currency,
+            'avatar' => $this->avatar,
             'email_verified_at' => $this->email_verified_at
         ];
     }

@@ -41,6 +41,9 @@ class DashboardController extends Controller
             $personal = [
                 'first_name' => $authUser->first_name,
                 'last_name'  => $authUser->last_name,
+                'avatar'  => $authUser->avatar,
+                'email'  => $authUser->email,
+                'phone_number'  => $authUser->phone_number,
                 'company_role' => $userRole->role,
                 'workspace' =>  $current,
                 'other_workspace' => $workspaces
