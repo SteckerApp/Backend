@@ -7,21 +7,41 @@ use Illuminate\Support\Facades\Session;
 
 function uploadDocument($file, $path, $name = null)
 {
-    $destination = storage_path('app/public/' . $path);
-    //  check if file storage path already exists. If No, create a new one
-    if (!File::isDirectory($destination)) {
-        File::makeDirectory($destination, 0777, true, true);
+
+    $destinationPath = 'images';
+    $destinationPath = 'images'. $path;
+
+     if (!File::isDirectory($destinationPath)) {
+        File::makeDirectory($destinationPath, 0777, true, true);
     }
 
     if (is_null($name)) {
-        $filename = time() . $file->extension();
-    } else {
-        $filename = $name;
-    }
+            $name = time() .'.'. $file->extension();
+        } else {
+            $name = $name;
+        }
 
-    file_put_contents($destination . $filename, $file);
 
-    return  '/storage' . $path . $filename;
+    $file->move(public_path($destinationPath),  $name);
+
+    return  $destinationPath.'/'.$name;
+
+
+    // $destination = storage_path('app/public/' . $path);
+    // //  check if file storage path already exists. If No, create a new one
+    // if (!File::isDirectory($destination)) {
+    //     File::makeDirectory($destination, 0777, true, true);
+    // }
+
+    // if (is_null($name)) {
+    //     $filename = time() . $file->extension();
+    // } else {
+    //     $filename = $name;
+    // }
+
+    // file_put_contents($destination . $filename, $file);
+
+    // return  '/storage' . $path . $filename;
 }
 
 function generateReference(): string
