@@ -2,12 +2,13 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\AdminCompany;
 use App\Models\Brand;
 use App\Models\Company;
-use App\Models\ProjectRequest;
-use App\Trait\HandleResponse;
+use App\Models\CompanyUser;
+use App\Models\AdminCompany;
 use Illuminate\Http\Request;
+use App\Trait\HandleResponse;
+use App\Models\ProjectRequest;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Session;
 
@@ -66,7 +67,11 @@ class DashboardController extends Controller
             $response = [
                 'statistics' => $stat,
                 'personal' => $personal,
-                'projects' => $projects
+                'projects' => $projects,
+                'owner' => CompanyUser::where([
+                                                'user_id'=> $authUser->id,
+                                                'company_id'=> getActiveWorkSpace()->id,
+                                            ])->first()->company->owner
             ];
         } else if (
             in_array($authUser->user_type, config('auth.admin_middle'))
