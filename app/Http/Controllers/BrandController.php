@@ -117,7 +117,6 @@ class BrandController extends Controller
                     'company_id',
                     'subscription_id',
                     'description',
-                    'website',
                     'industry',
                     'guideline'
                 ])
