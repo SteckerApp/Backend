@@ -61,7 +61,7 @@ class CompanyService
         if ($company->user_id != auth()->user()->id && in_array(auth()->user()->user_type, config( 'auth.admin_start'))) {
             return abort(401);
         };
-        
+
         return $this->successResponse($company);
     }
 
@@ -80,7 +80,7 @@ class CompanyService
         ]));
 
         $company->update();
-        
+
         return $this->successResponse($company);
     }
 
@@ -92,9 +92,9 @@ class CompanyService
         };
 
         $company->delete();
-        
+
         return $this->successResponse($company, 'Company delete successfully');
     }
 
-    
+
 }

@@ -26,6 +26,9 @@ class ProjectMessageController extends Controller
             'project_id' => $request->project_id,
         ]);
 
+        broadcast(new MessageSent($user, $message))->toOthers();
+
+
         return $this->successResponse(true , 'Message Sent', 200);
     }
 
