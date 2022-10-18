@@ -41,7 +41,7 @@ class ProjectRequestService
             'example_links' => $request->example_links,
             'example_uploads' => (count($attachments) > 0) ? json_encode($attachments) : null,
             'colors' => json_encode($request->colors),
-            'deliverables' => $request->deliverables,
+            'deliverables' => json_encode($request->deliverables),
             'date' => Carbon::now(),
 
         ]);

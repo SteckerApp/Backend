@@ -33,8 +33,13 @@ class DashboardController extends Controller
             });
 
             $current = $workspaces->shift();
-
             setActiveWorkSpace($current, true);
+
+            $current->owner = CompanyUser::where([
+                'user_id'=> $authUser->id,
+                'company_id'=> getActiveWorkSpace()->id,
+            ])->first()->company->owner->first();
+
 
             $userRole = DB::table('company_user')->where(['company_id' => getActiveWorkSpace()->id, 'user_id' => $authUser->id])->first();
 
@@ -68,10 +73,7 @@ class DashboardController extends Controller
                 'statistics' => $stat,
                 'personal' => $personal,
                 'projects' => $projects,
-                'owner' => CompanyUser::where([
-                                                'user_id'=> $authUser->id,
-                                                'company_id'=> getActiveWorkSpace()->id,
-                                            ])->first()->company->owner
+
             ];
         } else if (
             in_array($authUser->user_type, config('auth.admin_middle'))

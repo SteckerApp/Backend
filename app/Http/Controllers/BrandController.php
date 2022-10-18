@@ -60,7 +60,7 @@ class BrandController extends Controller
             'description' => $request->description,
             'website' => $request->website,
             'industry' => $request->industry,
-            'colors' => $request->colors
+            'colors' => json_encode($request->colors)
         ]);
 
         //Upload Brand Documents
