@@ -27,6 +27,7 @@ return new class extends Migration
             $table->string('referral_code',100)->nullable();
             $table->string('phone_number')->nullable();
             $table->string('currency',10)->nullable();
+            $table->enum('notification', ['yes','no'])->default('yes');
             $table->rememberToken();
             $table->timestamps();
         });
