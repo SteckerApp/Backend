@@ -2,16 +2,17 @@
 
 namespace App\Http\Controllers\api\v1\auth;
 
+use App\Models\User;
 use Illuminate\Http\Request;
+use App\Trait\HandleResponse;
 use App\Services\Auth\AuthService;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Hash;
 use App\Http\Requests\auth\LoginRequest;
 use App\Http\Requests\auth\RegisterRequest;
 use App\Http\Requests\auth\VerifyEmailRequest;
 use App\Http\Requests\auth\PasswordResetRequest;
 use App\Http\Requests\auth\ChangePasswordRequest;
-use App\Trait\HandleResponse;
-use Illuminate\Support\Facades\Hash;
 
 class UserController extends Controller
 {
@@ -68,6 +69,20 @@ class UserController extends Controller
     {
         return $request->user();
     }
+
+    public function setNotification(Request $request)
+    {
+        $this->validate($request, [
+            'notification' => 'required|in:yes,no',
+        ]);
+
+        User::whereId(auth()->user()->id)->update([
+            'notification'=> $request->notification
+        ]);
+
+        return $this->successResponse(true , 'Success', 200);
+    }
+
 
     public function updateProfile(Request $request)
     {

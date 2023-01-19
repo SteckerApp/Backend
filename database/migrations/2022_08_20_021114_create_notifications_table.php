@@ -18,7 +18,7 @@ return new class extends Migration
             $table->string('title');
             $table->text('description');
             $table->foreignId('user_id')->constrained();
-            $table->enum('type', ['project','message','deliverable',''])->nullable();
+            $table->enum('type', ['status','comment','attachment',''])->nullable();
             $table->enum('read', ['true','false'])->nullable();
             $table->timestamps();
         });

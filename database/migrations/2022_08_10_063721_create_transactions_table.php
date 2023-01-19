@@ -21,8 +21,11 @@ return new class extends Migration
             $table->string('duration');
             $table->integer('unit');
             $table->string('total');
+            // $table->dateTime('payment_date')->nullable();
+            // $table->dateTime('start_date')->nullable();
+            // $table->dateTime('end_date')->nullable();
+            // $table->enum('status', ['active', 'inactive'])->default('active');
             $table->timestamps();
-
             $table->foreign('reference')->references('reference')->on('carts');
         });
     }

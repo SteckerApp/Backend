@@ -13,13 +13,11 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('portfolios', function (Blueprint $table) {
+        Schema::create('user_comments', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('portfolio_category_id')->constrained();
-            $table->string('location');
+            $table->longText('comment');
+            $table->foreignId('user_id')->constrained();
             $table->timestamps();
-            $table->softDeletes();
-
         });
     }
 
@@ -30,6 +28,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('portfolios');
+        Schema::dropIfExists('user_comments');
     }
 };

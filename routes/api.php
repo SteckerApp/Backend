@@ -15,9 +15,11 @@ use App\Http\Controllers\PortfolioController;
 use App\Http\Controllers\WorkspaceController;
 use App\Http\Controllers\api\v1\TestController;
 use App\Http\Controllers\SubscriptionController;
+use App\Http\Controllers\UserCommentsController;
 use App\Http\Controllers\ProjectMessageController;
 use App\Http\Controllers\ProjectRequestController;
 use App\Http\Controllers\api\v1\auth\UserController;
+use App\Http\Controllers\PortfolioCategoryController;
 use App\Http\Controllers\ProjectDeliverablesController;
 
 /*
@@ -54,15 +56,25 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::post('/', [UserController::class, 'store']);
         Route::put('/{id}', [UserController::class, 'update']);
         Route::delete('/{id}', [UserController::class, 'destroy']);
+        Route::post('/set_notification', [UserController::class, 'setNotification']);
+    });
+
+    Route::prefix('comments')->group(function () {
+        Route::get('/', [UserCommentsController::class, 'index'])->withoutMiddleware('auth:sanctum');
+        Route::post('/', [UserCommentsController::class, 'store']);
+        Route::put('/{id}', [UserCommentsController::class, 'update']);
+        Route::delete('/{id}', [UserCommentsController::class, 'destroy']);
     });
 
 
     Route::prefix('subscription')->group(function () {
-        Route::get('/', [SubscriptionController::class, 'index']);
+        Route::get('/', [SubscriptionController::class, 'index'])->withoutMiddleware('auth:sanctum');
         Route::get('/{id}', [SubscriptionController::class, 'show']);
         Route::post('/', [SubscriptionController::class, 'store'])->middleware(['permission:admin can manage subscription']);
         Route::put('/{id}', [SubscriptionController::class, 'update'])->middleware(['permission:admin can manage subscription']);
         Route::delete('/{id}', [SubscriptionController::class, 'destroy'])->middleware(['permission:admin can manage subscription']);
+        Route::post('/payment', [PaymentController::class, 'updatePayment']);
+
     });
 
     Route::prefix('cart')->group(function () {
@@ -73,6 +85,7 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::delete('/item/{transaction}', [CartController::class, 'removeItem']);
         Route::post('/coupon/apply', [CouponController::class, 'verify']);
         Route::delete('/coupon/remove', [CouponController::class, 'remove']);
+
     });
 
 
@@ -163,6 +176,12 @@ Route::middleware('auth:sanctum')->group(function () {
             Route::get('/', [PortfolioController::class, 'index'])->withoutMiddleware('auth:sanctum');
             Route::post('/', [PortfolioController::class, 'store']);
             Route::delete('/{id}', [PortfolioController::class, 'destroy']);
+        });
+
+        Route::prefix('portfolio_category')->group(function () {
+            Route::post('/', [PortfolioCategoryController::class, 'store']);
+            Route::put('/{id}', [PortfolioCategoryController::class, 'store']);
+            Route::delete('/{id}', [PortfolioCategoryController::class, 'destroy']);
         });
     });
 

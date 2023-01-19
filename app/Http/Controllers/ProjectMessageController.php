@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\MessageSent;
 use Illuminate\Http\Request;
 use App\Trait\HandleResponse;
 use App\Models\ProjectMessage;
@@ -27,8 +28,6 @@ class ProjectMessageController extends Controller
         ]);
 
         broadcast(new MessageSent($user, $message))->toOthers();
-
-
         return $this->successResponse(true , 'Message Sent', 200);
     }
 
