@@ -37,7 +37,7 @@ class PortfolioController extends Controller
             'portfolio_category_id' => 'required',
         ]);
         $file = $request->attachment;
-        $path = "/portfolio".$request->category."/";
+        $path = "/portfolio/".$request->portfolio_category_id."/";
         $name = $request->attachment->getClientOriginalName();
         $doc_link = uploadDocument($file, $path, $name);
 

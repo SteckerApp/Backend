@@ -17,6 +17,7 @@ return new class extends Migration
             $table->id();
             $table->longText('comment');
             $table->foreignId('user_id')->constrained();
+            $table->enum('status', ['approved','unapproved'])->default('unapproved');
             $table->timestamps();
         });
     }
