@@ -9,7 +9,7 @@ function uploadDocument($file, $path, $name = null)
 {
 
     $destinationPath = 'images';
-    $destinationPath = 'images'. $path;
+    $destinationPath = '/images'. $path;
 
      if (!File::isDirectory($destinationPath)) {
         File::makeDirectory($destinationPath, 0777, true, true);

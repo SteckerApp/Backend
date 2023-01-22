@@ -49,6 +49,15 @@ class UserCommentsController extends Controller
 
         return $this->successResponse($comment, 'Comment updated successfully', 200);
     }
+    public function approveComment(Request $request, $id)
+    {
+
+        $comment = UserComment::whereId($id)->update([
+            'status' => 'approved'
+        ]);
+
+        return $this->successResponse($comment, 'Comment approved successfully', 200);
+    }
 
     public function destroy(Request $request, $id)
     {

@@ -14,6 +14,7 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\PortfolioController;
 use App\Http\Controllers\WorkspaceController;
 use App\Http\Controllers\api\v1\TestController;
+use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\SubscriptionController;
 use App\Http\Controllers\UserCommentsController;
 use App\Http\Controllers\ProjectMessageController;
@@ -35,6 +36,9 @@ use App\Http\Controllers\ProjectDeliverablesController;
 
 
 Route::get('/', [TestController::class, 'index']);
+Route::post('/request_call', [NotificationController::class, 'requestCall']);
+Route::post('/request_demo', [NotificationController::class, 'requestDemo']);
+
 
 
 /*
@@ -63,6 +67,7 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/', [UserCommentsController::class, 'index'])->withoutMiddleware('auth:sanctum');
         Route::post('/', [UserCommentsController::class, 'store']);
         Route::put('/{id}', [UserCommentsController::class, 'update']);
+        Route::put('/approve_comment/{id}', [UserCommentsController::class, 'approveComment']);
         Route::delete('/{id}', [UserCommentsController::class, 'destroy']);
     });
 

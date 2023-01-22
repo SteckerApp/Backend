@@ -4,9 +4,12 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\PortfolioCategory;
+use App\Trait\HandleResponse;
+
 
 class PortfolioCategoryController extends Controller
 {
+    use HandleResponse;
     public function store(Request $request,)
     {
         $this->validate($request, [
@@ -14,7 +17,7 @@ class PortfolioCategoryController extends Controller
         ]);
 
         $categ = PortfolioCategory::create([
-            'category' => $request->name,
+            'name' => $request->name,
         ]);
 
 
