@@ -12,4 +12,12 @@ class Transaction extends Model
     protected $fillable = [
         'reference', 'subscription_id', 'default', 'duration', 'unit', 'total'
     ];
+
+    /**
+     * Get the subscription associated with the Transaction
+     */
+    public function subscription()
+    {
+        return $this->belongsTo(Subscription::class);
+    }
 }
