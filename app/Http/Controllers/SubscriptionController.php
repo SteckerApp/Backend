@@ -19,7 +19,9 @@ class subscriptionController extends Controller
      */
     public function index(Request $request,)
     {
-        $subscriptions = Subscription::all()->groupBy('type');
+        $subscriptions = Subscription::when($request->type, function($query) use($request){
+            $query->where('default', $request->type);
+        })->get()->groupBy('type');
 
         $data = [];
         foreach ( $subscriptions as $subscription){

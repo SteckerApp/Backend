@@ -80,7 +80,7 @@ class CartController extends Controller
     public function show($reference)
     {
         $carts =  Cart::whereReference($reference)
-        ->with('transactions')->get();
+        ->with(['transactions','transactions.subscription'])->get();
 
         foreach($carts as $cart){
             $cart->info  =  $cart->transactions->where('default', 1);
