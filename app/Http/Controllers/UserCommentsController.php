@@ -13,7 +13,10 @@ class UserCommentsController extends Controller
 
     public function index(Request $request,)
     {
-        $comments= UserComment::with('user')->orderByDesc('id')->get();
+        $comments= UserComment::with('user')
+        ->join('admin_company', 'admin_company.user_id', '=', 'user_comments.user_id')
+        ->where('status', 'approved')
+        ->orderByDesc('user_comments.id')->get();
 
         return $this->successResponse($comments, 'Comments Fetched Succesfully', 200);
     }
