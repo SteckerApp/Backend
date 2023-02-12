@@ -79,16 +79,14 @@ class CartController extends Controller
      */
     public function show($reference)
     {
-        $carts =  Cart::whereReference($reference)
-        ->with(['transactions','transactions.subscription'])->get();
+        $cart =  Cart::whereReference($reference)
+        ->with(['transactions','transactions.subscription'])->first();
 
-        foreach($carts as $cart){
-            $cart->info  =  $cart->transactions->where('default', 1);
-           $cart->services  =  $cart->transactions->where('default', 0);
-        }
+        $cart->info  =  $cart->transactions->where('default', 1); // 1 is the main subscription
+        $cart->services  =  $cart->transactions->where('default', 0); // 0 is addon subscription
 
         return ($this->successResponse(
-            $carts,
+            $cart,
             'Cart transaction retrive successfully',
             200
         ));
@@ -117,8 +115,10 @@ class CartController extends Controller
      */
     public function update(UpdateCartRequest $request, $reference)
     {
+        
         $subscription = subscription::whereId($request->subscription_id)->first();
         $unit = $request->unit ?? 1;
+
         DB::beginTransaction();
 
         try {
@@ -147,7 +147,7 @@ class CartController extends Controller
 
             $transaction = Transaction::whereReference($reference)->get();
 
-            $cart = Cart::whereReference($reference)->first();
+            $cart = Cart::whereReference($reference)->with(['transactions','transactions.subscription'])->first();
 
             $total = $transaction->sum('total');
             $discount = $cart->discounted['amount'] ?? 0;
@@ -161,6 +161,9 @@ class CartController extends Controller
             DB::commit();
 
             $cart = $cart->refresh();
+
+            $cart->info  =  $cart->transactions->where('default', 1); // 1 is the main subscription
+            $cart->services  =  $cart->transactions->where('default', 0); // 0 is addon subscription
 
             return $this->successResponse($cart->load('transactions'), 'Cart updated successfully');
         } catch (\Throwable $th) {
