@@ -74,6 +74,7 @@ Route::middleware('auth:sanctum')->group(function () {
 
     Route::prefix('subscription')->group(function () {
         Route::get('/', [SubscriptionController::class, 'index'])->withoutMiddleware('auth:sanctum');
+        Route::get('/addons', [SubscriptionController::class, 'addons'])->withoutMiddleware('auth:sanctum');
         Route::get('/{id}', [SubscriptionController::class, 'show']);
         Route::post('/', [SubscriptionController::class, 'store'])->middleware(['permission:admin can manage subscription']);
         Route::put('/{id}', [SubscriptionController::class, 'update'])->middleware(['permission:admin can manage subscription']);

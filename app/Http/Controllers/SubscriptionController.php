@@ -19,19 +19,22 @@ class subscriptionController extends Controller
      */
     public function index(Request $request,)
     {
-        $subscriptions = Subscription::when($request->type, function($query) use($request){
-            $query->where('default', $request->type);
-        })->get()->groupBy('type');
+        $subscriptions = Subscription::where('default', true)->get()->groupBy('type');
 
-        $data = [];
-        foreach ( $subscriptions as $subscription){
-         $sub = (object)[];
-         $sub->name = $subscription[0]->type;
-         $sub->plans = $subscription;
-         array_push($data,$sub);
-        }
+        return $this->successResponse($subscriptions, 'Subscription retrive successfully!', 200);
 
-        return $this->successResponse($data, '', 200);
+    }
+
+    /**
+     * Display a listing of the resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function addons(Request $request,)
+    {
+        $subscriptions = Subscription::where('default', false)->get();
+
+        return $this->successResponse($subscriptions, 'Subscription retrive successfully!', 200);
 
     }
 
