@@ -39,7 +39,11 @@ class CartController extends Controller
 
             $reference = generateReference();
 
-            $subscription = subscription::whereId($request->subscription_id)->first();
+            $subscription = subscription::whereIdAndDefault($request->subscription_id, true)->first();
+            
+            if(!$subscription){
+                return $this->errorResponse(null, 'Please add a valid main plan', 409);
+            }
 
             $cart = Cart::create([
                 'reference' => $reference,
