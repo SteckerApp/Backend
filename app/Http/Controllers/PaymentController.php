@@ -28,9 +28,8 @@ class PaymentController extends Controller
             $reference = $request->input('data.reference');
 
             // Process the webhook event and data
-            switch ($event) {
 
-            case "charge.success":
+            if($event == "charge.success"){
                 // Log::error($request->input('data.reference'));
                 $tranx = CompanySubscription::where('reference', $reference)->firstOrFail();
 
@@ -57,16 +56,7 @@ class PaymentController extends Controller
                 $tranx->status = 'active';
 
                 $tranx->save();
-
-
-                break;
-            case "green":
-                echo "Your favorite color is green!";
-                break;
-            default:
-                echo "Your favorite color is neither red, blue, nor green!";
             }
-
             return response()->json(['success' => true]);
         } else {
             return response()->json(['error' => 'Invalid signature'], 400);
