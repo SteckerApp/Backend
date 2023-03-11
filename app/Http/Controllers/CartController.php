@@ -39,7 +39,11 @@ class CartController extends Controller
 
             $reference = generateReference();
 
-            $subscription = subscription::whereId($request->subscription_id)->first();
+            $subscription = subscription::whereIdAndDefault($request->subscription_id, true)->first();
+            
+            if(!$subscription){
+                return $this->errorResponse(null, 'Please add a valid main plan', 409);
+            }
 
             $cart = Cart::create([
                 'reference' => $reference,
@@ -83,8 +87,7 @@ class CartController extends Controller
         ->with(['transactions','transactions.subscription'])->first();
 
         $cart->info  =  $cart->transactions->where('default', 1); // 1 is the main subscription
-        $cart->services  =  $cart->transactions->where('default', 0); // 0 is addon subscription
-
+        $cart->services  = $cart->transactions()->where('default', 0)->get(); // 0 is addon subscription
         return ($this->successResponse(
             $cart,
             'Cart transaction retrive successfully',
@@ -163,7 +166,7 @@ class CartController extends Controller
             $cart = $cart->refresh();
 
             $cart->info  =  $cart->transactions->where('default', 1); // 1 is the main subscription
-            $cart->services  =  $cart->transactions->where('default', 0); // 0 is addon subscription
+            $cart->services  = $cart->transactions()->where('default', 0)->get(); // 0 is addon subscription
 
             return $this->successResponse($cart->load('transactions'), 'Cart updated successfully');
         } catch (\Throwable $th) {
