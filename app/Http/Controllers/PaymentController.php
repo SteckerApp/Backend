@@ -80,42 +80,4 @@ class PaymentController extends Controller
 
         return $hash === $signature;
     }
-
-    public function updatePayment($reference)
-    {
-        // $this->validate($request, [
-        //     'subscription_id' => 'required',
-        //     'reference' => 'required',
-        //    // 'duration' => 'required|in:monthly,bi-annually,quarterly,annually',
-        // ]);
-
-        $subscription = Subscription::where('id',$request->input('subscription_id'))->first();
-
-        // set end date duration
-        if($subscription->type == 'monthly'){
-            $end_date = Carbon::now()->addMonth();
-        }
-        elseif($subscription->type == 'quarterly'){
-            $end_date = Carbon::now()->addMonth(3);
-        }
-        elseif($subscription->type == 'bi-annually'){
-            $end_date = Carbon::now()->addMonth(6);
-        }
-        elseif($subscription->type == 'annually'){
-            $end_date = Carbon::now()->addYear();
-        }
-
-        //update transaction
-      $transaction = Transaction::where([
-        'reference' => $request->reference,
-        'subscription_id' => $request->subscription_id,
-        ])->update([
-            'payment_date' => Carbon::now(),
-            'start_date' => Carbon::now(),
-            'end_date' =>  $end_date,
-        ]);
-
-        return $this->successResponse(true , 'Success', 200);
-
-    }
 }
