@@ -201,5 +201,5 @@ Route::middleware('auth:sanctum')->group(function () {
 });
 
 Route::get('/test', [PaymentController::class, 'test']);
-Route::post('/payment/webhook', [PaymentController::class, 'webhook']);
+Route::post('/payment/webhook', [PaymentController::class, 'handleWebhook']);
 
