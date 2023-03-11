@@ -25,14 +25,14 @@ class PaymentController extends Controller
 
         if ($this->isValidSignature($payload, $signature)) {
             $event = $request->input('event');
-            $data = $request->input('data.reference');
+            $reference = $request->input('data.reference');
 
             // Process the webhook event and data
             switch ($event) {
 
             case "charge.success":
                 // Log::error($request->input('data.reference'));
-                $tranx = CompanySubscription::where('reference', $request->input('data.reference'))->firstOrFail();
+                $tranx = CompanySubscription::where('reference', $reference)->firstOrFail();
 
                 $subscription = Subscription::where('id',$tranx->subscription_id)->firstOrFail();
 
