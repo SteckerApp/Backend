@@ -14,6 +14,8 @@ class RegisterdResource extends JsonResource
      */
     public function toArray($request)
     {
+        $workspaces = $this->allAttachedCompany;
+        $current = $workspaces->shift();
         return [
             'firstName' => $this->first_name,
             'lastName' => $this->last_name,
@@ -22,7 +24,9 @@ class RegisterdResource extends JsonResource
             'currency' => $this->currency,
             'avatar' => $this->avatar,
             'notification' => $this->notification,
-            'email_verified_at' => $this->email_verified_at
+            'email_verified_at' => $this->email_verified_at,
+            'user_identification' => $this->id,
+            'loggin_company' => $current
         ];
     }
 }
