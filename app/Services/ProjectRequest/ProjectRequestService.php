@@ -7,6 +7,8 @@ use App\Trait\HandleResponse;
 use App\Models\ProjectRequest;
 use App\Models\ProjectDeliverable;
 use App\Events\NewProjectRequestCreated;
+use Illuminate\Support\Facades\DB;
+
 
 class ProjectRequestService
 {
@@ -17,6 +19,11 @@ class ProjectRequestService
 
         $user = auth()->user();
         $attachments = [];
+        $company_id =  getActiveWorkSpace()->id;
+
+        $subscription_id = $request->user()->companySubscription()->where([
+            'company_id' => $company_id, 'status' => 'active', 'payment_status' => 'paid'
+            ])->firstOrFail()->subscription_id;
 
 
         if($request->hasfile('attachments'))
@@ -34,7 +41,7 @@ class ProjectRequestService
         $project = ProjectRequest::create([
             'brand_id' => $request->brand_id,
             'user_id' => $user->id,
-            'subscription_id' => $request->subscription_id,
+            'subscription_id' =>  $subscription_id,
             'title' => $request->title,
             'description' => $request->description,
             'dimension' => json_encode($request->dimension),
@@ -46,7 +53,7 @@ class ProjectRequestService
 
         ]);
 
-        $project = ProjectUser::create([
+        $project = DB::table('project_user')->insert([
             'project_id' => $project->id,
             'user_id' => $user->id,
         ]);

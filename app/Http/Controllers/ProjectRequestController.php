@@ -59,9 +59,6 @@ class ProjectRequestController extends Controller
     public function store(Request $request)
     {
         $this->validate($request, [
-            // 'brand_id' => 'required',
-            'user_id' => 'required',
-            'subscription_id' => 'required',
             'title' => 'required',
             'description' => 'required',
             'dimension' => 'required',
