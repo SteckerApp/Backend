@@ -21,6 +21,12 @@ class ProjectRequest extends Model
         'subscription_id',
         'updated_at'
     ];
+    // protected $casts = [
+    //     'dimension' => 'json',
+    //     'colors' => 'json',
+    //     'deliverables' => 'json',
+    //     'example_links' => 'json'
+    // ];
 
     public function user(): BelongsTo
     {

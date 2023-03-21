@@ -45,7 +45,7 @@ class ProjectRequestService
             'title' => $request->title,
             'description' => $request->description,
             'dimension' => json_encode($request->dimension),
-            'example_links' => $request->example_links,
+            'example_links' => json_encode($request->example_links),
             'example_uploads' => (count($attachments) > 0) ? json_encode($attachments) : null,
             'colors' => json_encode($request->colors),
             'deliverables' => json_encode($request->deliverables),
