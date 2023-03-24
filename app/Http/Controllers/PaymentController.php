@@ -57,6 +57,11 @@ class PaymentController extends Controller
 
                 $tranx->save();
             }
+            else if($event == "charge.declined"){
+                $tranx = CompanySubscription::where('reference', $reference)->firstOrFail();
+                $tranx->new_reference = generateReference();
+                $tranx->save();
+            }
             return response()->json(['success' => true]);
         } else {
             return response()->json(['error' => 'Invalid signature'], 400);

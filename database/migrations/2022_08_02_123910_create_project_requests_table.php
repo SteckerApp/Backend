@@ -24,10 +24,10 @@ return new class extends Migration
             $table->foreignId('subscription_id')->constrained();
             $table->string('title');
             $table->longText('description')->nullable();
-            $table->string('dimension')->nullable();
-            $table->longText('example_links')->nullable();
-            $table->longText('example_uploads')->nullable();
-            $table->longText('colors')->nullable();
+            $table->json('dimension')->nullable();
+            $table->json('example_links')->nullable();
+            $table->json('example_uploads')->nullable();
+            $table->json('colors')->nullable();
             $table->longText('deliverables')->nullable();
             $table->date('date')->nullable();
             $table->enum('status', ['pending','on-going', 'in-progress', 'designer-approved', 'pm-approved','completed'])->default('pending');

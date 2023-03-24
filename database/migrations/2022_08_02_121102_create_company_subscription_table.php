@@ -27,6 +27,7 @@ return new class extends Migration
             $table->integer('duration');
             $table->enum('payment_status', ['pending', 'paid', 'cancelled'])->default('pending');
             $table->enum('status', ['active','inactive'])->default('inactive');
+            $table->string('new_reference')->unique()->nullable();
             $table->timestamps();
         });
     }
