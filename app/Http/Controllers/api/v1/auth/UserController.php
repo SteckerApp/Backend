@@ -70,18 +70,32 @@ class UserController extends Controller
         return $request->user();
     }
 
-    public function setNotification(Request $request)
+    public function setDesktopNotification(Request $request)
     {
         $this->validate($request, [
-            'notification' => 'required|in:yes,no',
+            'desktop_notification' => 'required|in:yes,no',
         ]);
 
         User::whereId(auth()->user()->id)->update([
-            'notification'=> $request->notification
+            'desktop_notification'=> $request->desktop_notification
         ]);
 
         return $this->successResponse(true , 'Success', 200);
     }
+
+    public function setEmailNotification(Request $request)
+    {
+        $this->validate($request, [
+            'email_notification' => 'required|in:never,periodically,instantly',
+        ]);
+
+        User::whereId(auth()->user()->id)->update([
+            'email_notification'=> $request->email_notification
+        ]);
+
+        return $this->successResponse(true , 'Success', 200);
+    }
+
 
 
     public function updateProfile(Request $request)
