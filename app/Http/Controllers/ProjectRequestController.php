@@ -31,6 +31,8 @@ class ProjectRequestController extends Controller
         })
         ->where('user_id', auth()->user()->id)->with(['uploadedFiles', 'pm', 'designer']);
 
+        // dd($projects->count());
+
         ($request->todo) ? $projects =  $projects->where('status', 'pending') :"";
         ($request->ongoing) ? $projects =  $projects->where('status', 'on-going') :"";
         ($request->in_review) ? $projects =  $projects->where('status', 'designer-approved'):"";
