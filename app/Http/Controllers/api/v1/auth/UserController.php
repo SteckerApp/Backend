@@ -13,6 +13,8 @@ use App\Http\Requests\auth\RegisterRequest;
 use App\Http\Requests\auth\VerifyEmailRequest;
 use App\Http\Requests\auth\PasswordResetRequest;
 use App\Http\Requests\auth\ChangePasswordRequest;
+use App\Http\Resources\RegisterdResource;
+
 
 class UserController extends Controller
 {
@@ -22,6 +24,16 @@ class UserController extends Controller
     public function __construct(AuthService $authService)
     {
         $this->authService = $authService;
+    }
+
+    public function index(Request $request)
+    {
+        $user = auth()->user();
+        return $this->successResponse(
+            [
+                'user' =>  new RegisterdResource($user)
+            ],
+        );   
     }
 
     public function register(RegisterRequest $request)
