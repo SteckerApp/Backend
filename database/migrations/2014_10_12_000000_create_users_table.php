@@ -29,6 +29,7 @@ return new class extends Migration
             $table->string('currency',10)->nullable();
             $table->enum('desktop_notification', ['yes','no'])->default('yes');
             $table->enum('email_notification', ['never','periodically', 'instantly'])->default('instantly');
+            $table->enum('notification', ['yes','no'])->default('no');
             $table->rememberToken();
             $table->timestamps();
         });

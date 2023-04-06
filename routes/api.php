@@ -62,6 +62,8 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::delete('/{id}', [UserController::class, 'destroy']);
         Route::post('/set_desktop_notification', [UserController::class, 'setDesktopNotification']);
         Route::post('/set_email_notification', [UserController::class, 'setEmailNotification']);
+        Route::post('/set_internal_notification', [UserController::class, 'setInternalNotification']);
+
 
     });
 

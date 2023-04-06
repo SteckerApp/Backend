@@ -6,6 +6,7 @@ use App\Models\Cart;
 use App\Models\Transaction;
 use Illuminate\Support\Arr;
 use App\Models\Subscription;
+use App\Models\CompanyUser;
 use Illuminate\Http\Request;
 use App\Trait\HandleResponse;
 use Illuminate\Support\Facades\DB;
@@ -53,15 +54,18 @@ class CartController extends Controller
                 'status' => Cart::STATUS[0]
             ]);
 
+            $user_company = CompanyUser::where('user_id', auth()->user()->id)->with('company')->first();
+            $company_id = $user_company->company->id;
+
             $transaction = Transaction::create([
                 'reference' => $reference,
                 'subscription_id' => $request->subscription_id,
                 'default' => true,
                 'duration' => $subscription->type,
                 'unit' => 1,
-                'total' => $subscription->price
+                'total' => $subscription->price,
+                'company_id'=> getActiveWorkSpace() ? getActiveWorkSpace()->id : $company_id
             ]);
-
             DB::commit();
 
             return $this->successResponse(
