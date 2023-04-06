@@ -24,7 +24,7 @@ class UserCommentsSeeder extends Seeder
 
           $admin_company = array(
             array('id' => '1','user_id' => '1','company_id' => '1','role' => 'Head of sales','created_at' => '2022-09-23 20:14:28','updated_at' => NULL),
-            array('id' => '2','user_id' => '3','company_id' => '3','role' => 'Head of Marketting, Vezetta','created_at' => '2023-02-10 21:33:46','updated_at' => NULL)
+            array('id' => '2','user_id' => '2','company_id' => '3','role' => 'Head of Marketting, Vezetta','created_at' => '2023-02-10 21:33:46','updated_at' => NULL)
           );
 
           DB::table('admin_company')->insert($admin_company);

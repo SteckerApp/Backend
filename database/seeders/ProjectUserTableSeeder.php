@@ -18,12 +18,8 @@ class ProjectUserTableSeeder extends Seeder
         $project_user = array(
             array('id' => '1','project_id' => '1','user_id' => '1'),
             array('id' => '2','project_id' => '1','user_id' => '2'),
-            array('id' => '3','project_id' => '1','user_id' => '3'),
-            array('id' => '4','project_id' => '1','user_id' => '4'),
             array('id' => '5','project_id' => '2','user_id' => '1'),
             array('id' => '6','project_id' => '2','user_id' => '2'),
-            array('id' => '7','project_id' => '2','user_id' => '3'),
-            array('id' => '8','project_id' => '2','user_id' => '4')
           );
 
 

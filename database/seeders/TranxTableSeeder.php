@@ -16,7 +16,7 @@ class TranxTableSeeder extends Seeder
     public function run()
     {
         $transactions = array(
-            array('id' => '1','reference' => 'TRAN2801710332660','subscription_id' => '1','default' => '1','duration' => 'monthly','unit' => '1','total' => '100000','created_at' => '2022-09-21 20:20:54','updated_at' => '2022-09-21 20:20:54')
+            array('id' => '1','reference' => 'TRAN2801710332660','company_id' => '1','subscription_id' => '1','default' => '1','duration' => 'monthly','unit' => '1','total' => '100000','created_at' => '2022-09-21 20:20:54','updated_at' => '2022-09-21 20:20:54')
           );
         DB::table('transactions')->insert($transactions);
 
