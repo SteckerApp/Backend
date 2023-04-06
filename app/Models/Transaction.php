@@ -10,7 +10,7 @@ class Transaction extends Model
     use HasFactory;
 
     protected $fillable = [
-        'reference', 'subscription_id', 'default', 'duration', 'unit', 'total'
+        'reference', 'subscription_id', 'default', 'duration', 'unit', 'total', 'company_id'
     ];
 
     /**
@@ -19,5 +19,10 @@ class Transaction extends Model
     public function subscription()
     {
         return $this->belongsTo(Subscription::class);
+    }
+
+    public function cart()
+    {
+        return $this->belongsTo(Cart::class, 'reference', 'reference');
     }
 }

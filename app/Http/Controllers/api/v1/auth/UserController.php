@@ -92,7 +92,7 @@ class UserController extends Controller
             'desktop_notification'=> $request->desktop_notification
         ]);
 
-        return $this->successResponse(true , 'Success', 200);
+        return $this->successResponse(true , 'Successfully Updated', 200);
     }
 
     public function setEmailNotification(Request $request)
@@ -105,10 +105,21 @@ class UserController extends Controller
             'email_notification'=> $request->email_notification
         ]);
 
-        return $this->successResponse(true , 'Success', 200);
+        return $this->successResponse(true , 'Successfully Updated', 200);
     }
 
+    public function setInternalNotification(Request $request)
+    {
+        $this->validate($request, [
+            'notification' => 'required|in:yes,no',
+        ]);
 
+        User::whereId(auth()->user()->id)->update([
+            'notification'=> $request->notification
+        ]);
+
+        return $this->successResponse(true , 'Successfully Updated', 200);
+    }
 
     public function updateProfile(Request $request)
     {

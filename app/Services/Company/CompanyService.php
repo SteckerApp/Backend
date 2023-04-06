@@ -17,7 +17,7 @@ class CompanyService
         try {
 
             if ($request->has('avatar')) {
-                $fileName = $request->name . time() . '.' . $request->avatar->extension();
+                $fileName = '/companies/avatars/'.$request->name . time() . '.' . $request->avatar->extension();
                 $request->avatar->move(public_path('companies/avatars'), $fileName);
             }
 

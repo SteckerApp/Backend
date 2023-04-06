@@ -31,37 +31,70 @@ class PaymentController extends Controller
 
             if($event == "charge.success"){
                 // Log::error($request->input('data.reference'));
-                $tranx = CompanySubscription::where('reference', $reference)->firstOrFail();
+                $tranx = Transaction::where('reference', $reference)->with('cart')->firstOrFail();
 
-                $subscription = Subscription::where('id',$tranx->subscription_id)->firstOrFail();
+                $subscription = Subscription::where('id',$tranx->subscription_id)->first();
 
-                // set end date duration
+               // set end date duration
                 if($subscription->type == 'monthly'){
-                    $end_date = Carbon::now()->addMonth();
+                    $qty = $tranx->unit * 1;
+                    $end_date = Carbon::now()->addMonth($qty);
                 }
                 elseif($subscription->type == 'quarterly'){
-                    $end_date = Carbon::now()->addMonth(3);
+                    $qty = $tranx->unit * 3;
+                    $end_date = Carbon::now()->addMonth($qty);
                 }
                 elseif($subscription->type == 'bi-annually'){
-                    $end_date = Carbon::now()->addMonth(6);
+                    $qty = $tranx->unit * 6;
+                    $end_date = Carbon::now()->addMonth($qty);
                 }
                 elseif($subscription->type == 'annually'){
-                    $end_date = Carbon::now()->addYear();
+                    $qty = $tranx->unit * 1;
+                    $end_date = Carbon::now()->addYear($qty);
                 }
 
-                $tranx->payment_date = Carbon::now();
-                $tranx->start_date = Carbon::now();
-                $tranx->end_date = $end_date;
-                $tranx->payment_status = 'paid';
-                $tranx->status = 'active';
+                CompanySubscription::create([
+                    'reference'=> $tranx->reference,
+                    'user_id'=> $tranx->cart->user_id,
+                    'subscription_id'=> $tranx->subscription_id,
+                    'company_id'=> $tranx->company_id,
+                    'payment_date'=> Carbon::now(),
+                    'start_date'=> Carbon::now(),
+                    'end_date'=> $end_date,
+                    'type'=> $subscription->type,
+                    'payment_status'=> 'paid',
+                    'status'=> 'active',
+                ]);
 
-                $tranx->save();
+                // $subscription = Subscription::where('id',$tranx->subscription_id)->firstOrFail();
+
+                // set end date duration
+                // if($subscription->type == 'monthly'){
+                //     $end_date = Carbon::now()->addMonth();
+                // }
+                // elseif($subscription->type == 'quarterly'){
+                //     $end_date = Carbon::now()->addMonth(3);
+                // }
+                // elseif($subscription->type == 'bi-annually'){
+                //     $end_date = Carbon::now()->addMonth(6);
+                // }
+                // elseif($subscription->type == 'annually'){
+                //     $end_date = Carbon::now()->addYear();
+                // }
+
+                // $tranx->payment_date = Carbon::now();
+                // $tranx->start_date = Carbon::now();
+                // $tranx->end_date = $end_date;
+                // $tranx->payment_status = 'paid';
+                // $tranx->status = 'active';
+
+                // $tranx->save();
             }
-            else if($event == "charge.declined"){
-                $tranx = CompanySubscription::where('reference', $reference)->firstOrFail();
-                $tranx->new_reference = generateReference();
-                $tranx->save();
-            }
+            // else if($event == "charge.declined"){
+            //     $tranx = CompanySubscription::where('reference', $reference)->firstOrFail();
+            //     $tranx->new_reference = generateReference();
+            //     $tranx->save();
+            // }
             return response()->json(['success' => true]);
         } else {
             return response()->json(['error' => 'Invalid signature'], 400);
@@ -75,4 +108,5 @@ class PaymentController extends Controller
 
         return $hash === $signature;
     }
+
 }
