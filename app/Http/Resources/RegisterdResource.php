@@ -26,6 +26,7 @@ class RegisterdResource extends JsonResource
             'email_notification' => $this->email_notification,
             'desktop_notification' => $this->desktop_notification,
             'email_verified_at' => $this->email_verified_at,
+            'notification' => $this->notification,
             'user_identification' => $this->id,
             'loggin_company' => $current
         ];

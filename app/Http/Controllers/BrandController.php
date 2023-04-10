@@ -45,6 +45,7 @@ class BrandController extends Controller
      */
     public function store(Request $request)
     {
+        dd(23);
         $this->validate($request, [
             'name' => 'required',
             'industry' => 'sometimes|string|max:100',

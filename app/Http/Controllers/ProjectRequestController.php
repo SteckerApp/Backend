@@ -29,7 +29,7 @@ class ProjectRequestController extends Controller
         $projects = ProjectRequest::whereHas('brand', function($q){
             $q->whereCompanyId(getActiveWorkSpace()->id);
         })
-        ->where('user_id', auth()->user()->id)->with(['uploadedFiles', 'pm', 'designer', 'projectUser']);
+        ->where('user_id', auth()->user()->id)->with(['uploadedFiles', 'pm', 'designer', 'projectUser', 'brand']);
 
         // dd($projects->count());
 
