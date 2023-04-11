@@ -33,10 +33,10 @@ class ProjectRequestController extends Controller
 
         // dd($projects->count());
 
-        ($request->todo) ? $projects =  $projects->where('status', 'pending') :"";
-        ($request->ongoing) ? $projects =  $projects->where('status', 'on-going') :"";
-        ($request->in_review) ? $projects =  $projects->where('status', 'designer-approved'):"";
-        ($request->approved) ? $projects =  $projects->where('status', 'pm-approved'):"";
+        ($request->todo) ? $projects =  $projects->where('status', 'todo') :"";
+        ($request->on_going) ? $projects =  $projects->where('status', 'on_going') :"";
+        ($request->in_review) ? $projects =  $projects->where('status', 'in_review'):"";
+        ($request->approved) ? $projects =  $projects->where('status', 'designer_approved')->orWhere('status', 'pm_approved')->orWhere('status', 'completed'):"";
         ($request->perPage) ? $projects =  $projects->paginate($perPage) : $projects = $projects->get();
 
         return $this->successResponse($projects, 'Projects Fetched Succesfully', 200);

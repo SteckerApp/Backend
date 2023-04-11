@@ -30,7 +30,7 @@ return new class extends Migration
             $table->json('colors')->nullable();
             $table->longText('deliverables')->nullable();
             $table->date('date')->nullable();
-            $table->enum('status', ['pending','on-going', 'in-progress', 'designer-approved', 'pm-approved','completed'])->default('pending');
+            $table->enum('status', ['todo','on_going', 'in_review', 'designer_approved', 'pm_approved','completed'])->default('todo');
             $table->timestamps();
             $table->softDeletes();
 
