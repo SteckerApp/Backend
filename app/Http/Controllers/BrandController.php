@@ -20,10 +20,10 @@ class BrandController extends Controller
      * @return \Illuminate\Http\Response
      */
 
-     public function __construct()
-     {
+    public function __construct()
+    {
         // $this->authorizeResource(Brand::class, 'brand' );
-     }
+    }
 
     public function index(Request $request,)
     {
@@ -45,7 +45,6 @@ class BrandController extends Controller
      */
     public function store(Request $request)
     {
-        dd(23);
         $this->validate($request, [
             'name' => 'required',
             'industry' => 'sometimes|string|max:100',
@@ -61,16 +60,14 @@ class BrandController extends Controller
             'description' => $request->description,
             'website' => $request->website,
             'industry' => $request->industry,
-            'colors' => json_encode($request->colors)
+            'colors' => $request->colors
         ]);
 
         //Upload Brand Documents
-        if($request->hasfile('attachments'))
-         {
-            foreach($request->file('attachments') as $key => $file)
-            {
+        if ($request->hasfile('attachments')) {
+            foreach ($request->file('attachments') as $key => $file) {
                 $key++;
-                $path = "/companies/brands/".$brand->id."/documents";
+                $path = "/companies/brands/" . $brand->id . "/documents";
                 $name = $file->getClientOriginalName();
                 $doc_link = uploadDocument($file, $path, $name);
 
@@ -80,7 +77,7 @@ class BrandController extends Controller
                     'user_id' => auth()->user()->id,
                 ]);
             }
-         }
+        }
 
         return $this->successResponse($brand, 'Brand created successfully', 201);
     }
