@@ -110,7 +110,7 @@ Route::middleware('auth:sanctum')->group(function () {
             Route::get('/', [BrandController::class, 'index']);
             Route::put('/{id}', [BrandController::class, 'update']);
             Route::get('/{id}', [BrandController::class, 'show']);
-            Route::post('/', [BrandController::class, 'store'])->middleware('can:create,App\Models\Brand');
+            Route::post('/', [BrandController::class, 'store']);
             Route::delete('/{id}', [BrandController::class, 'destroy']);
         });
 
