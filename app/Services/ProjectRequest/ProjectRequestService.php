@@ -8,6 +8,8 @@ use App\Models\ProjectRequest;
 use App\Models\ProjectDeliverable;
 use App\Events\NewProjectRequestCreated;
 use Illuminate\Support\Facades\DB;
+use App\Models\CompanySubscription;
+
 
 
 class ProjectRequestService
@@ -20,10 +22,13 @@ class ProjectRequestService
         $user = auth()->user();
         $attachments = [];
         $company_id =  getActiveWorkSpace()->id;
-
-        $subscription_id = $request->user()->companySubscription()->where([
-            'company_id' => $company_id, 'status' => 'active', 'payment_status' => 'paid'
-            ])->firstOrFail()->subscription_id;
+        
+        // $user_id = $request->user()->id;
+        $subscription_id = CompanySubscription::where([
+            'company_id' => $company_id,
+            'status' => 'active', 
+            'payment_status' => 'paid'
+            ])->first()->subscription_id;
 
 
         if($request->hasfile('attachments'))
