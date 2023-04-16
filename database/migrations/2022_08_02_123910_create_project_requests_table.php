@@ -28,7 +28,7 @@ return new class extends Migration
             $table->json('example_links')->nullable();
             $table->json('example_uploads')->nullable();
             $table->json('colors')->nullable();
-            $table->longText('deliverables')->nullable();
+            $table->json('deliverables')->nullable();
             $table->date('date')->nullable();
             $table->enum('status', ['todo','on_going', 'in_review', 'designer_approved', 'pm_approved','completed'])->default('todo');
             $table->timestamps();

@@ -22,7 +22,6 @@ class ProjectRequestService
         $user = auth()->user();
         $attachments = [];
         $company_id =  getActiveWorkSpace()->id;
-        
         // $user_id = $request->user()->id;
         $subscription_id = CompanySubscription::where([
             'company_id' => $company_id,
