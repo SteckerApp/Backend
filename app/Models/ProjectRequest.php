@@ -25,7 +25,8 @@ class ProjectRequest extends Model
         'dimension' => 'array',
         'colors' => 'array',
         'deliverables' => 'array',
-        'example_links' => 'array'
+        'example_links' => 'array',
+        'example_uploads' => 'array',
     ];
 
     public function user(): BelongsTo
