@@ -105,6 +105,7 @@ Route::middleware('auth:sanctum')->group(function () {
 
     Route::prefix('dashboard')->middleware('check_workspace')->group(function () {
         Route::get('/', [DashboardController::class, 'home']);
+        Route::post('/set_workspace/{company_id}', [DashboardController::class, 'setWorkspace']);
 
         Route::prefix('brand')->middleware(['can:viewAny,App\Models\Brand' , 'check_subscription'])->group(function () {
             Route::get('/', [BrandController::class, 'index']);
