@@ -49,6 +49,7 @@ class ProjectRequestService
             'title' => $request->title,
             'description' => $request->description,
             'dimension' => $request->dimension,
+            'company_id' => getActiveWorkSpace()->id,
             'example_links' => $request->example_links,
             'example_uploads' => (count($attachments) > 0) ? $attachments : null,
             'colors' => $request->colors,

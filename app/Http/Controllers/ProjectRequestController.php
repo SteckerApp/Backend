@@ -26,10 +26,13 @@ class ProjectRequestController extends Controller
     public function index(Request $request,)
     {
         $perPage = ($request->perPage) ?? 10;
-        $projects = ProjectRequest::whereHas('brand', function($q){
-            $q->whereCompanyId(getActiveWorkSpace()->id);
-        })
-        ->where('user_id', auth()->user()->id)->with(['uploadedFiles', 'pm', 'designer', 'projectUser', 'brand']);
+        $projects = ProjectRequest::
+        // whereHas('brand', function($q){
+        //     $q->whereCompanyId(getActiveWorkSpace()->id);
+        // })->
+        where('user_id', auth()->user()->id)
+        ->whereCompanyId(getActiveWorkSpace()->id)
+        ->with(['uploadedFiles', 'pm', 'designer', 'projectUser', 'brand']);
 
         // dd($projects->count());
 
