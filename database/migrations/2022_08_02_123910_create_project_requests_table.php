@@ -23,6 +23,7 @@ return new class extends Migration
             $table->foreignId('user_id')->constrained();
             $table->foreignId('subscription_id')->constrained();
             $table->string('title');
+            $table->foreignId('company_id')->references('id')->on('companies');
             $table->longText('description')->nullable();
             $table->json('dimension')->nullable();
             $table->json('example_links')->nullable();
