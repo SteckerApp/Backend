@@ -176,6 +176,16 @@ class DashboardController extends Controller
         return $this->successResponse($response);
     }
 
+    public function setWorkspace(Request $request, $company_id)
+    {
+
+        $company = Company::whereId($company_id)->first();
+
+        setActiveWorkSpace($company, true);
+
+        return $this->successResponse($company, "Workspace activated successfully");
+    }
+
     public function affilate(Request $request)
     {
         $referrals =  $request->user()->referrals;
