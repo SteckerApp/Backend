@@ -68,7 +68,7 @@ class ProjectRequestController extends Controller
             'description' => 'required',
             'dimension' => 'required',
             'colors' => 'required',
-            'deliverables' => 'required',
+            // 'deliverables' => 'required',
             'attachments.*' => 'mimes:jpg,jpeg,png,svg,pdf,eps,gif,adobe|max:5000',
         ]);
 

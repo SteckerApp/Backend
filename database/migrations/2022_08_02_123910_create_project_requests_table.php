@@ -31,7 +31,7 @@ return new class extends Migration
             $table->json('colors')->nullable();
             $table->json('deliverables')->nullable();
             $table->date('date')->nullable();
-            $table->enum('status', ['todo','on_going', 'in_review', 'designer_approved', 'pm_approved','completed'])->default('todo');
+            $table->enum('status', ['todo','on_going', 'in_review', 'approved'])->default('todo');
             $table->timestamps();
             $table->softDeletes();
 
