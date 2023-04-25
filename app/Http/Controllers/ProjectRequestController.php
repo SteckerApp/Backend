@@ -26,15 +26,12 @@ class ProjectRequestController extends Controller
     public function index(Request $request,)
     {
         $perPage = ($request->perPage) ?? 10;
-        $projects = ProjectRequest::
-        // whereHas('brand', function($q){
-        //     $q->whereCompanyId(getActiveWorkSpace()->id);
-        // })->
-        where('user_id', auth()->user()->id)
-        ->whereCompanyId(getActiveWorkSpace()->id)
-        ->with(['uploadedFiles', 'pm', 'designer', 'projectUser', 'brand']);
 
-        // dd($projects->count());
+        $projects = ProjectRequest::where([
+            'user_id' => $request->user()->id,
+            'company_id' => getActiveWorkSpace()->id,
+        ])
+        ->with(['uploadedFiles', 'pm', 'designer', 'projectUser', 'brand']);
 
         ($request->todo) ? $projects =  $projects->where('status', 'todo') :"";
         ($request->on_going) ? $projects =  $projects->where('status', 'on_going') :"";
@@ -83,7 +80,7 @@ class ProjectRequestController extends Controller
      */
     public function show($id)
     {
-        $project =  ProjectRequest::with(['brand','projectMessage','projectDeliverables'])->
+        $project =  ProjectRequest::with(['brand','projectMessage','uploadedFiles', 'pm', 'designer'])->
         whereHas('brand', function($q){
             $q->whereCompanyId(getActiveWorkSpace()->id);
         })

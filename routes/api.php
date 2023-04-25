@@ -122,7 +122,6 @@ Route::middleware('auth:sanctum')->group(function () {
             Route::post('/invite', [TeamController::class, 'invite']);
             Route::post('/invite/check/{id}', [TeamController::class, 'check']);
             Route::get('/{id}', [TeamController::class, 'show']);
-
             Route::delete('/{id}', [TeamController::class, 'delete']);
             Route::put('/{id}', [TeamController::class, 'update']);
 

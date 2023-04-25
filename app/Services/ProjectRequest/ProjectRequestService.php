@@ -50,10 +50,10 @@ class ProjectRequestService
             'description' => $request->description,
             'dimension' => $request->dimension,
             'company_id' => getActiveWorkSpace()->id,
-            'example_links' => $request->example_links,
+            'example_links' => $request->example_links ? $request->example_links : null,
             'example_uploads' => (count($attachments) > 0) ? $attachments : null,
             'colors' => $request->colors,
-            'deliverables' => $request->deliverables,
+            'deliverables' => $request->deliverables ?  $request->deliverables : null,
             'date' => Carbon::now(),
 
         ]);
@@ -86,6 +86,7 @@ class ProjectRequestService
                 $record = ProjectDeliverable::create([
                     'project_id' => $request->project_id,
                     'location' => $doc_link,
+                    'title' => $name,
                     'user_id' => auth()->user()->id,
                 ]);
             }

@@ -23,7 +23,7 @@ class ProjectDeliverablesController extends Controller
     public function index(Request $request)
     {
 
-       $data = ProjectDeliverable::select('id', 'project_id', 'location','created_at')->where('project_id', $request->project_id)->orderBy('created_at', 'desc')->get();
+       $data = ProjectDeliverable::select('id','title', 'project_id', 'location','created_at')->where('project_id', $request->project_id)->orderBy('created_at', 'desc')->get();
 
         return $this->successResponse($data, 'success', 200);
     }
