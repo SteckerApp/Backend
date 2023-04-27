@@ -53,6 +53,7 @@ class ProjectRequestService
             'example_links' => $request->example_links ? $request->example_links : null,
             'example_uploads' => (count($attachments) > 0) ? $attachments : null,
             'colors' => $request->colors,
+            'created_by' => $request->user()->id,
             'deliverables' => $request->deliverables ?  $request->deliverables : null,
             'date' => Carbon::now(),
 

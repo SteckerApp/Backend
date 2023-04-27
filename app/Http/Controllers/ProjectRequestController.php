@@ -31,7 +31,7 @@ class ProjectRequestController extends Controller
             'user_id' => $request->user()->id,
             'company_id' => getActiveWorkSpace()->id,
         ])
-        ->with(['uploadedFiles', 'pm', 'designer', 'projectUser', 'brand']);
+        ->with(['uploadedFiles', 'pm', 'designer', 'projectUser', 'brand', 'created_by']);
 
         ($request->todo) ? $projects =  $projects->where('status', 'todo') :"";
         ($request->on_going) ? $projects =  $projects->where('status', 'on_going') :"";

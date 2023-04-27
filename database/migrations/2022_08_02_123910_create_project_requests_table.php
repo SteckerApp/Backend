@@ -19,6 +19,8 @@ return new class extends Migration
             $table->foreign('pm_id')->references('id')->on('users');
             $table->unsignedBigInteger('designer_id')->nullable();
             $table->foreign('designer_id')->references('id')->on('users');
+            $table->unsignedBigInteger('created_by')->nullable();
+            $table->foreign('created_by')->references('id')->on('users');
             $table->foreignId('brand_id')->nullable()->constrained();
             $table->foreignId('user_id')->constrained();
             $table->foreignId('subscription_id')->constrained();
