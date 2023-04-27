@@ -22,11 +22,11 @@ class ProjectRequest extends Model
         'updated_at'
     ];
     protected $casts = [
-        'dimension' => 'array',
-        'colors' => 'array',
-        'deliverables' => 'array',
-        'example_links' => 'array',
-        'example_uploads' => 'array',
+        'dimension' => 'json',
+        'colors' => 'json',
+        'deliverables' => 'json',
+        'example_links' => 'json',
+        'example_uploads' => 'json',
     ];
 
     public function user(): BelongsTo
@@ -63,9 +63,19 @@ class ProjectRequest extends Model
         return $this->hasOne(User::class, 'id', 'designer_id');
     }
 
+    public function created_by(): HasOne
+    {
+        return $this->hasOne(User::class, 'id', 'created_by');
+    }
+
     public function projectUser()
     {
         return $this->belongsToMany(User::class, 'project_user','project_id', 'user_id');
     }
+
+    // public function getDimensionAttribute($value)
+    // {
+    //     return json_encode($value);
+    // }
 
 }
