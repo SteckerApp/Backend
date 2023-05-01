@@ -147,10 +147,13 @@ class subscriptionController extends Controller
     public function activeSub(Request $request)
     {
         $company = Company::whereId(getActiveWorkSpace()->id)->first();
+        // dd($company->activeSubscripitions()->select(['subscriptions.*', 'company_subscription.end_date', 'company_subscription.type'])->where('subscriptions.default', true)->toSql());
         return $this->successResponse(
             [
-                'subscription' => $company->activeSubscripitions()->where('default', 'yes')->first(),
-                'history' => $company->activeSubscripitions()->limit(5)->get()
+                'subscription' =>$company->activeSubscripitions()->select(['subscriptions.*', 'company_subscription.end_date', 'company_subscription.type', 'company_subscription.start_date'])->where('subscriptions.default', true)->first(),
+                'history' => $company->activeSubscripitions()->select(['subscriptions.*', 'company_subscription.end_date', 'company_subscription.type', 'company_subscription.start_date'])->limit(5)->get (),
+                'add-on' =>$company->activeSubscripitions()->select(['subscriptions.*', 'company_subscription.end_date', 'company_subscription.type', 'company_subscription.start_date'])->where('subscriptions.default', false)->get()
+
             ]
         );
     }
