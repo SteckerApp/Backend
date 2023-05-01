@@ -149,8 +149,8 @@ class subscriptionController extends Controller
         $company = Company::whereId(getActiveWorkSpace()->id)->first();
         return $this->successResponse(
             [
-                'subscription' => $company->activeSubscripitions()->where('default', 'yes')->first(),
-                'history' => $company->activeSubscripitions()->limit(5)->get()
+                'subscription' =>$company->activeSubscripitions()->where('subscriptions.default', true)->first(),
+                'history' => $company->activeSubscripitions()->limit(5)->get ()
             ]
         );
     }
