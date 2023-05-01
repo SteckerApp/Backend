@@ -150,9 +150,9 @@ class subscriptionController extends Controller
         // dd($company->activeSubscripitions()->select(['subscriptions.*', 'company_subscription.end_date', 'company_subscription.type'])->where('subscriptions.default', true)->toSql());
         return $this->successResponse(
             [
-                'subscription' =>$company->activeSubscripitions()->select(['subscriptions.*', 'company_subscription.end_date', 'company_subscription.type'])->where('subscriptions.default', true)->first(),
-                'history' => $company->activeSubscripitions()->select(['subscriptions.*', 'company_subscription.end_date', 'company_subscription.type'])->limit(5)->get (),
-                'add-on' =>$company->activeSubscripitions()->select(['subscriptions.*', 'company_subscription.end_date', 'company_subscription.type'])->where('subscriptions.default', false)->get()
+                'subscription' =>$company->activeSubscripitions()->select(['subscriptions.*', 'company_subscription.end_date', 'company_subscription.type', 'company_subscription.start_date'])->where('subscriptions.default', true)->first(),
+                'history' => $company->activeSubscripitions()->select(['subscriptions.*', 'company_subscription.end_date', 'company_subscription.type', 'company_subscription.start_date'])->limit(5)->get (),
+                'add-on' =>$company->activeSubscripitions()->select(['subscriptions.*', 'company_subscription.end_date', 'company_subscription.type', 'company_subscription.start_date'])->where('subscriptions.default', false)->get()
 
             ]
         );
