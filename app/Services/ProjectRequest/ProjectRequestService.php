@@ -42,6 +42,21 @@ class ProjectRequestService
             }
          }
 
+         //manage example upload incase of duplicates
+         $example_uploads = [];
+         if(count($attachments) > 0 && !$request->example_uploads){
+            $example_uploads = $attachments;
+         }
+         elseif(count($attachments) > 0 && $request->example_uploads){
+            foreach(json_decode($request->example_uploads) as $upload){
+                array_push($attachments,$upload);
+            }
+            $example_uploads = $attachments;
+         }
+         else{
+            $example_uploads = $request->example_uploads;
+         }
+
         $project = ProjectRequest::create([
             'brand_id' => $request->brand_id,
             'user_id' => $user->id,
@@ -51,7 +66,7 @@ class ProjectRequestService
             'dimension' => $request->dimension,
             'company_id' => getActiveWorkSpace()->id,
             'example_links' => $request->example_links ? $request->example_links : null,
-            'example_uploads' => (count($attachments) > 0) ? $attachments : null,
+            'example_uploads' => $example_uploads,
             'colors' => $request->colors,
             'created_by' => $request->user()->id,
             'deliverables' => $request->deliverables ?  $request->deliverables : null,
