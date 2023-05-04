@@ -73,9 +73,9 @@ class ProjectRequest extends Model
         return $this->belongsToMany(User::class, 'project_user','project_id', 'user_id');
     }
 
-    // public function getDimensionAttribute($value)
-    // {
-    //     return json_encode($value);
-    // }
+    public function getDimensionAttribute($value)
+    {
+        return json_decode($value);
+    }
 
 }
