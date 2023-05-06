@@ -9,8 +9,7 @@ use App\Models\ProjectDeliverable;
 use App\Events\NewProjectRequestCreated;
 use Illuminate\Support\Facades\DB;
 use App\Models\CompanySubscription;
-
-
+use App\Models\ProjectMessage;
 
 class ProjectRequestService
 {
@@ -71,14 +70,42 @@ class ProjectRequestService
             'created_by' => $request->user()->id,
             'deliverables' => $request->deliverables ?  $request->deliverables : null,
             'date' => Carbon::now(),
-
         ]);
-
-        $project = DB::table('project_user')->insert([
+        //add user to project user
+         DB::table('project_user')->insert([
             'project_id' => $project->id,
             'user_id' => $user->id,
         ]);
+        //add description to project messages
+        ProjectMessage::create([
+            'user_id' => $request->user()->id,
+            "project_id"=>  $project->id,
+            "type"=>  'text',
+            "message"=>  $request->description,
+        ]);
 
+        if($example_uploads)
+        {
+           foreach($example_uploads as $path)
+           {
+            $pathInfo = pathinfo($path);
+            $fileName = $pathInfo['filename'];
+            //add files to deliverables
+               ProjectDeliverable::create([
+                   "project_id"=>  $project->id,
+                   "title"=>  $fileName,
+                   "location"=>  $path, 
+                'user_id' => $request->user()->id,
+               ]);
+            //add files to project messages
+            ProjectMessage::create([
+                'user_id' => $request->user()->id,
+                "project_id"=>  $project->id,
+                "type"=>  'file',
+                "location"=>  $path,
+            ]);
+           }
+        }
         // event(new NewProjectRequestCreated($project));
 
         return $this->successResponse($project, 'Project created successfully', 201);
