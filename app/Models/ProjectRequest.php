@@ -22,11 +22,11 @@ class ProjectRequest extends Model
         'updated_at'
     ];
     protected $casts = [
-        'dimension' => 'json',
-        'colors' => 'json',
-        'deliverables' => 'json',
-        'example_links' => 'json',
-        'example_uploads' => 'json',
+        // 'dimension' => 'json',
+        // 'colors' => 'json',
+        // 'deliverables' => 'json',
+        // 'example_links' => 'json',
+        // 'example_uploads' => 'json',
     ];
 
     public function user(): BelongsTo
@@ -74,6 +74,26 @@ class ProjectRequest extends Model
     }
 
     public function getDimensionAttribute($value)
+    {
+        return json_decode($value);
+    }
+
+    public function getColorsAttribute($value)
+    {
+        return json_decode($value);
+    }
+
+    public function getDeliverablesAttribute($value)
+    {
+        return json_decode($value);
+    }
+
+    public function getExampleLinksAttribute($value)
+    {
+        return json_decode($value);
+    }
+
+    public function getExampleUploadsAttribute($value)
     {
         return json_decode($value);
     }

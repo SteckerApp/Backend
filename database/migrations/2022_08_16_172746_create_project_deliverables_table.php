@@ -17,7 +17,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('project_id')->references('id')->on('project_requests');
             $table->string('title');
-            $table->string('location');
+            $table->longText('location');
             $table->foreignId('user_id')->references('id')->on('users');
             $table->timestamps();
             $table->softDeletes();

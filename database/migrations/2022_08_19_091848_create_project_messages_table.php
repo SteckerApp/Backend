@@ -20,7 +20,7 @@ return new class extends Migration
             $table->foreign('project_id')->references('id')->on('project_requests');
             $table->text('message')->nullable();
             $table->enum('type', ['text','file'])->default('text');
-            $table->text('location')->nullable();
+            $table->longText('location')->nullable();
             $table->timestamps();
         });
     }
