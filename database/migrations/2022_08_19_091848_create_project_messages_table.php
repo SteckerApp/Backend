@@ -18,7 +18,9 @@ return new class extends Migration
             $table->foreignId('user_id')->constrained();
             $table->unsignedBigInteger('project_id');
             $table->foreign('project_id')->references('id')->on('project_requests');
-            $table->text('message');
+            $table->text('message')->nullable();
+            $table->enum('type', ['text','file'])->default('text');
+            $table->text('location')->nullable();
             $table->timestamps();
         });
     }

@@ -129,8 +129,12 @@ class ProjectRequestController extends Controller
         $projectRequest = ProjectRequest::find($id);
 
         if($projectRequest){
-            $deleted = $projectRequest->delete();
-            return $this->successResponse($deleted, 'Project deleted successfully', 200);
+            if($projectRequest->status == "todo"){
+                $deleted = $projectRequest->delete();
+                return $this->successResponse($deleted, 'Project deleted successfully', 200);
+            }
+        return abort(422, 'The request is not processable.');
+
         }
         return $this->errorResponse($projectRequest);
 
