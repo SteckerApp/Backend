@@ -80,10 +80,10 @@ class ProjectRequestController extends Controller
      */
     public function show($id)
     {
-        $project =  ProjectRequest::with(['brand','projectMessage','uploadedFiles', 'pm', 'designer'])->
-        whereHas('brand', function($q){
-            $q->whereCompanyId(getActiveWorkSpace()->id);
-        })
+        $project =  ProjectRequest::with(['brand','projectMessage','uploadedFiles', 'pm', 'designer'])
+        // ->whereHas('brand', function($q){
+        //     $q->whereCompanyId(getActiveWorkSpace()->id);
+        // })
         ->whereId($id)->firstOrFail();
 
         return $this->successResponse( $project, 'Project fetched successfully', 200);
