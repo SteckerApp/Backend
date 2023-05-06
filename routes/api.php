@@ -18,6 +18,7 @@ use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\SubscriptionController;
 use App\Http\Controllers\UserCommentsController;
 use App\Http\Controllers\ProjectMessageController;
+use App\Http\Controllers\ProjectUserController;
 use App\Http\Controllers\ProjectRequestController;
 use App\Http\Controllers\api\v1\auth\UserController;
 use App\Http\Controllers\PortfolioCategoryController;
@@ -154,6 +155,10 @@ Route::middleware('auth:sanctum')->group(function () {
             Route::prefix('messages')->group(function () {
                 Route::get('/{project_id}', [ProjectMessageController::class, 'fetchMessages']);
                 Route::post('/', [ProjectMessageController::class, 'sendMessage']);
+            });
+
+            Route::prefix('users')->group(function () {
+                Route::post('/', [ProjectUserController::class, 'addProjectUser']);
             });
         });
 

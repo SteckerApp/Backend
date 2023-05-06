@@ -29,6 +29,10 @@ class ProjectRequest extends Model
         // 'example_uploads' => 'json',
     ];
 
+    public function users()
+    {
+        return $this->belongsToMany(User::class, 'project_user', 'project_id', 'user_id');
+    }
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
@@ -97,5 +101,7 @@ class ProjectRequest extends Model
     {
         return json_decode($value);
     }
+
+    
 
 }
