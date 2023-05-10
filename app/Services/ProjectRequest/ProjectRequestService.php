@@ -28,7 +28,6 @@ class ProjectRequestService
             'payment_status' => 'paid'
             ])->first()->subscription_id;
 
-
         if($request->hasfile('attachments'))
          {
             foreach($request->file('attachments') as $key => $file)
@@ -40,7 +39,6 @@ class ProjectRequestService
                 array_push($attachments, $doc_link);
             }
          }
-
          //manage example upload incase of duplicates
          $example_uploads = [];
          if(count($attachments) > 0 && !$request->example_uploads){
@@ -65,7 +63,7 @@ class ProjectRequestService
             'dimension' => $request->dimension,
             'company_id' => getActiveWorkSpace()->id,
             'example_links' => $request->example_links ? $request->example_links : null,
-            'example_uploads' => $example_uploads,
+            'example_uploads' => json_encode($example_uploads),
             'colors' => $request->colors,
             'created_by' => $request->user()->id,
             'deliverables' => $request->deliverables ?  $request->deliverables : null,

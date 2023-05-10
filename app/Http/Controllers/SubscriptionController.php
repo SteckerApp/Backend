@@ -3,9 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Models\Company;
+use App\Models\CompanySubscription;
 use App\Models\Subscription;
 use Illuminate\Http\Request;
 use App\Trait\HandleResponse;
+use Carbon\Carbon;
 
 
 class subscriptionController extends Controller
@@ -150,9 +152,9 @@ class subscriptionController extends Controller
         // dd($company->activeSubscripitions()->select(['subscriptions.*', 'company_subscription.end_date', 'company_subscription.type'])->where('subscriptions.default', true)->toSql());
         return $this->successResponse(
             [
-                'subscription' =>$company->activeSubscripitions()->select(['subscriptions.*', 'company_subscription.end_date', 'company_subscription.type', 'company_subscription.start_date'])->where('subscriptions.default', true)->first(),
+                'subscription' =>$company->activeSubscripitions()->select(['subscriptions.*', 'company_subscription.end_date', 'company_subscription.type', 'company_subscription.status', 'company_subscription.start_date'])->where('subscriptions.default', true)->first(),
                 'history' => $company->activeSubscripitions()->select(['subscriptions.*', 'company_subscription.end_date', 'company_subscription.type', 'company_subscription.start_date'])->limit(5)->get (),
-                'add-on' =>$company->activeSubscripitions()->select(['subscriptions.*', 'company_subscription.end_date', 'company_subscription.type', 'company_subscription.start_date'])->where('subscriptions.default', false)->get()
+                'addon' =>$company->activeSubscripitions()->select(['subscriptions.*', 'company_subscription.end_date', 'company_subscription.type', 'company_subscription.start_date'])->where('subscriptions.default', false)->get()
 
             ]
         );
@@ -163,6 +165,61 @@ class subscriptionController extends Controller
         $company = Company::whereId(getActiveWorkSpace()->id)->first();
         return $this->successResponse(
             $company->activeSubscripitions()->paginate(20)
+        );
+    }
+
+    public function three_days_expiration_reminder(Request $request)
+    {
+        $subscription = CompanySubscription::where([
+            'company_id' => getActiveWorkSpace()->id
+        ])
+        ->whereHas('subscription', function ($q) {
+            $q->where('default', true);
+        })
+        ->whereDate('end_date', '>=', Carbon::now())->first();
+
+        if($subscription){
+            $end_date = $subscription->end_date;
+
+            // Set the end date
+            $end_date = Carbon::parse($end_date);
+    
+    
+            // Calculate the date 3 days before the end date
+            // $three_days_before_end_date = $end_date->sub(3, 'day');
+    
+            // Get the current date and time
+            $current_time = now();
+    
+            // Calculate the difference between the end date and the current date
+            $diff_in_days = $current_time->diffInDays($end_date);
+    
+            // Check if the remaining days are less than 3
+            if ($diff_in_days < 3) {
+                // Calculate the difference between the current date and the end date
+                // $diff_in_days = $current_time->diffInDays($end_date, true);
+    
+                $data = [
+                    'status' => 'expiring',
+                    'days' => $diff_in_days
+                ];
+                
+            } else {
+                $data = [
+                    'status' => 'active',
+                ];
+            }
+        }
+
+        else{
+            $data = [
+                'status' => 'expired',
+            ];
+        }
+
+       
+        return $this->successResponse(
+            $data
         );
     }
 }
