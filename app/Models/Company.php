@@ -81,4 +81,6 @@ class Company extends Model
     {
         return $this->belongsToMany(User::class)->where("role", "admin");
     }
+
+  
 }

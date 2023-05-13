@@ -8,6 +8,8 @@ use App\Models\Subscription;
 use Illuminate\Http\Request;
 use App\Trait\HandleResponse;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\DB;
+
 
 
 class subscriptionController extends Controller
@@ -21,7 +23,14 @@ class subscriptionController extends Controller
      */
     public function index(Request $request,)
     {
-        $subscriptions = Subscription::where('default', true)->get()->groupBy('type');
+        $subscriptions = Subscription::query();
+        if($request->type == '0'){
+            $subscriptions = $subscriptions->where('default', false);
+        }
+        else{
+            $subscriptions = $subscriptions->where('default', true);
+        }
+        $subscriptions = $subscriptions->get()->groupBy('type');
 
         return $this->successResponse($subscriptions, 'Subscription retrive successfully!', 200);
 
@@ -153,9 +162,14 @@ class subscriptionController extends Controller
         return $this->successResponse(
             [
                 'subscription' =>$company->activeSubscripitions()->select(['subscriptions.*', 'company_subscription.end_date', 'company_subscription.type', 'company_subscription.status', 'company_subscription.start_date'])->where('subscriptions.default', true)->first(),
-                'history' => $company->activeSubscripitions()->select(['subscriptions.*', 'company_subscription.end_date', 'company_subscription.type', 'company_subscription.start_date'])->limit(5)->get (),
-                'addon' =>$company->activeSubscripitions()->select(['subscriptions.*', 'company_subscription.end_date', 'company_subscription.type', 'company_subscription.start_date'])->where('subscriptions.default', false)->get()
-
+                'history' => $company->activeSubscripitions()
+                ->select(['subscriptions.*', 'company_subscription.type', \DB::raw("DATE_FORMAT(company_subscription.start_date, '%Y-%m-%dT%H:%i:%s.%fZ') as start_date"), \DB::raw("DATE_FORMAT(company_subscription.end_date, '%Y-%m-%dT%H:%i:%s.%fZ') as end_date")])
+                ->limit(5)
+                ->get(),
+                'addon' => $company->activeSubscripitions()
+                    ->select(['subscriptions.*', 'company_subscription.type', \DB::raw("DATE_FORMAT(company_subscription.start_date, '%Y-%m-%dT%H:%i:%s.%fZ') as start_date"), \DB::raw("DATE_FORMAT(company_subscription.end_date, '%Y-%m-%dT%H:%i:%s.%fZ') as end_date")])
+                    ->where('subscriptions.default', false)
+                    ->get()
             ]
         );
     }
