@@ -31,5 +31,8 @@ class SubscriptionSeeder extends Seeder
     Subscription::create([
       'title' => 'Basic Main','description' => 'For day to day graphic design needs','price' => '100000','type' => 'monthly','days' => NULL,'metadata' => NULL,'default' => '0','info' => '0','discounted' => NULL,'currency' => 'naira','order' => '1','user_limit' => '5','design_limit' => '5','category' => 'main','save_up_to' => '4000','created_at' => '2022-04-04 20:14:28','updated_at' => '2022-04-04 20:14:28'
     ]);
+    Subscription::create([
+      'title' => 'Basic Main 2','description' => 'For day to day graphic design needs','price' => '100000','type' => 'monthly','days' => NULL,'metadata' => NULL,'default' => '0','info' => '0','discounted' => NULL,'currency' => 'naira','order' => '1','user_limit' => '5','design_limit' => '5','category' => 'main','save_up_to' => '4000','created_at' => '2022-04-04 20:14:28','updated_at' => '2022-04-04 20:14:28'
+    ]);
   }
 }
