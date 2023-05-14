@@ -62,9 +62,6 @@ class ProjectRequestController extends Controller
      */
     public function store(Request $request)
     {
-        // dd($request->all());
-        Log::info($request->all());
-
 
         $this->validate($request, [
             'title' => 'required',
