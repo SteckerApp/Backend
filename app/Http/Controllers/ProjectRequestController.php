@@ -6,6 +6,8 @@ use Illuminate\Http\Request;
 use App\Models\ProjectRequest;
 use App\Services\ProjectRequest\ProjectRequestService;
 use App\Trait\HandleResponse;
+use Illuminate\Support\Facades\Log;
+
 
 
 class ProjectRequestController extends Controller
@@ -60,6 +62,7 @@ class ProjectRequestController extends Controller
      */
     public function store(Request $request)
     {
+
         $this->validate($request, [
             'title' => 'required',
             'description' => 'required',

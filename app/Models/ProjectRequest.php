@@ -22,10 +22,10 @@ class ProjectRequest extends Model
         'updated_at'
     ];
     protected $casts = [
-        // 'dimension' => 'json',
-        // 'colors' => 'json',
-        // 'deliverables' => 'json',
-        // 'example_links' => 'json',
+        // 'dimension' => 'array',
+        'colors' => 'array',
+        'deliverables' => 'array',
+        'example_links' => 'array',
         // 'example_uploads' => 'json',
     ];
 
