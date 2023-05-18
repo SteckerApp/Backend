@@ -161,13 +161,13 @@ class subscriptionController extends Controller
         // dd($company->activeSubscripitions()->select(['subscriptions.*', 'company_subscription.end_date', 'company_subscription.type'])->where('subscriptions.default', true)->toSql());
         return $this->successResponse(
             [
-                'subscription' =>$company->activeSubscripitions()->select(['subscriptions.*', 'company_subscription.type', DB::raw("DATE_FORMAT(company_subscription.start_date, '%Y-%m-%dT%H:%i:%s.%fZ') as start_date"), DB::raw("DATE_FORMAT(company_subscription.end_date, '%Y-%m-%dT%H:%i:%s.%fZ') as end_date")])->where('subscriptions.default', true)->first(),
+                'subscription' =>$company->activeSubscripitions()->select(['subscriptions.*', 'subscriptions.id as subscription_id','company_subscription.type', DB::raw("DATE_FORMAT(company_subscription.start_date, '%Y-%m-%dT%H:%i:%s.%fZ') as start_date"), DB::raw("DATE_FORMAT(company_subscription.end_date, '%Y-%m-%dT%H:%i:%s.%fZ') as end_date")])->where('subscriptions.default', true)->first(),
                 'history' => $company->activeSubscripitions()
-                ->select(['subscriptions.*', 'company_subscription.type', DB::raw("DATE_FORMAT(company_subscription.start_date, '%Y-%m-%dT%H:%i:%s.%fZ') as start_date"), DB::raw("DATE_FORMAT(company_subscription.end_date, '%Y-%m-%dT%H:%i:%s.%fZ') as end_date")])
+                ->select(['subscriptions.*', 'subscriptions.id as subscription_id', 'company_subscription.type', DB::raw("DATE_FORMAT(company_subscription.start_date, '%Y-%m-%dT%H:%i:%s.%fZ') as start_date"), DB::raw("DATE_FORMAT(company_subscription.end_date, '%Y-%m-%dT%H:%i:%s.%fZ') as end_date")])
                 ->limit(5)
                 ->get(),
                 'addon' => $company->activeSubscripitions()
-                    ->select(['subscriptions.*', 'company_subscription.type', DB::raw("DATE_FORMAT(company_subscription.start_date, '%Y-%m-%dT%H:%i:%s.%fZ') as start_date"), DB::raw("DATE_FORMAT(company_subscription.end_date, '%Y-%m-%dT%H:%i:%s.%fZ') as end_date")])
+                    ->select(['subscriptions.*', 'subscriptions.id as subscription_id', 'company_subscription.type', DB::raw("DATE_FORMAT(company_subscription.start_date, '%Y-%m-%dT%H:%i:%s.%fZ') as start_date"), DB::raw("DATE_FORMAT(company_subscription.end_date, '%Y-%m-%dT%H:%i:%s.%fZ') as end_date")])
                     ->where('subscriptions.default', false)
                     ->get()
             ]
@@ -234,6 +234,24 @@ class subscriptionController extends Controller
        
         return $this->successResponse(
             $data
+        );
+    }
+
+    public function cancelSubscription(Request $request)
+    {
+        $subscription = CompanySubscription::where([
+            'company_id' => getActiveWorkSpace()->id,
+            'subscription_id' => $request->subscription_id,
+            'payment_status' => "paid",
+            'status' => "active"
+        ])
+        ->whereDate('end_date', '>=', Carbon::now())->firstOrFail();
+
+        $subscription->payment_status = "cancelled";
+        $subscription->save();
+
+        return $this->successResponse(
+            $subscription
         );
     }
 }
