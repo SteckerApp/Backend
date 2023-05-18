@@ -4,6 +4,8 @@ namespace App\Http\Middleware;
 
 use Closure;
 use Illuminate\Http\Request;
+use Carbon\Carbon;
+
 
 class EnsureSubscription
 {
@@ -20,7 +22,9 @@ class EnsureSubscription
         $checkSub = $request->user()->companySubscription()
         ->where([
             'company_id' => getActiveWorkSpace()->id, 'status' => 'active', 'payment_status' => 'paid'
-            ])->exists();
+            ])
+            ->whereDate('end_date', '>=', Carbon::now())
+            ->exists();
         if($checkSub) {
             return $next($request);
         }

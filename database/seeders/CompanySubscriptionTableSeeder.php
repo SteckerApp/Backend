@@ -16,7 +16,7 @@ class CompanySubscriptionTableSeeder extends Seeder
     public function run()
     {
         $company_subscription = array(
-            array('id' => '1','reference' => 'TRAN2801710332660','user_id' => '1','company_id' => '1','subscription_id' => '3','payment_date' => '2022-09-23 01:06:30','start_date' => '2022-09-23 01:06:30','end_date' => '2022-09-23 01:06:30','default' => 'yes','type' => 'monthly','duration' => '2','payment_status' => 'paid','status' => 'active','created_at' => '2022-09-23 20:14:28','updated_at' => NULL)
+            array('id' => '1','reference' => 'TRAN2801710332660','user_id' => '1','company_id' => '1','subscription_id' => '3','payment_date' => '2022-09-23 01:06:30','start_date' => '2022-09-23 01:06:30','end_date' => '2023-05-19 01:06:30','default' => 'yes','type' => 'monthly','duration' => '2','payment_status' => 'paid','status' => 'active','created_at' => '2022-09-23 20:14:28','updated_at' => NULL)
           );
         DB::table('company_subscription')->insert($company_subscription);
     }
