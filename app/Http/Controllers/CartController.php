@@ -60,7 +60,7 @@ class CartController extends Controller
             $transaction = Transaction::create([
                 'reference' => $reference,
                 'subscription_id' => $request->subscription_id,
-                'default' => true,
+                'default' => $subscription->default,
                 'duration' => $subscription->type,
                 'unit' => 1,
                 'total' => $subscription->price,
