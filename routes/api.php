@@ -85,7 +85,8 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::put('/{id}', [SubscriptionController::class, 'update'])->middleware(['permission:admin can manage subscription']);
         Route::delete('/{id}', [SubscriptionController::class, 'destroy'])->middleware(['permission:admin can manage subscription']);
         Route::post('/cancel_subscription', [SubscriptionController::class, 'cancelSubscription'])
-        ->middleware(['permission:admin can manage subscription']);
+        // ->middleware(['permission:admin can manage subscription'])
+        ;
         Route::post('/payment', [PaymentController::class, 'updatePayment']);
 
     });
