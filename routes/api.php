@@ -138,6 +138,8 @@ Route::middleware('auth:sanctum')->group(function () {
             Route::get('/', [SubscriptionController::class, 'activeSub']);
             Route::get('/history', [SubscriptionController::class, 'list']);
             Route::get('/three_days_expiration_reminder', [SubscriptionController::class, 'three_days_expiration_reminder']);
+            Route::post('/auto_renewal', [SubscriptionController::class, 'autoRenew']);
+
 
             // Route::post('/withdrawal/bank', [AffiliateController::class, 'withdrawal']);
             // Route::get('/withdrawal', [AffiliateController::class, 'history']);

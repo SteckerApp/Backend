@@ -82,5 +82,10 @@ class Company extends Model
         return $this->belongsToMany(User::class)->where("role", "admin");
     }
 
+    public function getCardAuthorizationAttribute($value)
+    {
+        return json_decode($value);
+    }
+
   
 }

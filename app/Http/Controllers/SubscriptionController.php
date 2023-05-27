@@ -25,10 +25,10 @@ class subscriptionController extends Controller
     {
         $subscriptions = Subscription::query();
         if($request->type == '0'){
-            $subscriptions = $subscriptions->where('default', false);
+            $subscriptions = $subscriptions->where('default', false)->whereNotIn('id', [1]);
         }
         else{
-            $subscriptions = $subscriptions->where('default', true);
+            $subscriptions = $subscriptions->where('default', true)->whereNotIn('id', [1]);
         }
         $subscriptions = $subscriptions->get()->groupBy('type');
 
@@ -161,9 +161,27 @@ class subscriptionController extends Controller
         // dd($company->activeSubscripitions()->select(['subscriptions.*', 'company_subscription.end_date', 'company_subscription.type'])->where('subscriptions.default', true)->toSql());
         return $this->successResponse(
             [
-                'subscription' =>$company->activeSubscripitions()->select(['subscriptions.*', 'subscriptions.id as subscription_id','company_subscription.type', DB::raw("DATE_FORMAT(company_subscription.start_date, '%Y-%m-%dT%H:%i:%s.%fZ') as start_date"), DB::raw("DATE_FORMAT(company_subscription.end_date, '%Y-%m-%dT%H:%i:%s.%fZ') as end_date")])->where('subscriptions.default', true)->first(),
+                'subscription' =>$company->activeSubscripitions()
+                ->select(['subscriptions.*', 'subscriptions.id as subscription_id','company_subscription.type', DB::raw("DATE_FORMAT(company_subscription.start_date, '%Y-%m-%dT%H:%i:%s.%fZ') as start_date"), DB::raw("DATE_FORMAT(company_subscription.end_date, '%Y-%m-%dT%H:%i:%s.%fZ') as end_date")])
+                ->where('subscriptions.default', true)->first(),
+                'card_authorization' =>$company->card_authorization,
+                'auto_renewal' =>$company->auto_renew,
                 'history' => $company->activeSubscripitions()
-                ->select(['subscriptions.*', 'subscriptions.id as subscription_id', 'company_subscription.type', DB::raw("DATE_FORMAT(company_subscription.start_date, '%Y-%m-%dT%H:%i:%s.%fZ') as start_date"), DB::raw("DATE_FORMAT(company_subscription.end_date, '%Y-%m-%dT%H:%i:%s.%fZ') as end_date")])
+                ->select([
+                    'subscriptions.title',
+                    'subscriptions.type',
+                    'subscriptions.discounted',
+                    'subscriptions.price as unit_price',
+                    'subscriptions.id as subscription_id',
+                    'company_subscription.type',
+                    'company_subscription.id as order_number',
+                    'company_subscription.reference as purchase_order',
+                    'company_subscription.payment_date as invoice_date',
+                    'company_subscription.payment_date as invoice_date',
+                    'transactions.unit as quantity',
+                   DB::raw("DATE_FORMAT(company_subscription.start_date, '%Y-%m-%dT%H:%i:%s.%fZ') as start_date"), 
+                   DB::raw("DATE_FORMAT(company_subscription.end_date, '%Y-%m-%dT%H:%i:%s.%fZ') as end_date")])
+                ->join('transactions', 'transactions.reference', '=', 'company_subscription.reference')
                 ->limit(5)
                 ->get(),
                 'addon' => $company->activeSubscripitions()
@@ -252,6 +270,18 @@ class subscriptionController extends Controller
 
         return $this->successResponse(
             $subscription
+        );
+    }
+
+    public function autoRenew(Request $request)
+    {
+        Company::whereId(getActiveWorkSpace()->id)->update(
+            [
+                "auto_renew"=> $request->auto_renew
+            ]
+        );
+        return $this->successResponse(
+            true
         );
     }
 }
