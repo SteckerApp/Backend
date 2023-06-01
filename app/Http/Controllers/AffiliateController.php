@@ -15,7 +15,7 @@ class AffiliateController extends Controller
     {
         $this->validate($request, [
             'account_name' => 'required|string',
-            'acccount_number' => 'required|string',
+            'account_number' => 'required|string',
             'bank_name' => 'required|string',
         ]);
 
@@ -26,7 +26,7 @@ class AffiliateController extends Controller
             ],
             [
                 'account_name' => $request->account_name,
-                'acccount_number' => $request->acccount_number,
+                'acccount_number' => $request->account_number,
                 'bank_name' => $request->bank_name
             ]
         );

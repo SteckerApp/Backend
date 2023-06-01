@@ -284,4 +284,16 @@ class subscriptionController extends Controller
             true
         );
     }
+
+    public function removeCard(Request $request)
+    {
+        Company::whereId(getActiveWorkSpace()->id)->update(
+            [
+                "card_authorization"=> null
+            ]
+        );
+        return $this->successResponse(
+            true
+        );
+    }
 }
