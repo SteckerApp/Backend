@@ -9,16 +9,17 @@ use App\Http\Controllers\BrandController;
 use App\Http\Controllers\CouponController;
 use App\Http\Controllers\CompanyController;
 use App\Http\Controllers\PaymentController;
+use App\Http\Controllers\UserBankController;
 use App\Http\Controllers\AffiliateController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\PortfolioController;
 use App\Http\Controllers\WorkspaceController;
 use App\Http\Controllers\api\v1\TestController;
+use App\Http\Controllers\ProjectUserController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\SubscriptionController;
 use App\Http\Controllers\UserCommentsController;
 use App\Http\Controllers\ProjectMessageController;
-use App\Http\Controllers\ProjectUserController;
 use App\Http\Controllers\ProjectRequestController;
 use App\Http\Controllers\api\v1\auth\UserController;
 use App\Http\Controllers\PortfolioCategoryController;
@@ -214,9 +215,13 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::prefix('affilate')->group(function () {
         Route::get('/dashboard', [DashboardController::class, 'affilate']);
         Route::post('/withdrawal/bank', [AffiliateController::class, 'withdrawal']);
-        Route::get('/withdrawal', [AffiliateController::class, 'history']);
+        Route::get('/history', [AffiliateController::class, 'history']);
+        Route::get('/balance', [AffiliateController::class, 'balance']);
+        Route::post('/request_withdrawal', [AffiliateController::class, 'requestWithdrawal']);
     });
 
+    Route::get('/banks', [UserBankController::class, 'getBankList']);    
+    Route::post('/verify_account', [UserBankController::class, 'verifyAccountNumber']);
 
 });
 
