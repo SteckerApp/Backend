@@ -2,10 +2,11 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Affiliate;
+use App\Models\Payout;
 use App\Models\UserBank;
-use App\Trait\HandleResponse;
+use App\Models\Affiliate;
 use Illuminate\Http\Request;
+use App\Trait\HandleResponse;
 
 class AffiliateController extends Controller
 {
@@ -19,17 +20,15 @@ class AffiliateController extends Controller
             'bank_name' => 'required|string',
         ]);
 
-
         $account = UserBank::updateOrCreate(
-            [
-                'user_id' => $request->user()->id,
-            ],
+            ['user_id' => $request->user()->id],
             [
                 'account_name' => $request->account_name,
                 'acccount_number' => $request->account_number,
                 'bank_name' => $request->bank_name
             ]
         );
+
 
         return $this->successResponse($account, 'bank account store successfully');
     }
@@ -39,34 +38,53 @@ class AffiliateController extends Controller
         
         $referrals = [
         'bank' => $request->user()->bank,
-         "history" =>  Affiliate::where("referral_id", $request->user()->id)
+         "referral_history" =>  Affiliate::where("referral_id", $request->user()->id)
             ->where('status', 'paid')
-            ->limit(5)
+            ->when($request->input('limit'), function ($query) use ($request) {
+                $query->limit($request->input('limit'));
+            })
             ->with('user')
+            ->latest()
+            ->get(),
+
+        "payment_history" =>  Payout::where("user_id", $request->user()->id)
+            ->when($request->input('limit'), function ($query) use ($request) {
+                $query->limit($request->input('limit'));
+            })
+            ->latest()
             ->get()
         ];
     
         return $this->successResponse($referrals);
     }
 
+    public function balance(Request $request)
+    {
+        
+        $referrals =  $request->user()->referrals;
+
+        $balance = $referrals->where('status', 'paid')->count() * env('AFFILATE_AMOUNT');
+
+        $data = [
+            'balance' => $balance
+        ];
+        return $this->successResponse($data);
+    }
+
     public function requestWithdrawal(Request $request)
     {
-        $referrals =  $request->user()->referrals()->where('status', 'active');
-        $amount =  $referrals * env('AFFILATE_AMOUNT');
+        $referrals =  $request->user()->referrals()->where('status', 'paid');
+        $withdrawal_amount =  (clone $referrals)->count() * env('AFFILATE_AMOUNT');
 
-        //bank details
-
-
-        //make payment
-
-
-
-
-        $referrals->update([
-            'status' => 'paid',
-            'payment' => $request->user()->bank
+        Payout::create([
+            'user_id'=> $request->user()->id,
+            'amount'=> $withdrawal_amount,
         ]);
 
-        return $this->successResponse($referrals);
+        (clone $referrals)->update([
+            'status' => 'pending',
+        ]);
+
+        return $this->successResponse(true);
     }
 }
