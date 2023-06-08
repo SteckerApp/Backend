@@ -16,7 +16,7 @@ class AffiliateTableSeeder extends Seeder
     public function run()
     {
         $affiliates = array(
-            array('id' => '1','referral_id' => '1','user_id' => '2','status' => 'pending','created_at' => '2022-04-04 20:14:28','updated_at' => '2022-04-04 20:14:28')
+            array('id' => '1','referral_id' => '1','user_id' => '2','status' => 'paid','created_at' => '2022-04-04 20:14:28','updated_at' => '2022-04-04 20:14:28')
           );
         
         DB::table('affiliates')->insert($affiliates);
