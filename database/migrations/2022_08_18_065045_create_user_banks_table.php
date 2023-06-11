@@ -18,7 +18,8 @@ return new class extends Migration
             $table->foreignId('user_id')->references('id')->on('users');
             $table->string('account_name');
             $table->string('acccount_number');
-            $table->string('bank_name');
+            $table->string('bank_name')->nullable();
+            $table->string('bank_code');
             $table->timestamps();
         });
     }

@@ -168,13 +168,14 @@ class subscriptionController extends Controller
                 'auto_renewal' =>$company->auto_renew,
                 'history' => $company->activeSubscripitions()
                 ->select([
-                    'subscriptions.title',
+                    'subscriptions.title as product_name',
+                    'subscriptions.description as product_deescription',
                     'subscriptions.type',
                     'subscriptions.discounted',
                     'subscriptions.price as unit_price',
                     'subscriptions.id as subscription_id',
                     'company_subscription.type',
-                    'company_subscription.id as order_number',
+                    'company_subscription.id as invoice_number',
                     'company_subscription.reference as purchase_order',
                     'company_subscription.payment_date as invoice_date',
                     'company_subscription.payment_date as invoice_date',
