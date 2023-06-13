@@ -87,6 +87,6 @@ class AffiliateController extends Controller
             'status' => 'pending',
         ]);
 
-        return $this->successResponse(true);
+        return $this->successResponse(true, "Payout request In progress");
     }
 }
