@@ -7,6 +7,7 @@ use App\Models\UserBank;
 use App\Models\Affiliate;
 use Illuminate\Http\Request;
 use App\Trait\HandleResponse;
+use App\Http\Resources\RefferalResource;
 
 class AffiliateController extends Controller
 {
@@ -24,7 +25,7 @@ class AffiliateController extends Controller
             ['user_id' => $request->user()->id],
             [
                 'account_name' => $request->account_name,
-                'acccount_number' => $request->account_number,
+                'account_number' => $request->account_number,
                 'bank_name' => $request->bank_name,
                 'bank_code' => $request->bank_code
 
@@ -37,17 +38,19 @@ class AffiliateController extends Controller
 
     public function history(Request $request)
     {
-        
+        $ref_history = Affiliate::where("referral_id", $request->user()->id)
+        ->where('status', 'paid')
+        ->when($request->input('limit'), function ($query) use ($request) {
+            $query->limit($request->input('limit'));
+        })
+        ->with('user')
+        ->latest()
+        ->get();
+
+
         $referrals = [
         'bank' => $request->user()->bank,
-         "referral_history" =>  Affiliate::where("referral_id", $request->user()->id)
-            ->where('status', 'paid')
-            ->when($request->input('limit'), function ($query) use ($request) {
-                $query->limit($request->input('limit'));
-            })
-            ->with('user')
-            ->latest()
-            ->get(),
+         "referral_history" =>  RefferalResource::collection($ref_history),
 
         "payment_history" =>  Payout::where("user_id", $request->user()->id)
             ->when($request->input('limit'), function ($query) use ($request) {
