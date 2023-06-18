@@ -24,7 +24,7 @@ class AffiliateController extends Controller
             ['user_id' => $request->user()->id],
             [
                 'account_name' => $request->account_name,
-                'acccount_number' => $request->account_number,
+                'account_number' => $request->account_number,
                 'bank_name' => $request->bank_name,
                 'bank_code' => $request->bank_code
 
