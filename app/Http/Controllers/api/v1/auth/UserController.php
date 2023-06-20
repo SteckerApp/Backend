@@ -123,6 +123,7 @@ class UserController extends Controller
 
     public function updateProfile(Request $request)
     {
+
         $this->validate($request, [
             'first_name' => 'sometimes|string',
             'last_name' => 'sometimes|string',
@@ -130,17 +131,26 @@ class UserController extends Controller
         ]);
 
         $user = $request->user();
-
+        $doc_link = null;
         if ($request->has('password')) {
             $user->password = Hash::make($request->password);
         }
+        if($request->hasfile('avatar'))
+         {
+            $name = $request->avatar->getClientOriginalName();
+            $path = "/".$user->id."/avatar";
+            $doc_link = uploadDocument($request->avatar, $path, $name);
+         }
+
         $user->fill($request->only([
             'first_name',
             'last_name',
             'name',
             'phone_number',
-            'currency',
+            'currency'
         ]));
+
+        $user->avatar = $doc_link;
 
         $user->update();
 

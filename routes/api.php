@@ -113,6 +113,7 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::post('/set_workspace/{company_id}', [DashboardController::class, 'setWorkspace']);
 
         Route::prefix('brand')
+        ->middleware(['can:client can manage brand'])
        // ->middleware(['can:viewAny,App\Models\Brand' , 'check_subscription'])
         ->group(function () {
             Route::get('/', [BrandController::class, 'index']);
@@ -135,17 +136,14 @@ Route::middleware('auth:sanctum')->group(function () {
 
         });
         // ->middleware(['permission:client can managment subscription'])
-        Route::prefix('plan')->group(function () {
+        Route::prefix('plan')
+        ->middleware(['can:admin can manage subscription'])
+        ->group(function () {
             Route::get('/', [SubscriptionController::class, 'activeSub']);
             Route::get('/history', [SubscriptionController::class, 'list']);
             Route::get('/three_days_expiration_reminder', [SubscriptionController::class, 'three_days_expiration_reminder']);
             Route::post('/auto_renewal', [SubscriptionController::class, 'autoRenew']);
             Route::post('/remove_card_details', [SubscriptionController::class, 'removeCard']);
-
-
-
-            // Route::post('/withdrawal/bank', [AffiliateController::class, 'withdrawal']);
-            // Route::get('/withdrawal', [AffiliateController::class, 'history']);
         });
 
         Route::prefix('companies')->group(function () {
@@ -156,13 +154,15 @@ Route::middleware('auth:sanctum')->group(function () {
         });
 
         Route::prefix('requests')->group(function () {
-            Route::get('/', [ProjectRequestController::class, 'index']);
-            Route::get('/{id}', [ProjectRequestController::class, 'show']);
-            Route::post('/', [ProjectRequestController::class, 'store'])->middleware('check_subscription');
-            Route::put('/{id}', [ProjectRequestController::class, 'update']);
-            Route::delete('/{id}', [ProjectRequestController::class, 'destroy']);
+            Route::get('/', [ProjectRequestController::class, 'index'])->middleware(['can:client can view requests']);
+            Route::get('/{id}', [ProjectRequestController::class, 'show'])->middleware(['can:client can view requests']);
+            Route::post('/', [ProjectRequestController::class, 'store'])->middleware('can:client can create request','check_subscription');
+            Route::put('/{id}', [ProjectRequestController::class, 'update'])->middleware(['can:client can edit request']);
+            Route::delete('/{id}', [ProjectRequestController::class, 'destroy'])->middleware(['can:client can delete request']);
 
-            Route::prefix('messages')->group(function () {
+            Route::prefix('messages')
+            ->middleware(['can:client can view requests'])
+            ->group(function () {
                 Route::get('/{project_id}', [ProjectMessageController::class, 'fetchMessages']);
                 Route::post('/', [ProjectMessageController::class, 'sendMessage']);
             });
@@ -181,7 +181,7 @@ Route::middleware('auth:sanctum')->group(function () {
     });
 
     Route::get('/auth/user/profile', [UserController::class, 'profile']);
-    Route::put('/auth/user/profile', [UserController::class, 'updateProfile']);
+    Route::post('/auth/user/profile', [UserController::class, 'updateProfile']);
 
     Route::prefix('admin')->group(function () {
         Route::get('/', [DashboardController::class, 'home']);

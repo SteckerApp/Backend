@@ -233,7 +233,10 @@ class AuthService
                 return $this->successResponse(
                     [
                         'token' => $token,
-                        'user' =>  new RegisterdResource($user)
+                        'user' =>  new RegisterdResource($user),
+                        'permissions'=>$user->getAllPermissions(),
+                        'roles'=>$user->getRoleNames()
+
                     ],
                     'Login successful'
                 );
