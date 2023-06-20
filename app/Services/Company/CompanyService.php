@@ -40,6 +40,8 @@ class CompanyService
                 'role' => 'admin',
             ]);
 
+            $request->user()->givePermissionTo('admin can manage subscription');
+
             DB::commit();
 
             return $this->successResponse($record, 'Company created successfully', 201);
