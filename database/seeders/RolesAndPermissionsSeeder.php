@@ -19,27 +19,26 @@ class RolesAndPermissionsSeeder extends Seeder
         app()[\Spatie\Permission\PermissionRegistrar::class]->forgetCachedPermissions();
 
         // create permissions
-        Permission::create(['name' => 'client can manage brand']);
+        Permission::create(['name' => 'client can manage brand', 'ability' => 'manage_brand' ]);
 
-        Permission::create(['name' => 'client can create request']);
-        Permission::create(['name' => 'client can view requests']);
-        Permission::create(['name' => 'client can delete request']);
-        Permission::create(['name' => 'client can edit request']);
+        Permission::create(['name' => 'client can create request', 'ability' => 'create_request']);
+        Permission::create(['name' => 'client can view requests', 'ability' => 'view_request']);
+        Permission::create(['name' => 'client can delete request', 'ability' => 'delete_request']);
+        Permission::create(['name' => 'client can edit request', 'ability' => 'edit_request']);
 
-        Permission::create(['name' => 'client can managment teams']);
-        Permission::create(['name' => 'client can managment subscription']);
+        Permission::create(['name' => 'client can manage teams', 'ability' => 'manage_teams']);
 
         $role = Role::create(['name' => 'client']);
         Permission::all()->each(function($permission) use($role) {
             $role->givePermissionTo($permission->name);
         });
 
-        Permission::create(['name' => 'admin can view workspace']);
-        Permission::create(['name' => 'admin can manage coupons']);
-        Permission::create(['name' => 'admin can manage subscription']);
-        Permission::create(['name' => 'admin can manage staff']);
-        Permission::create(['name' => 'admin can manage protifolio']);
-        Permission::create(['name' => 'admin can view analytics']);
+        Permission::create(['name' => 'admin can view workspace', 'ability' => 'view_workspace']);
+        Permission::create(['name' => 'admin can manage coupons', 'ability' => 'manage_coupons']);
+        Permission::create(['name' => 'admin can manage subscription', 'ability' => 'manage_subscription']);
+        Permission::create(['name' => 'admin can manage staff', 'ability' => 'manage_staff']);
+        Permission::create(['name' => 'admin can manage portfolio', 'ability' => 'manage_portfolio']);
+        Permission::create(['name' => 'admin can view analytics', 'ability' => 'view_analytics']);
 
         // create roles and assign created permissions
 
@@ -50,6 +49,6 @@ class RolesAndPermissionsSeeder extends Seeder
         });
         $role = Role::create(['name' => 'pm']);
         $role = Role::create(['name' => 'designer']);
-        $role = Role::create(['name' => 'admin']);
+        // $role = Role::create(['name' => 'admin']);
     }
 }
