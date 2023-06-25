@@ -18,6 +18,7 @@ use App\Jobs\sendVerificationMailSync;
 use App\Jobs\SendPasswordResetMailSync;
 use App\Http\Resources\RegisterdResource;
 use App\Http\Requests\auth\RegisterRequest;
+use App\Http\Resources\PermissionsResource;
 
 class AuthService
 {
@@ -234,7 +235,7 @@ class AuthService
                     [
                         'token' => $token,
                         'user' =>  new RegisterdResource($user),
-                        'permissions'=>$user->getAllPermissions(),
+                        'permissions'=> PermissionsResource::collection($user->getAllPermissions()),
                         'roles'=>$user->getRoleNames()
 
                     ],
