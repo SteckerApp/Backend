@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\WorkSpaceResource;
 use App\Models\AdminCompany;
 use App\Models\Company;
 use Illuminate\Http\Request;
@@ -77,5 +78,21 @@ class WorkspaceController extends Controller
         ($request->page) ? $projects =  $projects->paginate($perPage) : $projects = $projects->get();
         // dd($request->ongoing);
         return $this->successResponse($projects, '', 200);
+    }
+
+    public function listWorkSpace(Request $request)
+    {
+        $new = Company::whereHas('projects', function($q){
+                $q->where('status', 'todo');
+            })->get();
+        $others = Company::whereHas('projects', function($q){
+            $q->whereNot('status', 'todo');
+        })->get();
+
+      $data =[
+        "new_projects"=> WorkSpaceResource::collection($new),
+        "others"=>  WorkSpaceResource::collection($others),
+      ];
+        return $this->successResponse($data, '', 200);
     }
 }
