@@ -87,5 +87,11 @@ class Company extends Model
         return json_decode($value);
     }
 
+    public function projects(): HasMany
+    {
+        return $this->hasMany(ProjectRequest::class);
+    }
+
+
   
 }

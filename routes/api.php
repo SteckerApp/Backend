@@ -194,8 +194,10 @@ Route::middleware('auth:sanctum')->group(function () {
             Route::delete('/{coupon}', [CouponController::class, 'destroy']);
         });
 
-        Route::prefix('workspace')->middleware(['permission:admin can view workspace'])->group(function(){
-            Route::get('/', [WorkspaceController::class, 'index']);
+        Route::prefix('workspace')
+        // ->middleware(['permission:admin can view workspace'])
+        ->group(function(){
+            Route::get('/', [WorkspaceController::class, 'listWorkSpace']);
             Route::get('/company', [WorkspaceController::class, 'list']);
         });
 
