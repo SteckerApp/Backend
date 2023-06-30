@@ -44,6 +44,24 @@ class ProjectRequestController extends Controller
         return $this->successResponse($projects, 'Projects Fetched Succesfully', 200);
     }
 
+    public function getCompanyRequests(Request $request,)
+    {
+        $perPage = ($request->perPage) ?? 10;
+
+        $projects = ProjectRequest::where([
+            'company_id' => $request->company_id,
+        ])
+        ->with(['uploadedFiles', 'pm', 'designer', 'projectUser', 'brand', 'created_by'])->orderBy('created_at', 'desc');
+
+        ($request->todo) ? $projects =  $projects->where('status', 'todo') :"";
+        ($request->on_going) ? $projects =  $projects->where('status', 'on_going') :"";
+        ($request->in_review) ? $projects =  $projects->where('status', 'in_review'):"";
+        ($request->approved) ? $projects =  $projects->where('status', 'designer_approved')->orWhere('status', 'pm_approved')->orWhere('status', 'completed'):"";
+        ($request->perPage) ? $projects =  $projects->paginate($perPage) : $projects = $projects->get();
+
+        return $this->successResponse($projects, 'Projects Fetched Succesfully', 200);
+    }
+
     /**
      * Show the form for creating a new resource.
      *
