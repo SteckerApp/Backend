@@ -199,7 +199,7 @@ Route::middleware('auth:sanctum')->group(function () {
         ->group(function(){
             Route::get('/', [WorkspaceController::class, 'listWorkSpace']);
             Route::get('/company', [WorkspaceController::class, 'list']);
-            Route::get('/company_requests', [ProjectRequestController::class, 'getCompanyRequests']);
+            Route::get('/get_company_requests', [ProjectRequestController::class, 'getCompanyRequests']);
 
         });
 
