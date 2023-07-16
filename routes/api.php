@@ -24,6 +24,8 @@ use App\Http\Controllers\ProjectRequestController;
 use App\Http\Controllers\api\v1\auth\UserController;
 use App\Http\Controllers\PortfolioCategoryController;
 use App\Http\Controllers\ProjectDeliverablesController;
+use App\Http\Controllers\AdminOverviewController;
+
 
 /*
 |--------------------------------------------------------------------------
@@ -200,6 +202,15 @@ Route::middleware('auth:sanctum')->group(function () {
             Route::get('/', [WorkspaceController::class, 'listWorkSpace']);
             Route::get('/company', [WorkspaceController::class, 'list']);
             Route::get('/get_company_requests', [ProjectRequestController::class, 'getCompanyRequests']);
+
+        });
+
+        Route::prefix('analytics')
+        // ->middleware(['permission:admin can view workspace'])
+        ->group(function(){
+            Route::get('/total_overview', [AdminOverviewController::class, 'getTotalOverview']);
+            // Route::get('/company', [WorkspaceController::class, 'list']);
+            // Route::get('/get_company_requests', [ProjectRequestController::class, 'getCompanyRequests']);
 
         });
 
