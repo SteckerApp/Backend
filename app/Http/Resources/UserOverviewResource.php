@@ -21,6 +21,7 @@ class UserOverviewResource extends JsonResource
             'email' => $this->email,
             'phone' => $this->phone_number,
             'roles' => $this->roles,
+            'workspace' => $this->companies,
         ];
     }
 }

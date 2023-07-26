@@ -20,7 +20,11 @@ class CustomerOverviewResource extends JsonResource
             'email' => $this->user->email,
             'avatar' => $this->user->avatar,
             'phone' => $this->user->phone_number,
-            'plan' => $this->subcription->title,
+            'plan' => $this->subscription->title,
+            'workspace' => $this->company->name,
+            'hear_about_us' => $this->company->hear_about_us
+
+
         ];
     }
 }

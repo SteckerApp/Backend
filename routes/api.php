@@ -25,6 +25,8 @@ use App\Http\Controllers\api\v1\auth\UserController;
 use App\Http\Controllers\PortfolioCategoryController;
 use App\Http\Controllers\ProjectDeliverablesController;
 use App\Http\Controllers\AdminOverviewController;
+use App\Http\Controllers\PayoutController;
+
 
 
 /*
@@ -202,17 +204,26 @@ Route::middleware('auth:sanctum')->group(function () {
             Route::get('/', [WorkspaceController::class, 'listWorkSpace']);
             Route::get('/company', [WorkspaceController::class, 'list']);
             Route::get('/get_company_requests', [ProjectRequestController::class, 'getCompanyRequests']);
-
         });
 
         Route::prefix('analytics')
         // ->middleware(['permission:admin can view workspace'])
         ->group(function(){
             Route::get('/total_overview', [AdminOverviewController::class, 'getTotalOverview']);
-            // Route::get('/company', [WorkspaceController::class, 'list']);
-            // Route::get('/get_company_requests', [ProjectRequestController::class, 'getCompanyRequests']);
-
+            Route::get('/order_overview_list', [AdminOverviewController::class, 'getOrderOverview']);
+            Route::get('/user_overview_list', [AdminOverviewController::class, 'getUserOverview']);
+            Route::get('/customer_overview_list', [AdminOverviewController::class, 'getCustomerOverview']);
+            Route::get('/affiliate_overview_list', [AdminOverviewController::class, 'getAffiliateOverview']);
+            Route::get('/payout_history', [AdminOverviewController::class, 'getPayoutHistory']);
         });
+
+        Route::prefix('payout')
+        // ->middleware(['permission:admin can view workspace'])
+        ->group(function(){
+            Route::post('/approve_payout', [PayoutController::class, 'approvePayout']);
+            Route::post('/decline_payout', [PayoutController::class, 'declinePayout']);
+        });
+
 
         Route::prefix('portfolio')->group(function () {
             Route::get('/', [PortfolioController::class, 'index'])->withoutMiddleware('auth:sanctum');

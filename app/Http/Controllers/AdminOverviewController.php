@@ -13,6 +13,8 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use App\Trait\HandleResponse;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\DB;
+
 use App\Models\Payout;
 
 
@@ -82,10 +84,10 @@ class AdminOverviewController extends Controller
         $page = $request->input('perPage') ?? 10;
         $orders = CompanySubscription::with(['user','subscription','company'])
                     ->when($request->input('date_from'), function ($query) use ($request) {
-                      $query->whereDate('created_at', '>=', Carbon::now());
+                      $query->whereDate('created_at', '>=', Carbon::parse($request->input('date_from')));
                     })
                     ->when($request->input('date_to'), function ($query) use ($request) {
-                        $query->whereDate('created_at', '<=', Carbon::now());
+                        $query->whereDate('created_at', '<=', Carbon::parse($request->input('date_to')));
                     })
                     ->when($request->input('this_month'), function ($query) use ($request) {
                         $query->whereMonth('created_at', Carbon::now()->month);
@@ -96,6 +98,7 @@ class AdminOverviewController extends Controller
                         ->orWhere('users.last_name', 'like', '%' . $request->input('search') . '%');
                     })
                     ->paginate($page);
+
       
        $data = OrderOverviewResource::collection($orders);
 
@@ -105,7 +108,7 @@ class AdminOverviewController extends Controller
     public function getUserOverview(Request $request)
     {
         $page = $request->input('perPage') ?? 10;
-        $users = User::with(['roles'])
+        $users = User::with(['roles', 'companies:id,name'])
                     ->when($request->input('search'), function ($query) use ($request) {
                         $query->where('email', 'like', '%' . $request->input('search') . '%')
                         ->orWhere('first_name', 'like', '%' . $request->input('search') . '%')
@@ -122,13 +125,14 @@ class AdminOverviewController extends Controller
     public function getCustomerOverview(Request $request)
     {
         $page = $request->input('perPage') ?? 10;
-        $users = CompanySubscription::with(['company','user','subscription'])
+        $users = CompanySubscription::with(['company:id,name,hear_about_us','user','subscription:id,title'])
                     ->when($request->input('search'), function ($query) use ($request) {
                         $query->where('users.email', 'like', '%' . $request->input('search') . '%')
                         ->orWhere('users.first_name', 'like', '%' . $request->input('search') . '%')
                         ->orWhere('users.last_name', 'like', '%' . $request->input('search') . '%')
                         ->orWhere('reference', 'like', '%' . $request->input('search') . '%');
                     })
+                    // ->select('company_subscription.user_id', DB::raw('COUNT(*) as subscription_count'))
                     ->groupBy('user_id')
                     ->paginate($page);
       
@@ -141,7 +145,7 @@ class AdminOverviewController extends Controller
     {
         $page = $request->input('perPage') ?? 10;
         $users = Affiliate::with(['company','user'])
-                    ->join('coupons', 'coupons.created_by', 'affiliates.referral_id')
+                    // ->join('coupons', 'coupons.created_by', 'affiliates.referral_id')
                     ->when($request->input('search'), function ($query) use ($request) {
                         $query->where('users.email', 'like', '%' . $request->input('search') . '%')
                         ->orWhere('users.first_name', 'like', '%' . $request->input('search') . '%')

@@ -16,9 +16,10 @@ class PayoutOverviewResource extends JsonResource
     {
         // return parent::toArray($request);
         return [
-            'reference' => $this->id,
+            'payout_id' => $this->id,
             'full_name' => $this->user->first_name. " ". $this->user->last_name,
             'email' => $this->user->email,
+            'amount' => $this->amount,
             'day_requested' => $this->created_at,
             'day_approved' => $this->approval_date,
             'status' => $this->status,
