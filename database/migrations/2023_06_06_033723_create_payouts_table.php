@@ -18,6 +18,7 @@ return new class extends Migration
             $table->foreignId('user_id')->references('id')->on('users');
             $table->integer('amount');
             $table->enum('status', ['in-progress','declined', 'completed'])->default('in-progress');
+            $table->dateTime('approval_date')->nullable();
             $table->timestamps();
         });
     }
