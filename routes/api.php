@@ -190,7 +190,9 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::prefix('admin')->group(function () {
         Route::get('/', [DashboardController::class, 'home']);
 
-        Route::prefix('promo')->middleware(['permission:admin can manage coupons'])->group(function () {
+        Route::prefix('promo')
+        // ->middleware(['permission:admin can manage coupons'])
+        ->group(function () {
             Route::get('/', [CouponController::class, 'index']);
             Route::put('/{coupon}', [CouponController::class, 'update']);
             Route::get('/{coupon}', [CouponController::class, 'show']);
@@ -206,10 +208,18 @@ Route::middleware('auth:sanctum')->group(function () {
             Route::get('/get_company_requests', [ProjectRequestController::class, 'getCompanyRequests']);
         });
 
-        Route::prefix('analytics')
+        Route::prefix('overview')
         // ->middleware(['permission:admin can view workspace'])
         ->group(function(){
             Route::get('/total_overview', [AdminOverviewController::class, 'getTotalOverview']);
+            Route::get('/company', [WorkspaceController::class, 'list']);
+            Route::get('/get_company_requests', [ProjectRequestController::class, 'getCompanyRequests']);
+        });
+
+        Route::prefix('analytics')
+        // ->middleware(['permission:admin can view workspace'])
+        ->group(function(){
+            Route::get('/total_overview', [AdminOverviewController::class, 'getTotalAnalytics']);
             Route::get('/order_overview_list', [AdminOverviewController::class, 'getOrderOverview']);
             Route::get('/user_overview_list', [AdminOverviewController::class, 'getUserOverview']);
             Route::get('/customer_overview_list', [AdminOverviewController::class, 'getCustomerOverview']);

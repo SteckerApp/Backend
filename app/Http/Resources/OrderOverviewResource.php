@@ -21,6 +21,7 @@ class OrderOverviewResource extends JsonResource
             'reference' => $this->reference,
             'full_name' => $this->user->first_name. " ". $this->user->last_name,
             'email' => $this->user->email,
+            'avatar' => $this->user->avatar,
             'plan' => $this->subscription->title,
             'status' => $this->status,
             'workspace' => $this->company->name,
