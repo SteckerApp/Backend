@@ -10,6 +10,7 @@ use Illuminate\Http\Request;
 use App\Trait\HandleResponse;
 use Illuminate\Support\Facades\DB;
 
+
 class CouponController extends Controller
 {
     use HandleResponse;
@@ -173,7 +174,16 @@ class CouponController extends Controller
 
     public function index(Request $request)
     {
-        $redemption = Cart::whereNotNull('discounted')->where("status", 'paid');
+        $redemption = Cart::whereNotNull('discounted')->where("status", 'paid')
+        ->when($request->input('date_from'), function ($query) use ($request) {
+            $query->whereDate('created_at', '>=', Carbon::parse($request->input('date_from')));
+        })
+        ->when($request->input('date_to'), function ($query) use ($request) {
+            $query->whereDate('created_at', '<=', Carbon::parse($request->input('date_to')));
+        })
+        ->when($request->input('this_month'), function ($query) use ($request) {
+            $query->whereMonth('created_at', Carbon::now()->month);
+        });
         $response = [
             'redemption_amount'  => $redemption->sum('discounted->amount'),
             'redemption_total' => $redemption->count(),

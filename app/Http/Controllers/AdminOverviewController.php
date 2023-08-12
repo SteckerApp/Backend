@@ -2,55 +2,84 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Resources\AffiliateOverviewResource;
-use App\Http\Resources\CustomerOverviewResource;
-use App\Http\Resources\OrderOverviewResource;
-use App\Http\Resources\PayoutOverviewResource;
-use App\Http\Resources\UserOverviewResource;
-use App\Models\Affiliate;
-use App\Models\CompanySubscription;
+use Carbon\Carbon;
 use App\Models\User;
+use App\Models\Payout;
+use App\Models\Company;
+use App\Models\Affiliate;
 use Illuminate\Http\Request;
 use App\Trait\HandleResponse;
-use Carbon\Carbon;
+use App\Models\ProjectRequest;
 use Illuminate\Support\Facades\DB;
+use App\Models\CompanySubscription;
+use App\Http\Resources\WorkSpaceResource;
+use App\Http\Resources\UserOverviewResource;
+use App\Http\Resources\OrderOverviewResource;
 
-use App\Models\Payout;
-
-
+use App\Http\Resources\PayoutOverviewResource;
+use App\Http\Resources\CustomerOverviewResource;
+use App\Http\Resources\AffiliateOverviewResource;
 
 class AdminOverviewController extends Controller
 {
     use HandleResponse;
- 
+
     public function getTotalOverview(Request $request)
     {
 
+        $todo = ProjectRequest::where('status','todo')->count();
+        $on_going = ProjectRequest::where('status','on_going')->count();
+        $approved = ProjectRequest::where('status','approved')->count();
+        $total_workspace = Company::count();
+        $new_projects = Company::whereHas('projects', function($q){
+                            $q->where('status', 'todo');
+                        })->get();
+
+
+
+      
+       $data = [
+            "todo" => $todo,
+            "on_going" => $on_going,
+            "approved" => $approved,
+            "total_workspace" => $total_workspace,
+            "new_projects" => WorkSpaceResource::collection($new_projects)
+
+        ];
+
+       
+
+        return $this->successResponse($data, 'Operation successful');
+    }
+ 
+    public function getTotalAnalytics(Request $request)
+    {
+
         $orders = CompanySubscription::when($request->input('date_from'), function ($query) use ($request) {
-                      $query->whereDate('created_at', '>=', Carbon::now());
+                      $query->whereDate('created_at', '>=', Carbon::parse($request->input('date_from')));
                     })
                     ->when($request->input('date_to'), function ($query) use ($request) {
-                        $query->whereDate('created_at', '<=', Carbon::now());
+                        $query->whereDate('created_at', '<=', Carbon::parse($request->input('date_to')));
                     })
                     ->when($request->input('this_month'), function ($query) use ($request) {
                         $query->whereMonth('created_at', Carbon::now()->month);
                     })
                     ->count();
         $users = User::when($request->input('date_from'), function ($query) use ($request) {
-                        $query->whereDate('created_at', '>=', Carbon::now());
+                        $query->whereDate('created_at', '>=', Carbon::parse($request->input('date_from')));
                     })
                     ->when($request->input('date_to'), function ($query) use ($request) {
-                        $query->whereDate('created_at', '<=', Carbon::now());
+                        $query->whereDate('created_at', '<=', Carbon::parse($request->input('date_to')));
                     })
                     ->when($request->input('this_month'), function ($query) use ($request) {
                         $query->whereMonth('created_at', Carbon::now()->month);
                     })
                     ->count();
         $customers = CompanySubscription::when($request->input('date_from'), function ($query) use ($request) {
-                        $query->whereDate('created_at', '>=', Carbon::now());
+                        $query->whereDate('created_at', '>=', Carbon::parse($request->input('date_from')));
                     })
                     ->when($request->input('date_to'), function ($query) use ($request) {
-                        $query->whereDate('created_at', '<=', Carbon::now());
+                        $query->whereDate('created_at', '<=', Carbon::parse($request->input('date_to')));
                     })
                     ->when($request->input('this_month'), function ($query) use ($request) {
                         $query->whereMonth('created_at', Carbon::now()->month);
@@ -58,10 +87,10 @@ class AdminOverviewController extends Controller
                     ->groupBy('user_id')
                     ->count();
         $affiliates = Affiliate::when($request->input('date_from'), function ($query) use ($request) {
-                        $query->whereDate('created_at', '>=', Carbon::now());
+                        $query->whereDate('created_at', '>=', Carbon::parse($request->input('date_from')));
                     })
                     ->when($request->input('date_to'), function ($query) use ($request) {
-                        $query->whereDate('created_at', '<=', Carbon::now());
+                        $query->whereDate('created_at', '<=', Carbon::parse($request->input('date_to')));
                     })
                     ->when($request->input('this_month'), function ($query) use ($request) {
                         $query->whereMonth('created_at', Carbon::now()->month);
