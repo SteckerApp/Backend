@@ -62,12 +62,13 @@ class ProjectRequestService
             'description' => $request->description,
             'dimension' => $request->dimension,
             'company_id' => getActiveWorkSpace()->id,
+            'pm_id' => getActiveWorkSpace()->account_manager,
             'example_links' => $request->example_links ? $request->example_links : null,
             'example_uploads' => json_encode($example_uploads),
             'colors' => $request->colors,
             'created_by' => $request->user()->id,
             'deliverables' => $request->deliverables ?  $request->deliverables : null,
-            'date' => Carbon::now(),
+            'date' => Carbon::now()
         ]);
         //add user to project user
          DB::table('project_user')->insert([

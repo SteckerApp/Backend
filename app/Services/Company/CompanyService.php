@@ -2,9 +2,11 @@
 
 namespace App\Services\Company;
 
+use App\Models\User;
 use App\Models\Company;
 use App\Trait\HandleResponse;
 use Illuminate\Support\Facades\DB;
+use Spatie\Permission\Models\Permission;
 
 class CompanyService
 {
@@ -12,6 +14,7 @@ class CompanyService
 
     public function createCompany($request)
     {
+/
         DB::beginTransaction();
 
         try {
@@ -26,13 +29,27 @@ class CompanyService
                 $request->user()->save();
             }
 
+            $accountManagerPermission = Permission::where('name', 'account manager')
+            ->first();
+            $accountManagers = User::permission($accountManagerPermission)->get();
+            
+            //  select the account manager with the least number of company assignments             
+            $accountManagerIds = $accountManagers->pluck('id');
+
+            $nextAccountManager = User::whereIn('users.id', $accountManagerIds)
+                ->leftJoin('companies', 'users.id', '=', 'companies.account_manager')
+                ->select('users.id as user_id', DB::raw('COUNT(companies.id) as companies_count'))
+                ->groupBy('users.id')
+                ->orderBy('companies_count', 'asc')
+                ->first();
+
             $record = $request->user()->ownCompanies()->create([
                 'avatar' => $fileName ?? null,
                 'name' => $request->name,
                 'description' => $request->description,
                 'hear_about_us' => $request->hear_about_us,
+                'account_manager' => $nextAccountManager->user_id
             ]);
-
 
             DB::table('company_user')->insert([
                 'user_id' => $request->user()->id,

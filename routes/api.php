@@ -26,8 +26,8 @@ use App\Http\Controllers\PortfolioCategoryController;
 use App\Http\Controllers\ProjectDeliverablesController;
 use App\Http\Controllers\AdminOverviewController;
 use App\Http\Controllers\PayoutController;
-
-
+use App\Http\Controllers\PlansController;
+use App\Http\Controllers\RolesAndPermissionsController;
 
 /*
 |--------------------------------------------------------------------------
@@ -227,6 +227,16 @@ Route::middleware('auth:sanctum')->group(function () {
             Route::get('/payout_history', [AdminOverviewController::class, 'getPayoutHistory']);
         });
 
+        Route::prefix('roles')
+        // ->middleware(['permission:admin can view workspace'])
+        ->group(function(){
+            Route::get('/get_permissions', [RolesAndPermissionsController::class, 'getAllPermissions']);
+            Route::get('/get_roles', [RolesAndPermissionsController::class, 'getAllRoles']);
+            Route::post('/create_role', [RolesAndPermissionsController::class, 'createRole']);
+            Route::put('/{role_id}', [RolesAndPermissionsController::class, 'editRole']);
+            Route::delete('/{role_id}', [RolesAndPermissionsController::class, 'deleteRole']);
+        });
+
         Route::prefix('payout')
         // ->middleware(['permission:admin can view workspace'])
         ->group(function(){
@@ -237,14 +247,26 @@ Route::middleware('auth:sanctum')->group(function () {
 
         Route::prefix('portfolio')->group(function () {
             Route::get('/', [PortfolioController::class, 'index'])->withoutMiddleware('auth:sanctum');
-            Route::post('/', [PortfolioController::class, 'store']);
+            Route::post('/images', [PortfolioController::class, 'storeImage']);
+            Route::post('/videos', [PortfolioController::class, 'storeVideos']);
             Route::delete('/{id}', [PortfolioController::class, 'destroy']);
         });
 
         Route::prefix('portfolio_category')->group(function () {
+            Route::get('/', [PortfolioCategoryController::class, 'index'])->withoutMiddleware('auth:sanctum');
             Route::post('/', [PortfolioCategoryController::class, 'store']);
             Route::put('/{id}', [PortfolioCategoryController::class, 'store']);
             Route::delete('/{id}', [PortfolioCategoryController::class, 'destroy']);
+        });
+
+        Route::prefix('plans')->group(function () {
+            Route::get('/', [PlansController::class, 'index']);
+            Route::post('/set_visible', [PlansController::class, 'setVisible']);
+            Route::post('/set_most_popular', [PlansController::class, 'setMostPopular']);
+            Route::post('/create_plan', [PlansController::class, 'createPlan']);
+            Route::post('/create_addon', [PlansController::class, 'createAddon']);
+
+
         });
     });
 

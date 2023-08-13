@@ -27,6 +27,8 @@ class OrderOverviewResource extends JsonResource
             'workspace' => $this->company->name,
             'end_date' => $this->end_date,
             'fee' => $this->subscription->price,
+            'currency' => $this->subscription->currency,
+
         ];
     }
 }

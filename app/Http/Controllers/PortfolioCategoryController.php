@@ -10,6 +10,14 @@ use App\Trait\HandleResponse;
 class PortfolioCategoryController extends Controller
 {
     use HandleResponse;
+
+    public function index(Request $request,)
+    {
+        $projects= PortfolioCategory::all();
+
+        return $this->successResponse($projects, 'Portfolio Categories Fetched Succesfully', 200);
+    }
+
     public function store(Request $request,)
     {
         $this->validate($request, [

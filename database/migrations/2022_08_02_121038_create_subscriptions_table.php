@@ -24,7 +24,9 @@ return new class extends Migration
             $table->boolean('default')->default(false);
             $table->boolean('info')->default(false);
             $table->string('discounted')->nullable();
-            $table->string('currency')->nullable();
+            $table->enum('currency', ['NGN', 'USD'])->default('NGN');
+            $table->enum('visible', ['yes', 'no'])->default('yes');
+            $table->enum('most_popular', ['yes', 'no'])->default('no');
             $table->integer('order')->nullable();
             $table->integer('user_limit')->nullable();
             $table->integer('design_limit')->nullable();
@@ -32,7 +34,6 @@ return new class extends Migration
             $table->timestamps();
         });
     }
-
     /**
      * Reverse the migrations.
      *

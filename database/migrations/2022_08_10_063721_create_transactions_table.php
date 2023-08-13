@@ -26,6 +26,7 @@ return new class extends Migration
             // $table->dateTime('start_date')->nullable();
             // $table->dateTime('end_date')->nullable();
             // $table->enum('status', ['active', 'inactive'])->default('active');
+            $table->enum('currency', ['NGN', 'USD'])->default('NGN');
             $table->timestamps();
             $table->foreign('reference')->references('reference')->on('carts');
         });
