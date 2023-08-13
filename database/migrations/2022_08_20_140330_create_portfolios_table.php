@@ -17,6 +17,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('portfolio_category_id')->constrained();
             $table->string('location');
+            $table->enum('type', ['image','video'])->default('image');
             $table->timestamps();
             $table->softDeletes();
 

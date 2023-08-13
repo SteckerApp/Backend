@@ -154,7 +154,7 @@ class AdminOverviewController extends Controller
     public function getCustomerOverview(Request $request)
     {
         $page = $request->input('perPage') ?? 10;
-        $users = CompanySubscription::with(['company:id,name,hear_about_us','user','subscription:id,title'])
+        $users = CompanySubscription::with(['company.project_manager','user','subscription:id,title'])
                     ->when($request->input('search'), function ($query) use ($request) {
                         $query->where('users.email', 'like', '%' . $request->input('search') . '%')
                         ->orWhere('users.first_name', 'like', '%' . $request->input('search') . '%')

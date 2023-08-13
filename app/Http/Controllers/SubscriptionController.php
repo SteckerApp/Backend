@@ -30,7 +30,7 @@ class subscriptionController extends Controller
         else{
             $subscriptions = $subscriptions->where('default', true)->whereNotIn('id', [1]);
         }
-        $subscriptions = $subscriptions->get()->groupBy('type');
+        $subscriptions = $subscriptions->where('visible', 'yes')->get()->groupBy('type');
 
         return $this->successResponse($subscriptions, 'Subscription retrive successfully!', 200);
 

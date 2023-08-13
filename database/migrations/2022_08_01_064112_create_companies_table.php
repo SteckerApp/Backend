@@ -20,6 +20,8 @@ return new class extends Migration
             $table->string('avatar')->nullable();
             $table->string('description')->nullable();
             $table->string('hear_about_us')->nullable();
+            $table->unsignedBigInteger('account_manager')->nullable();
+            $table->foreign('account_manager')->references('id')->on('users');
             $table->json('card_authorization')->nullable();
             $table->enum('auto_renew', ['yes','no'])->default('yes');
             $table->timestamps();

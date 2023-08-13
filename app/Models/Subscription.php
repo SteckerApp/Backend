@@ -12,6 +12,11 @@ class Subscription extends Model
 
     protected $guarded = [];
 
+    protected $casts = [
+        'metadata' => 'array',
+       
+    ];
+
     public function companySubscription(): HasMany
     {
         return $this->hasMany(CompanySubscription::class);

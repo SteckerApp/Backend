@@ -20,6 +20,7 @@ class Company extends Model
         'hear_about_us',
         'avatar',
         'user_id',
+        'account_manager',
     ];
 
 
@@ -81,6 +82,12 @@ class Company extends Model
     {
         return $this->belongsToMany(User::class)->where("role", "admin");
     }
+
+    public function project_manager(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'account_manager');
+    }
+
 
     public function getCardAuthorizationAttribute($value)
     {

@@ -22,9 +22,8 @@ class CustomerOverviewResource extends JsonResource
             'phone' => $this->user->phone_number,
             'plan' => $this->subscription->title,
             'workspace' => $this->company->name,
+            'project_manager' => $this->company->project_manager->last_name . " " .$this->company->project_manager->first_name ,
             'hear_about_us' => $this->company->hear_about_us
-
-
         ];
     }
 }
