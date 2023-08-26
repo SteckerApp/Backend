@@ -13,7 +13,7 @@ class PortfolioCategoryController extends Controller
 
     public function index(Request $request,)
     {
-        $projects= PortfolioCategory::all();
+        $projects= PortfolioCategory::with('portfolio')->get();
 
         return $this->successResponse($projects, 'Portfolio Categories Fetched Succesfully', 200);
     }

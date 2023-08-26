@@ -19,6 +19,7 @@ use App\Http\Resources\OrderOverviewResource;
 use App\Http\Resources\PayoutOverviewResource;
 use App\Http\Resources\CustomerOverviewResource;
 use App\Http\Resources\AffiliateOverviewResource;
+use App\Models\CompanyUser;
 
 class AdminOverviewController extends Controller
 {
@@ -31,23 +32,28 @@ class AdminOverviewController extends Controller
         $on_going = ProjectRequest::where('status','on_going')->count();
         $approved = ProjectRequest::where('status','approved')->count();
         $total_workspace = Company::count();
+        $total_board = ProjectRequest::count();
+
         $new_projects = Company::whereHas('projects', function($q){
                             $q->where('status', 'todo');
-                        })->get();
+                        });
+        if($request->user()->hasPermissionTo('view all workspace')){
+            $new_projects =  $new_projects->get();
+        }
+        else{
+            $companies = CompanyUser::where('user_id', $request->user()->id)->groupBy('company_id')->pluck('company_id')->toArray();
+            $new_projects =  $new_projects->whereIn('id',  $companies)->get();
+        }
 
-
-
-      
        $data = [
             "todo" => $todo,
             "on_going" => $on_going,
             "approved" => $approved,
             "total_workspace" => $total_workspace,
+            "total_board" => $total_board,
             "new_projects" => WorkSpaceResource::collection($new_projects)
 
         ];
-
-       
 
         return $this->successResponse($data, 'Operation successful');
     }

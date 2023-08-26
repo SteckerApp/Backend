@@ -2,10 +2,11 @@
 
 namespace App\Http\Resources;
 
-use App\Models\CompanySubscription;
+use App\Models\User;
 use App\Models\CompanyUser;
-use Illuminate\Http\Resources\Json\JsonResource;
 use App\Models\ProjectRequest;
+use App\Models\CompanySubscription;
+use Illuminate\Http\Resources\Json\JsonResource;
 
 
 class WorkSpaceResource extends JsonResource
@@ -24,7 +25,12 @@ class WorkSpaceResource extends JsonResource
             "payment_status" => "paid",
         ])->first();
 
-        $company_users = CompanyUser::with('user')->whereCompanyId($this->id)->get();
+        $company_users = CompanyUser::with('user')->whereHas('user', function($q){
+            $q->where('user_type', 'admin');
+        })->whereCompanyId($this->id)->get();
+        
+        $admin_users = User::with('roles')->where('user_type', 'admin')->get();
+
         return [
             'company_id' => $this->id,
             'company_name' => $this->name,
@@ -44,6 +50,7 @@ class WorkSpaceResource extends JsonResource
                         ])->count(),
             'subscription' => $activeSubscription->subscription,
             'company_users' => $company_users,
+            'admin_users' => $admin_users,
             'last_request_date' =>  ProjectRequest::whereCompanyId($this->id)->latest()->first()->created_at,
         ];
     }
