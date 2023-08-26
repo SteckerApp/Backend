@@ -29,7 +29,7 @@ class CompanyService
                 $request->user()->save();
             }
 
-            $accountManagerPermission = Permission::where('name', 'account manager')
+            $accountManagerPermission = Permission::where('name', 'lias with customers')
             ->first();
             $accountManagers = User::permission($accountManagerPermission)->get();
             

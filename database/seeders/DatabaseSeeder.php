@@ -42,7 +42,9 @@ class DatabaseSeeder extends Seeder
             PortfolioSeeder::class,
             UserCommentsSeeder::class,
             AffiliateTableSeeder::class,
-            PayoutSeeder::class
+            PayoutSeeder::class,
+            CouponSeeder::class,
+            CoupunTransactionSeeder::class,
         ]);
     }
 }

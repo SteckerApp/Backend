@@ -9,6 +9,8 @@ use App\Models\Coupon;
 use Illuminate\Http\Request;
 use App\Trait\HandleResponse;
 use Illuminate\Support\Facades\DB;
+use App\Rules\ValidSubscriptionIds;
+use App\Http\Resources\CouponResource;
 
 
 class CouponController extends Controller
@@ -191,7 +193,7 @@ class CouponController extends Controller
                 Carbon::now()->subDays(30)->startOfDay()->toDateString(),
                 Carbon::now()->addDay(1)->endOfDay()->toDateString()
             ])->count(),
-            'coupons' => Coupon::limit(10)->get()
+            'coupons' => CouponResource::collection(Coupon::with('subscriptions')->limit(10)->get())
         ];
 
         return $this->successResponse($response);
@@ -199,34 +201,41 @@ class CouponController extends Controller
     public function store(Request $request)
     {
         $this->validate($request, [
-            'user_id' => 'sometimes|exists:users,id',
-            'company_id' => 'sometimes|exists:companies,id',
             'code' => 'required|string',
+            'name' => 'required|string',
             'type' => 'required|string',
             'amount' => 'sometimes|string|nullable',
-            'percentage' => 'sometimes|integer|nullable|max:100',
-            'cap' => 'sometimes|string',
             'start' => 'required|date',
             'ends' => 'sometimes|date|nullable',
+            'subscriptions' => ['sometimes', 'array', 'nullable', new ValidSubscriptionIds],
+            'recurring' => 'sometimes|nullable',
         ]);
 
         $request->merge([
             'created_by' => $request->user()->id
         ]);
+        if( $request->has('recurring')){
+            $startDate = Carbon::createFromFormat('Y-m-d', $request->start); 
+            $endDate = $startDate->copy()->addMonths(intval($request->recurring));
+
+            $request->merge([
+                'ends' => $endDate->format('Y-m-d')
+            ]); 
+        }
 
         $created = Coupon::create($request->only([
-            'created_by',
-            'user_id',
-            'company_id',
             'code',
+            'name',
             'type',
             'amount',
-            'percentage',
-            'cap',
             'start',
             'ends',
-            'status',
+            'created_by',
+            'recurring'
         ]));
+
+        $created->subscriptions()->sync($request->subscriptions);
+
 
         return $this->successResponse($created);
     }
@@ -235,32 +244,29 @@ class CouponController extends Controller
     public function update(Request $request, Coupon $coupon)
     {
         $this->validate($request, [
-            'user_id' => 'sometimes|exists:users,id',
-            'company_id' => 'sometimes|exists:companies,id',
-            'code' => 'sometimes|string',
-            'type' => 'sometimes|string',
-            'amount' => 'sometimes|string',
-            'percentage' => 'sometimes|integer|max:100',
-            'cap' => 'sometimes|string',
-            'start' => 'sometimes|date',
-            'ends' => 'sometimes|date',
-            'status' => 'sometimes|string',
+            'code' => 'required|string',
+            'name' => 'required|string',
+            'type' => 'required|string',
+            'amount' => 'sometimes|string|nullable',
+            'start' => 'required|date',
+            'ends' => 'sometimes|date|nullable',
+            'subscriptions' => ['sometimes', 'array', 'nullable', new ValidSubscriptionIds],
+            'recurring' => 'sometimes|nullable',
         ]);
 
         $coupon->fill(
             $request->only([
-                'user_id',
-                'company_id',
                 'code',
+                'name',
                 'type',
                 'amount',
-                'percentage',
-                'cap',
                 'start',
                 'ends',
-                'status',
+                'recurring'
             ])
         );
+        $coupon->subscriptions()->sync($request->subscriptions);
+
         $coupon->update();
         return $this->successResponse($coupon);
     }
@@ -268,7 +274,7 @@ class CouponController extends Controller
     public function destroy(Coupon $coupon)
     {
         $coupon->delete();
-        return $this->successResponse($coupon);
+        return $this->successResponse("Operation succesful");
     }
 
     public function show(Coupon $coupon)

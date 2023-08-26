@@ -30,6 +30,7 @@ return new class extends Migration
             $table->enum('desktop_notification', ['yes','no'])->default('yes');
             $table->enum('email_notification', ['never','periodically', 'instantly'])->default('instantly');
             $table->enum('notification', ['yes','no'])->default('no');
+            $table->enum('status', ['active','in-active'])->default('active');
             $table->rememberToken();
             $table->timestamps();
         });

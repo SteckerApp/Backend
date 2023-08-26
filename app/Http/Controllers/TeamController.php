@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\AdminTeamResource;
 use App\Models\User;
 use App\Models\Invite;
 use App\Models\Company;
@@ -25,6 +26,17 @@ class TeamController extends Controller
 
         return $this->successResponse($teams);
     }
+
+    public function getAdminTeam()
+    {
+
+        $teams = User::where('user_type', 'admin')->get();
+
+        $teams = AdminTeamResource::collection($teams);
+
+        return $this->successResponse($teams);
+    }
+
 
 
     public function show($id)

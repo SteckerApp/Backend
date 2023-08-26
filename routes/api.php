@@ -205,6 +205,7 @@ Route::middleware('auth:sanctum')->group(function () {
         ->group(function(){
             Route::get('/', [WorkspaceController::class, 'listWorkSpace']);
             Route::get('/company', [WorkspaceController::class, 'list']);
+            Route::post('/add_or_remove_user_from_workspace', [WorkspaceController::class, 'addOrRemove']);
             Route::get('/get_company_requests', [ProjectRequestController::class, 'getCompanyRequests']);
         });
 
@@ -232,10 +233,20 @@ Route::middleware('auth:sanctum')->group(function () {
         ->group(function(){
             Route::get('/get_permissions', [RolesAndPermissionsController::class, 'getAllPermissions']);
             Route::get('/get_roles', [RolesAndPermissionsController::class, 'getAllRoles']);
+            Route::get('/get_user_roles', [RolesAndPermissionsController::class, 'getUserRoles']);
             Route::post('/create_role', [RolesAndPermissionsController::class, 'createRole']);
+            Route::post('/change_role', [RolesAndPermissionsController::class, 'changeRole']);
             Route::put('/{role_id}', [RolesAndPermissionsController::class, 'editRole']);
             Route::delete('/{role_id}', [RolesAndPermissionsController::class, 'deleteRole']);
         });
+
+        Route::prefix('teams')
+        // ->middleware(['permission:admin can view workspace'])
+        ->group(function(){
+            Route::get('/get_admin_teams', [TeamController::class, 'getAdminTeam']);
+            Route::get('/remove_member', [TeamController::class, 'removeAdminTeammember']);
+        });
+
 
         Route::prefix('payout')
         // ->middleware(['permission:admin can view workspace'])

@@ -22,4 +22,9 @@ class Subscription extends Model
         return $this->hasMany(CompanySubscription::class);
     }
 
+    public function coupons()
+    {
+        return $this->belongsToMany(Coupon::class, 'coupon_subscription');
+    }
+
 }

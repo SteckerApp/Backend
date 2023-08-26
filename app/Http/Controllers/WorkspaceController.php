@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Resources\WorkSpaceResource;
 use App\Models\AdminCompany;
 use App\Models\Company;
+use App\Models\CompanyUser;
 use Illuminate\Http\Request;
 use App\Trait\HandleResponse;
 use App\Models\ProjectRequest;
@@ -94,5 +95,34 @@ class WorkspaceController extends Controller
         "others"=>  WorkSpaceResource::collection($others),
       ];
         return $this->successResponse($data, '', 200);
+    }
+
+    public function addOrRemove(Request $request)
+    {
+        $this->validate($request, [
+            'company_id' => 'required',
+            'user_id' => 'required',
+            'add_status' => 'boolean',
+        ]);
+        if($request->add_status){
+            CompanyUser::where([
+                'user_id' => $request->user_id,
+                'company_id' => $request->company_id,
+
+            ])->updateOrCreate(
+                ['user_id' => $request->user_id,
+                'company_id' => $request->company_id,], 
+                ['user_id' => $request->user_id,
+                'company_id' => $request->company_id,] 
+            );
+        }
+        else{
+            CompanyUser::where([
+                'user_id' => $request->user_id,
+                'company_id' => $request->company_id,
+
+            ])->delete();
+        }
+        return $this->successResponse('','User Role Updated Successfully', 200);
     }
 }

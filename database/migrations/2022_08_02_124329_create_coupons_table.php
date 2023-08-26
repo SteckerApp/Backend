@@ -16,13 +16,12 @@ return new class extends Migration
         Schema::create('coupons', function (Blueprint $table) {
             $table->id();
             $table->foreignId('created_by')->references('id')->on('users');
-            $table->foreignId('user_id')->nullable();
-            $table->foreignId('company_id')->nullable();
             $table->string('code');
-            $table->enum('type', ['flat','percentage', 'both']);
+            $table->string('name');
+            $table->enum('type', ['flat','percentage']);
             $table->integer('amount')->nullable();
-            $table->double('percentage')->nullable();
-            $table->integer('cap')->nullable();
+            $table->string('currency')->nullable();
+            $table->integer('recurring')->nullable();
             $table->dateTime('start');
             $table->dateTime('ends')->nullable();
             $table->enum('status', ['active','in-active'])->default('active');

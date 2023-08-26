@@ -21,8 +21,8 @@ class CouponSeeder extends Seeder
             'created_by' => 1,
             'code' => 'test@coupon',
             'type' => 'percentage',
-            'percentage' => 5,
-            'cap' => 10000,
+            'amount' => 5,
+            'currency' =>   'NGN',
             'start' => Carbon::now(),
             'ends' => Carbon::now()->addYear(1),
             'status' => 'active'

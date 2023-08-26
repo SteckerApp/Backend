@@ -4,6 +4,7 @@ namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Laravel\Sanctum\HasApiTokens;
+use App\Models\Scopes\ActiveScope;
 use Spatie\Permission\Traits\HasRoles;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -15,6 +16,11 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 class User extends Authenticatable
 {
     use HasRoles, HasApiTokens, HasFactory, Notifiable;
+
+    protected static function booted()
+    {
+        static::addGlobalScope(new ActiveScope);
+    }
 
     /**
      * The attributes that are mass assignable.
