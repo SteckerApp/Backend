@@ -51,6 +51,7 @@ class CartController extends Controller
                 'user_id' => $request->user()->id,
                 'subtotal' => $subscription->price,
                 'total' => $subscription->price,
+                'main_subscription_id' => $request->subscription_id,
                 'status' => Cart::STATUS[0]
             ]);
 

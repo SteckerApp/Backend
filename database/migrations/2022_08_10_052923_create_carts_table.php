@@ -22,6 +22,7 @@ return new class extends Migration
             $table->string('discounted')->nullable();
             $table->string('total')->nullable();
             $table->string("status")->nullable();
+            $table->foreignId('main_subscription_id')->nullable()->references('id')->on('subscriptions');
             $table->timestamps();
         });
     }

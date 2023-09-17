@@ -18,6 +18,7 @@ return new class extends Migration
             $table->foreignId('user_id')->references('id')->on('users');
             $table->string('user_phone_number')->nullable();
             $table->foreignId('coupon_id')->references('id')->on('coupons');
+            $table->integer('amount')->nullable();
             $table->foreignId('transaction_id')->references('id')->on('transactions');
             $table->timestamps();
         });

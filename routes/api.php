@@ -224,10 +224,12 @@ Route::middleware('auth:sanctum')->group(function () {
         ->group(function(){
             Route::get('/total_overview', [AdminOverviewController::class, 'getTotalAnalytics']);
             Route::get('/order_overview_list', [AdminOverviewController::class, 'getOrderOverview']);
+            Route::get('/order_overview_month_stats', [AdminOverviewController::class, 'getMonthOrderStats']);
             Route::get('/user_overview_list', [AdminOverviewController::class, 'getUserOverview']);
             Route::get('/customer_overview_list', [AdminOverviewController::class, 'getCustomerOverview']);
             Route::get('/affiliate_overview_list', [AdminOverviewController::class, 'getAffiliateOverview']);
             Route::get('/payout_history', [AdminOverviewController::class, 'getPayoutHistory']);
+            Route::get('/affiliate_overview_month_stats', [AdminOverviewController::class, 'getMonthAffiliateStats']);
         });
 
         Route::prefix('roles')
