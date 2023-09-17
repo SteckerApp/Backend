@@ -66,7 +66,7 @@ class subscriptionController extends Controller
             'info' => 'sometimes|boolean',
             'discounted' => 'sometimes|integer'
         ]);
-
+        $identifier = uniqid('SUB');
         $subscription = Subscription::create([
             'title' => $request->title,
             'description' => $request->description,
@@ -80,6 +80,7 @@ class subscriptionController extends Controller
             'order' => $request->order,
             'user_limit' =>  $request->user_limit,
             'design_limit' =>  $request->design_limit,
+            'group_identifier' =>  $identifier,
         ]);
 
         return $this->successResponse($subscription, 'Subscription created successfully', 201);
@@ -116,7 +117,12 @@ class subscriptionController extends Controller
             'type' => 'sometimes|in:monthly,quarterly,yearly',
             'default' => 'sometimes|boolean',
             'info' => 'sometimes|boolean',
-            'discounted' => 'sometimes|integer'
+            'discounted' => 'sometimes|integer',
+            'group_identifier' => 'required|string'
+        ]);
+
+        Subscription::where('group_identifier', $request->group_identifier)->update([
+            'title' => $request->title
         ]);
 
         $subscription = Subscription::find($id);
@@ -137,6 +143,8 @@ class subscriptionController extends Controller
         ]));
 
         $subscription->update();
+
+
 
         return $this->successResponse($subscription, 'Subscription updated successfully', 200);
     }

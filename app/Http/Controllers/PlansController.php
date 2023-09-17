@@ -94,6 +94,7 @@ class PlansController extends Controller
             'discount_dollar_yearly' => 'required',
         ]);
 
+        $identifier = uniqid('SUB');
 
         $subscription = Subscription::create([
             'title' => $request->title,
@@ -105,6 +106,8 @@ class PlansController extends Controller
             'info' => true,
             'discounted' => $request->slash_price_naira_monthly,
             'currency' => "NGN",
+            'group_identifier' =>  $identifier,
+
         ]);
 
         $subscription = Subscription::create([
@@ -117,6 +120,8 @@ class PlansController extends Controller
             'info' => true,
             'discounted' => $request->slash_price_dollar_monthly,
             'currency' => "USD",
+            'group_identifier' =>  $identifier,
+
         ]);
 
         $subscription = Subscription::create([
@@ -129,6 +134,8 @@ class PlansController extends Controller
             'info' => true,
             'discounted' => $request->slash_price_naira_quarterly,
             'currency' => "NGN",
+            'group_identifier' =>  $identifier,
+
         ]);
 
         $subscription = Subscription::create([
@@ -141,6 +148,8 @@ class PlansController extends Controller
             'info' => true,
             'discounted' => $request->slash_price_dollar_quarterly,
             'currency' => "USD",
+            'group_identifier' =>  $identifier,
+
         ]);
 
         $subscription = Subscription::create([
@@ -153,6 +162,8 @@ class PlansController extends Controller
             'info' => true,
             'discounted' => $request->slash_price_naira_bi_annually,
             'currency' => "NGN",
+            'group_identifier' =>  $identifier,
+
         ]);
 
         $subscription = Subscription::create([
@@ -165,6 +176,8 @@ class PlansController extends Controller
             'info' => true,
             'discounted' => $request->slash_price_dollar_bi_annually,
             'currency' => "USD",
+            'group_identifier' =>  $identifier,
+
         ]);
 
         $subscription = Subscription::create([
@@ -177,6 +190,8 @@ class PlansController extends Controller
             'info' => true,
             'discounted' => $request->slash_price_naira_yearly,
             'currency' => "NGN",
+            'group_identifier' =>  $identifier,
+
         ]);
 
         $subscription = Subscription::create([
@@ -189,6 +204,8 @@ class PlansController extends Controller
             'info' => true,
             'discounted' => $request->slash_price_dollar_yearly,
             'currency' => "USD",
+            'group_identifier' =>  $identifier,
+
         ]);
 
         return $this->successResponse($subscription, 'Subscription created successfully', 200);
