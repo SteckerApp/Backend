@@ -27,7 +27,6 @@ class PlansResource extends JsonResource
             'sales' => CompanySubscription::where('subscription_id', $this->id)->count(),
             'created' => $this->created_at,
             "default_type"=> ($this->default == "1") ? "plan" : "addon",
-
         ];
     }
 }

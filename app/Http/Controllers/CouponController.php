@@ -34,6 +34,7 @@ class CouponController extends Controller
             if(!$code){
                 return $this->errorResponse('Invalid Coupon code', 422);
             }
+
             //check coupon if is valid for a user or company
             if ($code && ($code->user_id != null ||  $code->company_id != null)) {
                 if ($code->user_id != null &&  $code->user_id != $authUser->id) {
@@ -54,6 +55,18 @@ class CouponController extends Controller
                 return $this->errorResponse('Coupon code already used by you', 422);
             }
 
+            // //check coupon if is valid for the subscription
+
+            $sub_count = DB::table('coupon_subscription')
+            ->join('coupons', 'coupon_subscription.coupon_id', '=', 'coupons.id')
+            ->join('carts', 'coupon_subscription.subscription_id', '=', 'carts.main_subscription_id')
+            ->where('carts.reference', $request->reference)
+            ->count();
+
+            if ($sub_count < 1) {
+                return $this->errorResponse('Coupon code does not apply for selected main subscription', 422);
+            }
+
             if ($today->gte($code->start)  && ($today->lte($code->ends) || $code->ends == null)) {
 
                 $cart = Cart::whereReference($request->reference)->first();
@@ -62,14 +75,14 @@ class CouponController extends Controller
 
                     switch ($code->type) {
                         case 'flat':
-                            $amount = ($code->amount > $code->cap)? $code->cap : $code->amount;
+                            // $amount = ($code->amount > $code->cap)? $code->cap : $code->amount;
+                            $amount = $code->amount;
                             $cart->total = ($cart->total - $amount);
                             $cart->discounted = [
                                 'amount' =>  $amount,
                                 'coupon_reference' =>  $code->id,
                                 'flat' =>  $amount,
                                 'percentage' => null,
-                                'cap' => $code->cap,
                                 'total_before_discount' => $old_total,
                                 'total_after_discount' => $cart->total,
                             ];
@@ -77,38 +90,37 @@ class CouponController extends Controller
 
                         case 'percentage':
                             $percentage_value = (($code->percentage / 100) * $cart->total);
-                            $amount = ($percentage_value > $code->cap)? $code->cap : $percentage_value;
+                            $amount = $percentage_value;
                             $cart->total = ($cart->total - $amount);
                             $cart->discounted = [
                                 'amount' => $amount,
                                 'coupon_reference' =>  $code->id,
                                 'flat' =>  null,
                                 'percentage' => $code->percentage,
-                                'cap' => $code->cap,
                                 'total_before_discount' => $old_total,
                                 'total_after_discount' => $cart->total,
                             ];
                             break;
 
-                        case 'both':
-                            $percentage_value = (($code->percentage / 100) * $cart->total);
-                            $total_value = $percentage_value + $code->amount;
+                        // case 'both':
+                        //     $percentage_value = (($code->percentage / 100) * $cart->total);
+                        //     $total_value = $percentage_value + $code->amount;
 
-                            $amount = ($total_value > $code->cap)? $code->cap : $total_value;
+                        //     $amount = ($total_value > $code->cap)? $code->cap : $total_value;
 
-                            $total_discount = ($cart->total - $amount);
+                        //     $total_discount = ($cart->total - $amount);
 
-                            $cart->total = $total_discount;
-                            $cart->discounted = [
-                                'amount' => $amount,
-                                'coupon_reference' =>  $code->id,
-                                'flat' =>  $code->amount,
-                                'percentage' => $code->percentage,
-                                'cap' => $code->cap,
-                                'total_before_discount' => $old_total,
-                                'total_after_discount' => $cart->total,
-                            ];
-                            break;
+                        //     $cart->total = $total_discount;
+                        //     $cart->discounted = [
+                        //         'amount' => $amount,
+                        //         'coupon_reference' =>  $code->id,
+                        //         'flat' =>  $code->amount,
+                        //         'percentage' => $code->percentage,
+                        //         'cap' => $code->cap,
+                        //         'total_before_discount' => $old_total,
+                        //         'total_after_discount' => $cart->total,
+                        //     ];
+                        //     break;
                     }
 
                     $cart->promo_code = $code->code;
@@ -118,6 +130,7 @@ class CouponController extends Controller
                         'user_id' => $authUser->id,
                         'user_phone_number' => $authUser->phone_number,
                         'coupon_id' => $code->id,
+                        'amount' => $amount,
                         'transaction_id' => $cart->id
                     ]);
                     $cart = $cart->refresh();

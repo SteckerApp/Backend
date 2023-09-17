@@ -140,6 +140,80 @@ class AdminOverviewController extends Controller
         return $this->successResponse($data, 'Operation successful');
     }
 
+    public function getMonthOrderStats(Request $request)
+    {
+        $currentMonth = Carbon::now()->month;
+        $currentYear = Carbon::now()->year;
+        $rev_naira = CompanySubscription::
+            whereMonth('payment_date', $currentMonth)
+            ->whereYear('payment_date', $currentYear)
+            ->where('payment_status', 'paid')
+            ->whereHas('subscription', function($q){
+                $q->where('currency', 'NGN');
+            })
+            ->count();
+        $rev_dollar = CompanySubscription::
+            whereMonth('payment_date', $currentMonth)
+            ->whereYear('payment_date', $currentYear)
+            ->where('payment_status', 'paid')
+            ->whereHas('subscription', function($q){
+                $q->where('currency', 'USD');
+            })
+            ->count();
+
+        $aff_naira = CompanySubscription::
+            whereMonth('company_subscription.payment_date', $currentMonth)
+            ->whereYear('company_subscription.payment_date', $currentYear)
+            ->where('company_subscription.payment_status', 'paid')
+            ->join('affiliates', 'affiliates.user_id', '=', 'company_subscription.user_id')
+            ->where('affiliates.status', 'paid')
+            ->whereHas('subscription', function($q){
+                $q->where('currency', 'NGN');
+            })
+            ->count();
+        $aff_dollar = CompanySubscription::
+            whereMonth('company_subscription.payment_date', $currentMonth)
+            ->whereYear('company_subscription.payment_date', $currentYear)
+            ->where('company_subscription.payment_status', 'paid')
+            ->join('affiliates', 'affiliates.user_id', '=', 'company_subscription.user_id')
+            ->where('affiliates.status', 'paid')
+            ->whereHas('subscription', function($q){
+                $q->where('currency', 'USD');
+            })
+            ->count();
+
+        $promo_naira = DB::table('coupon_transaction')
+            ->join('coupons', 'coupon_transaction.coupon_id', '=', 'coupons.id')
+            ->whereMonth('coupon_transaction.created_at', $currentMonth)
+            ->whereYear('coupon_transaction.created_at', $currentYear)
+            ->where('coupons.currency', 'NGN')
+            ->sum('coupon_transaction.amount');
+        
+        $promo_dollar = DB::table('coupon_transaction')
+            ->join('coupons', 'coupon_transaction.coupon_id', '=', 'coupons.id')
+            ->whereMonth('coupon_transaction.created_at', $currentMonth)
+            ->whereYear('coupon_transaction.created_at', $currentYear)
+            ->where('coupons.currency', 'USD')
+            ->sum('coupon_transaction.amount');
+        // $tot_reffered = Affiliate::
+        //     whereMonth('created_at', $currentMonth)
+        //     ->whereYear('created_at', $currentYear)
+        //     ->where('status', 'paid')
+        //     ->count();
+      
+       $data = [
+            'revenue_naira' => $rev_naira * env('AFFILATE_AMOUNT'),
+            'revenue_dollar' => $rev_dollar * env('AFFILATE_AMOUNT_DOLLAR'),
+            'affiliate_payout_naira' => $aff_naira * env('AFFILATE_AMOUNT'),
+            'affiliate_payout_dollar' => $aff_dollar * env('AFFILATE_AMOUNT_DOLLAR'),
+            'promo_redeemed_naira' => $promo_naira,
+            'promo_redeemed_dollar' => $promo_dollar,
+
+       ];
+
+        return $this->successResponse($data, 'Operation successful');
+    }
+
     public function getUserOverview(Request $request)
     {
         $page = $request->input('perPage') ?? 10;
@@ -208,6 +282,71 @@ class AdminOverviewController extends Controller
                     ->paginate($page);
       
        $data = PayoutOverviewResource::collection($users);
+
+        return $this->successResponse($data, 'Operation successful');
+    }
+
+    public function getMonthAffiliateStats(Request $request)
+    {
+        $currentMonth = Carbon::now()->month;
+        $currentYear = Carbon::now()->year;
+      
+        $aff_paid_dollar = CompanySubscription::
+            whereMonth('company_subscription.payment_date', $currentMonth)
+            ->whereYear('company_subscription.payment_date', $currentYear)
+            ->where('company_subscription.payment_status', 'paid')
+            ->join('affiliates', 'affiliates.user_id', '=', 'company_subscription.user_id')
+            ->where('affiliates.status', 'paid')
+            ->whereHas('subscription', function($q){
+                $q->where('currency', 'USD');
+            })
+            ->count();
+        
+        $aff_paid_naira = CompanySubscription::
+            whereMonth('company_subscription.payment_date', $currentMonth)
+            ->whereYear('company_subscription.payment_date', $currentYear)
+            ->where('company_subscription.payment_status', 'paid')
+            ->join('affiliates', 'affiliates.user_id', '=', 'company_subscription.user_id')
+            ->where('affiliates.status', 'paid')
+            ->whereHas('subscription', function($q){
+                $q->where('currency', 'NGN');
+            })
+            ->count();
+
+        $aff_dollar = CompanySubscription::
+            whereMonth('company_subscription.payment_date', $currentMonth)
+            ->whereYear('company_subscription.payment_date', $currentYear)
+            ->where('company_subscription.payment_status', 'paid')
+            ->join('affiliates', 'affiliates.user_id', '=', 'company_subscription.user_id')
+            ->whereHas('subscription', function($q){
+                $q->where('currency', 'USD');
+            })
+            ->count();
+        
+        $aff_naira = CompanySubscription::
+            whereMonth('company_subscription.payment_date', $currentMonth)
+            ->whereYear('company_subscription.payment_date', $currentYear)
+            ->where('company_subscription.payment_status', 'paid')
+            ->join('affiliates', 'affiliates.user_id', '=', 'company_subscription.user_id')
+            ->whereHas('subscription', function($q){
+                $q->where('currency', 'NGN');
+            })
+            ->count();
+    
+        $tot_reffered = Affiliate::
+            whereMonth('created_at', $currentMonth)
+            ->whereYear('created_at', $currentYear)
+            ->where('status', 'paid')
+            ->count();
+      
+       $data = [
+            'total_affiliate_naira' => $aff_naira,
+            'total_affiliate_dollar' => $aff_dollar,
+            'total_affiliate_paid_naira' => $aff_paid_naira,
+            'affiliate_payout_paid_dollar' => $aff_paid_dollar,
+            'total_reffered' =>  $tot_reffered,
+
+       ];
 
         return $this->successResponse($data, 'Operation successful');
     }

@@ -21,6 +21,7 @@ return new class extends Migration
             $table->string('duration');
             $table->integer('unit');
             $table->string('total');
+            // $table->integer('amount')->nullable();
             $table->foreignId('company_id')->references('id')->on('companies');
             // $table->dateTime('payment_date')->nullable();
             // $table->dateTime('start_date')->nullable();

@@ -12,7 +12,7 @@ class Cart extends Model
     use HasFactory;
 
     protected $fillable = [
-        'reference','subtotal','total','status', 'user_id'
+        'reference','subtotal','total','status', 'user_id','main_subscription_id'
     ];
 
     public const STATUS = [
