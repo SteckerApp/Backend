@@ -31,6 +31,7 @@ return new class extends Migration
             $table->integer('user_limit')->nullable();
             $table->integer('design_limit')->nullable();
             $table->string('category')->default('main');
+            $table->string('group_identifier');
             $table->timestamps();
         });
     }

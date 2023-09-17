@@ -30,6 +30,7 @@ class WorkSpaceResource extends JsonResource
         })->whereCompanyId($this->id)->get();
         
         $admin_users = User::with('roles')->where('user_type', 'admin')->get();
+        $data = ['user'=> $admin_users];
 
         return [
             'company_id' => $this->id,
@@ -50,7 +51,7 @@ class WorkSpaceResource extends JsonResource
                         ])->count(),
             'subscription' => $activeSubscription->subscription,
             'company_users' => $company_users,
-            'admin_users' => $admin_users,
+            'admin_users' => $data,
             'last_request_date' =>  ProjectRequest::whereCompanyId($this->id)->latest()->first()->created_at,
         ];
     }
