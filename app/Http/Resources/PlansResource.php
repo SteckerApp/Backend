@@ -23,6 +23,7 @@ class PlansResource extends JsonResource
             'show_in_catalogue' => $this->visible,
             'most_popular' => $this->most_popular,
             'price' => $this->price,
+            'currency' => $this->currency,
             'type' => $this->type,
             'sales' => CompanySubscription::where('subscription_id', $this->id)->count(),
             'created' => $this->created_at,

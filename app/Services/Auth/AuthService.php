@@ -76,7 +76,11 @@ class AuthService
 
                     $user->assignRole('client');
                 }
-            } else {
+            }
+            else if($request->has('role')){
+                $user->assignRole($request->role);
+            }
+            else {
                 $user->assignRole('client');
             }
 
