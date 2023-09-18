@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Resources\AdminTeamResource;
+use App\Mail\AdminInvitationMail;
 use App\Models\User;
 use App\Models\Invite;
 use App\Models\Company;
@@ -33,6 +34,18 @@ class TeamController extends Controller
         $teams = User::where('user_type', 'admin')->get();
 
         $teams = AdminTeamResource::collection($teams);
+
+        return $this->successResponse($teams);
+    }
+
+    public function removeAdminTeammember(Request $request)
+    {
+
+        $teams = User::whereId($request->user_id)->first();
+
+        $teams->user_type = "client";
+
+        $teams->save();
 
         return $this->successResponse($teams);
     }
@@ -159,5 +172,28 @@ class TeamController extends Controller
         } else {
             $mail->send(new InvitationMail($name, $company, $owner));
         }
+    }
+
+    protected function inviteAdmin(Request $request)
+    {
+
+        $this->validate($request, [
+            'email' => 'required|email',
+            'role' => 'required|string'
+        ]);
+
+        $mail = Mail::to($request->email);
+
+        $url = "";
+
+        // send mail of verification code
+        if (env('APP_SYSTEM_STACK') == 'queue') {
+            $mail->queue(new AdminInvitationMail($request->email, $request->role, $url));
+        } else {
+            $mail->send(new AdminInvitationMail($request->email, $request->role, $url));
+        }
+
+        return $this->successResponse(null, 'Invitation mail sent successfully');
+
     }
 }

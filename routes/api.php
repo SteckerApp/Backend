@@ -248,7 +248,9 @@ Route::middleware('auth:sanctum')->group(function () {
         // ->middleware(['permission:admin can view workspace'])
         ->group(function(){
             Route::get('/get_admin_teams', [TeamController::class, 'getAdminTeam']);
-            Route::get('/remove_member', [TeamController::class, 'removeAdminTeammember']);
+            Route::post('/remove_member', [TeamController::class, 'removeAdminTeammember']);
+            Route::post('/invite_admin', [TeamController::class, 'inviteAdmin']);
+
         });
 
 

@@ -56,6 +56,13 @@ class RolesAndPermissionsController extends Controller
             // Handle role not found error
             return $this->errorResponse(false, 'Rolenot found!', 404);
         }
+
+        $permissionIds = $request->input('permission_ids'); 
+
+        $permissions = Permission::whereIn('id', $permissionIds)->get();
+
+        $role->syncPermissions($permissions);
+
         $role->name = $request->role_name;
         $role->save();
 

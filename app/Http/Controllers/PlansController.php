@@ -17,7 +17,10 @@ class PlansController extends Controller
             $query->where('default', true);
         })
         ->when($request->input('type') == "addon", function ($query) use ($request) {
-            $query->where('default', true);
+            $query->where('default', false);
+        })
+        ->when($request->input('currency'), function ($query) use ($request) {
+            $query->where('currency', $request->currency);
         })
         ->whereNotIn('id', [1])->get();
 
