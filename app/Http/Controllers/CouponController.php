@@ -200,7 +200,12 @@ class CouponController extends Controller
             $query->whereMonth('created_at', Carbon::now()->month);
         });
         $response = [
-            'redemption_amount'  => $redemption->sum('discounted->amount'),
+            'redemption_amount_naira'  => $redemption->whereHas('subscription', function($q){
+                $q->where('currency', 'NGN');
+            })->sum('discounted->amount'),
+            'redemption_amount_dollar'  => $redemption->whereHas('subscription', function($q){
+                $q->where('currency', 'USD');
+            })->sum('discounted->amount'),
             'redemption_total' => $redemption->count(),
             'redemption_new' => $redemption->whereBetween('created_at', [
                 Carbon::now()->subDays(30)->startOfDay()->toDateString(),
