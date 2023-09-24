@@ -31,6 +31,11 @@ class Cart extends Model
         return $this->hasMany(Transaction::class, 'reference', 'reference');
     }
 
+    public function subscription(): HasMany
+    {
+        return $this->hasMany(Subscription::class, 'id', 'main_subscription_id');
+    }
+
     protected $casts = [
         'discounted' => 'array',
     ];
