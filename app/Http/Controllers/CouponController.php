@@ -44,6 +44,15 @@ class CouponController extends Controller
                 }
             }
 
+            //check coupon has reached maximum usage limt
+            $usage_count = DB::table('coupon_transaction')
+                ->where('coupon_id', $code->id)->count();
+            
+            if ($code->no_of_usage >= $usage_count ) {
+                return $this->errorResponse('Coupon has exceeded it limit', 422);
+            }
+
+
             $checkRecord = DB::table('coupon_transaction')
                 ->where(function ($query) use ($authUser) {
                     return $query->where('user_id', $authUser->id)
@@ -227,6 +236,8 @@ class CouponController extends Controller
             'ends' => 'sometimes|date|nullable',
             'subscriptions' => ['sometimes', 'array', 'nullable', new ValidSubscriptionIds],
             'recurring' => 'sometimes|nullable',
+            'no_of_usage' => 'sometimes|nullable',
+
         ]);
 
         $request->merge([
@@ -249,7 +260,8 @@ class CouponController extends Controller
             'start',
             'ends',
             'created_by',
-            'recurring'
+            'recurring',
+            'no_of_usage'
         ]));
 
         $created->subscriptions()->sync($request->subscriptions);
@@ -270,6 +282,8 @@ class CouponController extends Controller
             'ends' => 'sometimes|date|nullable',
             'subscriptions' => ['sometimes', 'array', 'nullable', new ValidSubscriptionIds],
             'recurring' => 'sometimes|nullable',
+            'no_of_usage' => 'sometimes|nullable',
+
         ]);
 
         $coupon->fill(
@@ -280,7 +294,8 @@ class CouponController extends Controller
                 'amount',
                 'start',
                 'ends',
-                'recurring'
+                'recurring',
+                'no_of_usage'
             ])
         );
         $coupon->subscriptions()->sync($request->subscriptions);

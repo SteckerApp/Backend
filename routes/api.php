@@ -129,7 +129,7 @@ Route::middleware('auth:sanctum')->group(function () {
             Route::delete('/{id}', [BrandController::class, 'destroy']);
         });
 
-        Route::prefix('teams')->middleware(['can:teams-managment', 'check_subscription'])->group(function () {
+        Route::prefix('teams')->middleware(['can:teams-managment'])->group(function () {
             Route::get('/', [TeamController::class, 'index']);
             Route::post('/invite', [TeamController::class, 'invite']);
             Route::post('/invite/check/{id}', [TeamController::class, 'check']);
