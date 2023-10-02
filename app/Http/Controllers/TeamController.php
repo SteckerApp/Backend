@@ -31,7 +31,7 @@ class TeamController extends Controller
     public function getAdminTeam()
     {
 
-        $teams = User::where('user_type', 'admin')->get();
+        $teams = User::where('user_type', 'admin', 'roles')->get();
 
         $teams = AdminTeamResource::collection($teams);
 
@@ -176,24 +176,23 @@ class TeamController extends Controller
 
     protected function inviteAdmin(Request $request)
     {
-
-        $this->validate($request, [
-            'email' => 'required|email',
-            'role' => 'required|string'
-        ]);
+        // $this->validate($request, [
+        //     'email' => 'required|email',
+        //     'role' => 'required|string'
+        // ]);
 
         $mail = Mail::to($request->email);
 
         $url = "";
 
         // send mail of verification code
-        if (env('APP_SYSTEM_STACK') == 'queue') {
-            $mail->queue(new AdminInvitationMail($request->email, $request->role, $url));
-        } else {
-            $mail->send(new AdminInvitationMail($request->email, $request->role, $url));
-        }
+        // if (env('APP_SYSTEM_STACK') == 'queue') {
+        //     $mail->queue(new AdminInvitationMail($request->email, $request->role, $url));
+        // } else {
+        //     $mail->send(new AdminInvitationMail($request->email, $request->role, $url));
+        // }
 
-        return $this->successResponse(null, 'Invitation mail sent successfully');
+        return $this->successResponse("", 'Invitation mail sent successfully');
 
     }
 }

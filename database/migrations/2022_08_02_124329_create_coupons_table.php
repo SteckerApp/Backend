@@ -22,6 +22,7 @@ return new class extends Migration
             $table->integer('amount')->nullable();
             $table->string('currency')->nullable();
             $table->integer('recurring')->nullable();
+            $table->integer('no_of_usage')->nullable();
             $table->dateTime('start');
             $table->dateTime('ends')->nullable();
             $table->enum('status', ['active','in-active'])->default('active');

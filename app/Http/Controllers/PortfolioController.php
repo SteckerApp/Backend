@@ -54,14 +54,22 @@ class PortfolioController extends Controller
     {
         $this->validate($request, [
             'portfolio_category_id' => 'required',
-            'links' => 'required|array',
+            'videos' => 'required|array',
         ]);
 
-        foreach ($request->input('links') as $link) {
+        foreach ($request->input('videos') as $video) {
+
+            $link = $video['link'];
+	        $thumbnail = $video['thumbnail'];
+
+            $path = "/portfolio/thumbnail/".$request->portfolio_category_id;;
+            $name = $video['thumbnail']->getClientOriginalName();
+            $doc_link = uploadDocument($video['thumbnail'], $path, $name);
 
             $record = Portfolio::create([
                 'portfolio_category_id' => $request->portfolio_category_id,
                 'location' => $link,
+                'thumbnail' => $doc_link,
                 'type' => 'video',
             ]);
         }

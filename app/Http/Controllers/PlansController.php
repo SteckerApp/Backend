@@ -22,6 +22,9 @@ class PlansController extends Controller
         ->when($request->input('currency'), function ($query) use ($request) {
             $query->where('currency', $request->currency);
         })
+        ->when($request->input('billing_type'), function ($query) use ($request) {
+            $query->whereIn('type', $request->input('billing_type'));
+        })
         ->whereNotIn('id', [1])->get();
 
         $subscriptions= PlansResource::collection($subscriptions);
