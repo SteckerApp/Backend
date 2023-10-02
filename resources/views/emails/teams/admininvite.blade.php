@@ -1,7 +1,7 @@
 @component('mail::message')
 # Invitation Mail
 
-<!-- Hi {{ $name }}, -->
+Hi {{ config('app.name') }}, 
 
 You have been invited to join stecker as an .
 

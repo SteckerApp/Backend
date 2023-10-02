@@ -122,7 +122,8 @@ class subscriptionController extends Controller
         ]);
 
         Subscription::where('group_identifier', $request->group_identifier)->update([
-            'title' => $request->title
+            'title' => $request->title,
+            'description' => $request->description
         ]);
 
         $subscription = Subscription::find($id);
