@@ -236,6 +236,7 @@ class CouponController extends Controller
             'ends' => 'sometimes|date|nullable',
             'subscriptions' => ['sometimes', 'array', 'nullable', new ValidSubscriptionIds],
             'recurring' => 'sometimes|nullable',
+            'currency' => 'sometimes|nullable',
             'no_of_usage' => 'sometimes|nullable',
 
         ]);
@@ -261,6 +262,7 @@ class CouponController extends Controller
             'ends',
             'created_by',
             'recurring',
+            'currency',
             'no_of_usage'
         ]));
 

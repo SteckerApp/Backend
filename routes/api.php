@@ -300,6 +300,17 @@ Route::middleware('auth:sanctum')->group(function () {
 
 });
 
-Route::get('/test', [PaymentController::class, 'test']);
+Route::post('/test', function(){
+    return response()->json([
+        "status" => true,
+        "data" => [
+            'firstname' => "John",
+            'lastname' => "Temitope",
+            'email' => "soge.tope@gmail.com",
+            'telephone' => "07039566540",
+
+        ],
+    ], 200);
+});
 Route::post('/payment/webhook', [PaymentController::class, 'handleWebhook']);
 

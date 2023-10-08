@@ -19,6 +19,7 @@ class PlansResource extends JsonResource
         return [
             'subscription_id' => $this->id,
             'name' => $this->title,
+            'description' => $this->description,
             'group_identifier' => $this->group_identifier,
             'show_in_catalogue' => $this->visible,
             'most_popular' => $this->most_popular,

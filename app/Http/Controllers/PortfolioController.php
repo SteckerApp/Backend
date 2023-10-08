@@ -3,9 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Models\Portfolio;
-use App\Models\PortfolioCategory;
 use Illuminate\Http\Request;
 use App\Trait\HandleResponse;
+use App\Models\PortfolioCategory;
+use Illuminate\Support\Facades\Log;
 
 
 class PortfolioController extends Controller
@@ -52,6 +53,7 @@ class PortfolioController extends Controller
 
     public function storeVideos(Request $request)
     {
+        Log::error($request->all());
         $this->validate($request, [
             'portfolio_category_id' => 'required',
             'videos' => 'required|array',
