@@ -22,7 +22,7 @@ class TeamController extends Controller
     {
 
         $teams = Company::whereId(getActiveWorkSpace()->id)
-            ->with('users')
+            ->with('users.roles')
             ->get();
 
         return $this->successResponse($teams);
