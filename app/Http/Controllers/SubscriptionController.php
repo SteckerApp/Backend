@@ -72,7 +72,7 @@ class subscriptionController extends Controller
             'description' => $request->description,
             'price' => $request->price,
             'type' => $request->type,
-            'metadata' => $request->metadata,
+            'metadata' => $request->features,
             'default' => $request->default,
             'info' => $request->info,
             'discounted' => $request->discounted,
@@ -123,29 +123,17 @@ class subscriptionController extends Controller
 
         Subscription::where('group_identifier', $request->group_identifier)->update([
             'title' => $request->title,
-            'description' => $request->description
+            'description' => $request->description,
+            'metadata' => $request->features
         ]);
 
         $subscription = Subscription::find($id);
 
-        $subscription->fill($request->only([
-            'title',
-            'description',
-            'price',
-            'type',
-            'metadata',
-            'default',
-            'info',
-            'discounted',
-            'currency',
-            'order',
-            'user_limit',
-            'design_limit',
-        ]));
+        $subscription->price = $request->price;
+        $subscription->discounted = $request->discount;
+        $subscription->save_up_to = $request->slash;
 
-        $subscription->update();
-
-
+        $subscription->save();
 
         return $this->successResponse($subscription, 'Subscription updated successfully', 200);
     }
