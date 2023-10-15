@@ -26,6 +26,8 @@ class PlansResource extends JsonResource
             'price' => $this->price,
             'currency' => $this->currency,
             'features' => $this->metadata,
+            'slash' => $this->save_up_to,
+            'discount' => $this->discounted,
             'type' => $this->type,
             'sales' => CompanySubscription::where('subscription_id', $this->id)->count(),
             'created' => $this->created_at,
