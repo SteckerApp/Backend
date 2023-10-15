@@ -53,20 +53,20 @@ class PortfolioController extends Controller
 
     public function storeVideos(Request $request)
     {
-        Log::error($request->all());
         $this->validate($request, [
             'portfolio_category_id' => 'required',
             'videos' => 'required|array',
         ]);
 
-        foreach ($request->input('videos') as $video) {
+
+        foreach ($request->videos as $video) {
 
             $link = $video['link'];
 	        $thumbnail = $video['thumbnail'];
 
             $path = "/portfolio/thumbnail/".$request->portfolio_category_id;;
-            $name = $video['thumbnail']->getClientOriginalName();
-            $doc_link = uploadDocument($video['thumbnail'], $path, $name);
+            $name = $thumbnail->getClientOriginalName();
+            $doc_link = uploadDocument($thumbnail, $path, $name);
 
             $record = Portfolio::create([
                 'portfolio_category_id' => $request->portfolio_category_id,

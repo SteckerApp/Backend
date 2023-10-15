@@ -279,7 +279,7 @@ class CouponController extends Controller
             'code' => 'required|string',
             'name' => 'required|string',
             'type' => 'required|string',
-            'amount' => 'sometimes|string|nullable',
+            'amount' => 'sometimes|nullable',
             'start' => 'required|date',
             'ends' => 'sometimes|date|nullable',
             'subscriptions' => ['sometimes', 'array', 'nullable', new ValidSubscriptionIds],
