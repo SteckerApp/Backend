@@ -40,12 +40,12 @@ class CouponResource extends JsonResource
             'plans' => DB::table('coupon_subscription')
                         ->join('subscriptions', 'coupon_subscription.subscription_id', '=', 'subscriptions.id')
                         ->where([
-                            "coupon_subscription.subscription_id" => $this->id
+                            "coupon_subscription.coupon_id" => $this->id
                         ])->get(),
             'billing_types' => DB::table('coupon_subscription')
                         ->join('subscriptions', 'coupon_subscription.subscription_id', '=', 'subscriptions.id')
                         ->where([
-                            "coupon_subscription.subscription_id" => $this->id
+                            "coupon_subscription.coupon_id" => $this->id
                         ])
                         ->groupBy('subscriptions.type')
                         ->pluck('subscriptions.type'),
