@@ -19,6 +19,7 @@ class AffiliateOverviewResource extends JsonResource
         // return parent::toArray($request);
         return [
             'full_name' => $this->user->first_name. " ". $this->user->last_name,
+            'avatar' => $this->user->avatar,
             'email' => $this->user->email,
             'referral_code' => $this->code,
             'total_commission' => Affiliate::where("user_id", $this->user_id)
