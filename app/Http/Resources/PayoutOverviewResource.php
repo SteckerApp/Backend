@@ -19,6 +19,7 @@ class PayoutOverviewResource extends JsonResource
             'payout_id' => $this->id,
             'full_name' => $this->user->first_name. " ". $this->user->last_name,
             'email' => $this->user->email,
+            'avatar' => $this->user->avatar,
             'amount' => $this->amount,
             'day_requested' => $this->created_at,
             'day_approved' => $this->approval_date,

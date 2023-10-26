@@ -23,11 +23,13 @@ class OrderOverviewResource extends JsonResource
             'email' => $this->user->email,
             'avatar' => $this->user->avatar,
             'plan' => $this->subscription->title,
-            'status' => $this->status,
+            'status' => $this->payment_status,
             'workspace' => $this->company->name,
             'end_date' => $this->end_date,
             'fee' => $this->subscription->price,
             'currency' => $this->subscription->currency,
+            'promo_code' => null
+
 
         ];
     }
