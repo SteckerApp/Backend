@@ -23,6 +23,7 @@ class PayoutOverviewResource extends JsonResource
             'amount' => $this->amount,
             'day_requested' => $this->created_at,
             'day_approved' => $this->approval_date,
+            'payment_mode' => "Paystack",
             'status' => $this->status,
         ];
     }
