@@ -17,7 +17,7 @@ class OrderOverviewResource extends JsonResource
         // return parent::toArray($request);
 
         return [
-            'order_number' => $this->id,
+            'order_number' =>  sprintf("%04d", $this->id),
             'reference' => $this->reference,
             'full_name' => $this->user->first_name. " ". $this->user->last_name,
             'email' => $this->user->email,
