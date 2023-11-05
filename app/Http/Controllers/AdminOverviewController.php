@@ -117,7 +117,7 @@ class AdminOverviewController extends Controller
     public function getOrderOverview(Request $request)
     {
         $page = $request->input('perPage') ?? 10;
-        $orders = CompanySubscription::with(['user','subscription','company'])
+        $orders = CompanySubscription::with(['user','subscription.coupon','company'])
                     ->when($request->input('date_from'), function ($query) use ($request) {
                       $query->whereDate('created_at', '>=', Carbon::parse($request->input('date_from')));
                     })
@@ -200,6 +200,30 @@ class AdminOverviewController extends Controller
         //     ->whereYear('created_at', $currentYear)
         //     ->where('status', 'paid')
         //     ->count();
+
+        $plans = DB::table('subscriptions')
+                ->leftJoin('company_subscription', 'subscriptions.id', '=', 'company_subscription.subscription_id')
+                ->where('subscriptions.id', '!=', 1)
+                ->where('subscriptions.default', '=', 1)
+                ->select('subscriptions.title')
+                ->selectRaw('SUM(CASE WHEN subscriptions.currency = "NGN" THEN subscriptions.price ELSE 0 END) as amount_naira')
+                ->selectRaw('SUM(CASE WHEN subscriptions.currency = "USD" THEN subscriptions.price ELSE 0 END) as amount_dollar')
+                ->groupBy('subscriptions.title')
+                ->get();
+        $addons_naira = DB::table('subscriptions')
+        ->leftJoin('company_subscription', 'subscriptions.id', '=', 'company_subscription.subscription_id')
+        ->where('subscriptions.id', '!=', 1)
+        ->where('subscriptions.default', '=', 0)
+        ->selectRaw('SUM(CASE WHEN subscriptions.currency = "NGN" THEN subscriptions.price ELSE 0 END) as amount_naira')
+        ->first();
+
+        $addons_dollar = DB::table('subscriptions')
+        ->leftJoin('company_subscription', 'subscriptions.id', '=', 'company_subscription.subscription_id')
+        ->where('subscriptions.id', '!=', 1)
+        ->where('subscriptions.default', '=', 0)
+        ->selectRaw('SUM(CASE WHEN subscriptions.currency = "USD" THEN subscriptions.price ELSE 0 END) as amount_dollar')
+        ->first();
+
       
        $data = [
             'revenue_naira' => $rev_naira * env('AFFILATE_AMOUNT'),
@@ -208,7 +232,9 @@ class AdminOverviewController extends Controller
             'affiliate_payout_dollar' => $aff_dollar * env('AFFILATE_AMOUNT_DOLLAR'),
             'promo_redeemed_naira' => $promo_naira,
             'promo_redeemed_dollar' => $promo_dollar,
-
+            'plans' => $plans,
+            'addons_naira' => $addons_naira->amount_naira,
+            'addons_dollar' => $addons_dollar->amount_dollar
        ];
 
         return $this->successResponse($data, 'Operation successful');
@@ -244,7 +270,8 @@ class AdminOverviewController extends Controller
                     // ->select('company_subscription.user_id', DB::raw('COUNT(*) as subscription_count'))
                     ->groupBy('user_id')
                     ->paginate($page);
-      
+
+        return $users;
        $data = CustomerOverviewResource::collection($users);
 
         return $this->successResponse($data, 'Operation successful');

@@ -28,7 +28,7 @@ class OrderOverviewResource extends JsonResource
             'end_date' => $this->end_date,
             'fee' => $this->subscription->price,
             'currency' => $this->subscription->currency,
-            'promo_code' => null
+            'promo_code' => $this->subscription?->coupon?->code
 
 
         ];
