@@ -14,7 +14,7 @@ class ProjectMessageController extends Controller
     use HandleResponse;
     public function fetchMessages($project_id)
     {
-        $messages = ProjectMessage::with('user:id,avatar')->where('project_id',$project_id)->get();
+        $messages = ProjectMessage::with('user.roles')->where('project_id',$project_id)->get();
 
         return $this->successResponse($messages , '', 200);
     }
@@ -27,7 +27,9 @@ class ProjectMessageController extends Controller
             'project_id' => $request->project_id,
         ]);
 
-        broadcast(new MessageSent($user, $message))->toOthers();
+        // broadcast(new MessageSent($user, $message))->toOthers();
+        event(new MessageSent($user, $message));
+
         return $this->successResponse(true , 'Message Sent', 200);
     }
 

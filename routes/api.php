@@ -167,7 +167,7 @@ Route::middleware('auth:sanctum')->group(function () {
             Route::delete('/{id}', [ProjectRequestController::class, 'destroy'])->middleware(['can:client can delete request']);
 
             Route::prefix('messages')
-            ->middleware(['can:client can view requests'])
+            // ->middleware(['can:client can view requests'])
             ->group(function () {
                 Route::get('/{project_id}', [ProjectMessageController::class, 'fetchMessages']);
                 Route::post('/', [ProjectMessageController::class, 'sendMessage']);
