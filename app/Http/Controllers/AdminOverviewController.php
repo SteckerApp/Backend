@@ -128,9 +128,13 @@ class AdminOverviewController extends Controller
                         $query->whereMonth('created_at', Carbon::now()->month);
                     })
                     ->when($request->input('search'), function ($query) use ($request) {
-                        $query->where('reference', 'like', '%' . $request->input('search') . '%')
-                        ->orWhere('users.first_name', 'like', '%' . $request->input('search') . '%')
-                        ->orWhere('users.last_name', 'like', '%' . $request->input('search') . '%');
+                        $query->where(function ($query) use ($request) {
+                            $query->where('reference', 'like', '%' . $request->input('search') . '%')
+                                ->orWhereHas('user', function ($query) use ($request) {
+                                    $query->where('first_name', 'like', '%' . $request->input('search') . '%')
+                                        ->orWhere('last_name', 'like', '%' . $request->input('search') . '%');
+                                });
+                        });
                     })
                     ->paginate($page);
 
@@ -210,19 +214,29 @@ class AdminOverviewController extends Controller
                 ->selectRaw('SUM(CASE WHEN subscriptions.currency = "USD" THEN subscriptions.price ELSE 0 END) as amount_dollar')
                 ->groupBy('subscriptions.title')
                 ->get();
-        $addons_naira = DB::table('subscriptions')
-        ->leftJoin('company_subscription', 'subscriptions.id', '=', 'company_subscription.subscription_id')
-        ->where('subscriptions.id', '!=', 1)
-        ->where('subscriptions.default', '=', 0)
-        ->selectRaw('SUM(CASE WHEN subscriptions.currency = "NGN" THEN subscriptions.price ELSE 0 END) as amount_naira')
-        ->first();
+        // $addons_naira = DB::table('subscriptions')
+        // ->leftJoin('company_subscription', 'subscriptions.id', '=', 'company_subscription.subscription_id')
+        // ->where('subscriptions.id', '!=', 1)
+        // ->where('subscriptions.default', '=', 0)
+        // ->selectRaw('SUM(CASE WHEN subscriptions.currency = "NGN" THEN subscriptions.price ELSE 0 END) as amount_naira')
+        // ->first();
 
-        $addons_dollar = DB::table('subscriptions')
+        // $addons_dollar = DB::table('subscriptions')
+        // ->leftJoin('company_subscription', 'subscriptions.id', '=', 'company_subscription.subscription_id')
+        // ->where('subscriptions.id', '!=', 1)
+        // ->where('subscriptions.default', '=', 0)
+        // ->selectRaw('SUM(CASE WHEN subscriptions.currency = "USD" THEN subscriptions.price ELSE 0 END) as amount_dollar')
+        // ->first();
+
+        $addons =  DB::table('subscriptions')
         ->leftJoin('company_subscription', 'subscriptions.id', '=', 'company_subscription.subscription_id')
         ->where('subscriptions.id', '!=', 1)
         ->where('subscriptions.default', '=', 0)
+        ->select('subscriptions.title')
+        ->selectRaw('SUM(CASE WHEN subscriptions.currency = "NGN" THEN subscriptions.price ELSE 0 END) as amount_naira')
         ->selectRaw('SUM(CASE WHEN subscriptions.currency = "USD" THEN subscriptions.price ELSE 0 END) as amount_dollar')
-        ->first();
+        ->groupBy('subscriptions.title')
+        ->get();
 
       
        $data = [
@@ -233,8 +247,9 @@ class AdminOverviewController extends Controller
             'promo_redeemed_naira' => $promo_naira,
             'promo_redeemed_dollar' => $promo_dollar,
             'plans' => $plans,
-            'addons_naira' => $addons_naira->amount_naira,
-            'addons_dollar' => $addons_dollar->amount_dollar
+            'addons' =>  $addons
+            // 'addons_naira' => $addons_naira->amount_naira,
+            // 'addons_dollar' => $addons_dollar->amount_dollar
        ];
 
         return $this->successResponse($data, 'Operation successful');
@@ -244,13 +259,16 @@ class AdminOverviewController extends Controller
     {
         $page = $request->input('perPage') ?? 10;
         $users = User::with(['roles', 'companies:id,name'])
-                    ->when($request->input('search'), function ($query) use ($request) {
-                        $query->where('email', 'like', '%' . $request->input('search') . '%')
-                        ->orWhere('first_name', 'like', '%' . $request->input('search') . '%')
-                        ->orWhere('last_name', 'like', '%' . $request->input('search') . '%')
-                        ->orWhere('roles.name', 'like', '%' . $request->input('search') . '%');
-                    })
-                    ->paginate($page);
+        ->when($request->input('search'), function ($query) use ($request) {
+            $query->where(function ($query) use ($request) {
+                $query->where('email', 'like', '%' . $request->input('search') . '%')
+                    ->orWhere('first_name', 'like', '%' . $request->input('search') . '%')
+                    ->orWhere('last_name', 'like', '%' . $request->input('search') . '%')
+                    ->orWhereHas('roles', function ($query) use ($request) {
+                        $query->where('name', 'like', '%' . $request->input('search') . '%');
+                    });
+            });
+        })->paginate($page);
       
        $data = UserOverviewResource::collection($users);
 
@@ -262,12 +280,12 @@ class AdminOverviewController extends Controller
         $page = $request->input('perPage') ?? 10;
         $users = CompanySubscription::with(['company.project_manager','user','subscription:id,title'])
                     ->when($request->input('search'), function ($query) use ($request) {
-                        $query->where('users.email', 'like', '%' . $request->input('search') . '%')
-                        ->orWhere('users.first_name', 'like', '%' . $request->input('search') . '%')
-                        ->orWhere('users.last_name', 'like', '%' . $request->input('search') . '%')
-                        ->orWhere('reference', 'like', '%' . $request->input('search') . '%');
+                        $query->whereHas('user', function ($query) use ($request) {
+                            $query->where('first_name', 'like', '%' . $request->input('search') . '%')
+                                ->orWhere('last_name', 'like', '%' . $request->input('search') . '%')
+                                ->orWhere('users.email', 'like', '%' . $request->input('search') . '%');
+                        });
                     })
-                    // ->select('company_subscription.user_id', DB::raw('COUNT(*) as subscription_count'))
                     ->groupBy('user_id')
                     ->paginate($page);
 
@@ -281,12 +299,12 @@ class AdminOverviewController extends Controller
     {
         $page = $request->input('perPage') ?? 10;
         $users = Affiliate::with(['company','user'])
-                    // ->join('coupons', 'coupons.created_by', 'affiliates.referral_id')
                     ->when($request->input('search'), function ($query) use ($request) {
-                        $query->where('users.email', 'like', '%' . $request->input('search') . '%')
-                        ->orWhere('users.first_name', 'like', '%' . $request->input('search') . '%')
-                        ->orWhere('users.last_name', 'like', '%' . $request->input('search') . '%')
-                        ->orWhere('reference', 'like', '%' . $request->input('search') . '%');
+                        $query->whereHas('user', function ($query) use ($request) {
+                            $query->where('first_name', 'like', '%' . $request->input('search') . '%')
+                                ->orWhere('last_name', 'like', '%' . $request->input('search') . '%')
+                                ->orWhere('users.email', 'like', '%' . $request->input('search') . '%');
+                        });
                     })
                     ->groupBy('user_id')
                     ->paginate($page);

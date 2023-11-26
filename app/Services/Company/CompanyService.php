@@ -14,7 +14,7 @@ class CompanyService
 
     public function createCompany($request)
     {
-/
+
         DB::beginTransaction();
 
         try {
@@ -48,6 +48,7 @@ class CompanyService
                 'name' => $request->name,
                 'description' => $request->description,
                 'hear_about_us' => $request->hear_about_us,
+                'location' => $request->location,
                 'account_manager' => $nextAccountManager->user_id
             ]);
 
