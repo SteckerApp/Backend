@@ -319,10 +319,11 @@ class AdminOverviewController extends Controller
         $page = $request->input('perPage') ?? 10;
         $users = Payout::with(['user'])
                     ->when($request->input('search'), function ($query) use ($request) {
-                        $query->where('users.email', 'like', '%' . $request->input('search') . '%')
-                        ->orWhere('users.first_name', 'like', '%' . $request->input('search') . '%')
-                        ->orWhere('users.last_name', 'like', '%' . $request->input('search') . '%')
-                        ->orWhere('reference', 'like', '%' . $request->input('search') . '%');
+                        $query->whereHas('user', function ($query) use ($request) {
+                            $query->where('first_name', 'like', '%' . $request->input('search') . '%')
+                                ->orWhere('last_name', 'like', '%' . $request->input('search') . '%')
+                                ->orWhere('users.email', 'like', '%' . $request->input('search') . '%');
+                        });
                     })
                     ->paginate($page);
       
