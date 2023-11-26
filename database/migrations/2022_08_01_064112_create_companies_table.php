@@ -20,6 +20,7 @@ return new class extends Migration
             $table->string('avatar')->nullable();
             $table->string('description')->nullable();
             $table->string('hear_about_us')->nullable();
+            $table->string('location')->nullable();
             $table->unsignedBigInteger('account_manager')->nullable();
             $table->foreign('account_manager')->references('id')->on('users');
             $table->json('card_authorization')->nullable();
