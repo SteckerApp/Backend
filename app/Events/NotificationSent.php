@@ -10,20 +10,28 @@ use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 
-class NewProjectRequestCreated
+class NotificationSent
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
-
-    public $project;
 
     /**
      * Create a new event instance.
      *
      * @return void
      */
-    public function __construct($project)
+ 
+    public $notification;
+
+
+
+
+    public function __construct( $notification = null)
     {
-        $this->project = $project;
+       
+        $this->notification = $notification;
+    
+
+
     }
 
     /**
@@ -31,8 +39,27 @@ class NewProjectRequestCreated
      *
      * @return \Illuminate\Broadcasting\Channel|array
      */
-    // public function broadcastOn()
-    // {
-    //     return new PrivateChannel('channel-name');
-    // }
+    public function broadcastOn()
+    {
+        // return new PrivateChannel('notification-channel');
+        return 'notification'.$this->notification->user_id;
+
+    }
+
+    public function broadcastAs()
+    {
+        return 'notification-sent';
+    }
+
+    /**
+     * Data to broadcast with the event.
+     *
+     * @return array
+     */
+    public function broadcastWith()
+    {
+        return [
+            'notification' => $this->notification,
+        ];
+    }
 }

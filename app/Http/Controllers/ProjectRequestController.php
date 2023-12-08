@@ -3,10 +3,11 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\ProjectRequest;
-use App\Services\ProjectRequest\ProjectRequestService;
 use App\Trait\HandleResponse;
+use App\Models\ProjectRequest;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use App\Services\ProjectRequest\ProjectRequestService;
 
 
 
@@ -139,6 +140,28 @@ class ProjectRequestController extends Controller
         return $this->successResponse($project, 'Project updated successfully', 200);
     }
 
+    public function setStatus(Request $request)
+    {
+        $this->validate($request, [
+            'project_id' => 'required',
+            'status' => 'required',
+        ]);
+
+        $project =  ProjectRequest::whereId($request->project_id)->firstOrFail();
+        $project->status = $request->status;
+        $project->save();
+
+        $message = $request->user()->messages()->create([
+            'message' => $request->user()->first_name. "Changed project status to ".$project->status,
+            'project_id' => $request->project_id,
+        ]);
+
+        $this->notify($request,$message,$request->project_id,"status");
+
+        
+        return $this->successResponse($project, 'Project status updated successfully', 200);
+    }
+
     /**
      * Remove the specified resource from storage.
      *
@@ -159,6 +182,25 @@ class ProjectRequestController extends Controller
         }
         return $this->errorResponse($projectRequest);
 
+    }
+
+    public function notify($request, $message, $project_id, $type)
+    {
+        $project_users = DB::table('project_user')->where('project_id', $project_id )->where('user_id', '!=', $request->user()->id)->get();
+
+            foreach($project_users as $project_user){
+
+                $data = [
+                    'user_id' => $project_user->user_id,
+                    'type' => $type ?? null,
+                    'project_id' => $request->project_id,
+                    'project_message_id' => $message->id,
+                    'commenter_id' => ($request->reply)? $request->reply : null
+                ];
+
+                $notification = new NotificationController();
+                $notification->store($data);
+            }
     }
 
 

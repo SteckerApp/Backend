@@ -114,7 +114,9 @@ Route::middleware('auth:sanctum')->group(function () {
     // Route::resource('requests', ProjectRequestController::class);
     // Route::resource('brands', BrandController::class);
 
-    Route::prefix('dashboard')->middleware('check_workspace')->group(function () {
+    Route::prefix('dashboard')
+   // ->middleware('check_workspace')
+    ->group(function () {
         Route::get('/', [DashboardController::class, 'home']);
         Route::post('/set_workspace/{company_id}', [DashboardController::class, 'setWorkspace']);
 
@@ -162,8 +164,14 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::prefix('requests')->group(function () {
             Route::get('/', [ProjectRequestController::class, 'index'])->middleware(['can:client can view requests']);
             Route::get('/{id}', [ProjectRequestController::class, 'show'])->middleware(['can:client can view requests']);
-            Route::post('/', [ProjectRequestController::class, 'store'])->middleware('can:client can create request','check_subscription');
+            Route::post('/', [ProjectRequestController::class, 'store'])
+            //->middleware('can:client can create request','check_subscription')
+            ;
             Route::put('/{id}', [ProjectRequestController::class, 'update'])->middleware(['can:client can edit request']);
+            Route::post('/set_status', [ProjectRequestController::class, 'setStatus'])
+            //->middleware(['can:client can edit request'])
+            ;
+
             Route::delete('/{id}', [ProjectRequestController::class, 'destroy'])->middleware(['can:client can delete request']);
 
             Route::prefix('messages')
@@ -182,6 +190,10 @@ Route::middleware('auth:sanctum')->group(function () {
             Route::get('/', [ProjectDeliverablesController::class, 'index']);
             Route::post('/upload_deliverables', [ProjectDeliverablesController::class, 'uploadDeliverables']);
             Route::delete('/{id}', [ProjectDeliverablesController::class, 'destroy']);
+        });
+
+        Route::prefix('notifications')->group(function () {
+            Route::get('/', [NotificationController::class, 'fetchNotifications']);
         });
 
     });

@@ -8,4 +8,21 @@ use Illuminate\Database\Eloquent\Model;
 class Notification extends Model
 {
     use HasFactory;
+    protected $guarded = [];
+
+    public function project()
+    {
+        return $this->belongsTo(ProjectRequest::class, 'project_id');
+    }
+
+    public function commenter()
+    {
+        return $this->belongsTo(User::class, 'commenter_id');
+    }
+
+    public function message()
+    {
+        return $this->belongsTo(ProjectMessage::class, 'commenter_id');
+    }
+
 }

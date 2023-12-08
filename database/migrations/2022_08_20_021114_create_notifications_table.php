@@ -15,11 +15,12 @@ return new class extends Migration
     {
         Schema::create('notifications', function (Blueprint $table) {
             $table->id();
-            $table->string('title');
-            $table->text('description');
             $table->foreignId('user_id')->constrained();
             $table->enum('type', ['status','comment','attachment',''])->nullable();
             $table->enum('read', ['true','false'])->nullable();
+            $table->foreignId('project_message_id')->nullable()->references('id')->on('project_messages');
+            $table->foreignId('project_id')->nullable()->references('id')->on('project_requests');
+            $table->foreignId('commenter_id')->nullable()->references('id')->on('users');
             $table->timestamps();
         });
     }
