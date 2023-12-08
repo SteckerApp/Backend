@@ -1,12 +1,14 @@
 <?php
 namespace App\Services\ProjectRequest;
 
+use App\Events\MessageSent;
 use Carbon\Carbon;
 use App\Models\ProjectUser;
 use App\Trait\HandleResponse;
 use App\Models\ProjectRequest;
 use App\Models\ProjectDeliverable;
 use App\Events\NewProjectRequestCreated;
+use App\Http\Controllers\NotificationController;
 use Illuminate\Support\Facades\DB;
 use App\Models\CompanySubscription;
 use App\Models\ProjectMessage;
@@ -76,15 +78,16 @@ class ProjectRequestService
             'user_id' => $user->id,
         ]);
         //add description to project messages
-        ProjectMessage::create([
+       $project_message = ProjectMessage::create([
             'user_id' => $request->user()->id,
             "project_id"=>  $project->id,
-            "type"=>  'text',
             "message"=>  $request->description,
         ]);
 
+        
         if($example_uploads)
         {
+            $type = 'attachment';
            foreach($example_uploads as $path)
            {
             $pathInfo = pathinfo($path);
@@ -92,20 +95,43 @@ class ProjectRequestService
             //add files to deliverables
                ProjectDeliverable::create([
                    "project_id"=>  $project->id,
+                   "project_message_id"=>  $project_message->id,
                    "title"=>  $fileName,
                    "location"=>  $path, 
                 'user_id' => $request->user()->id,
                ]);
-            //add files to project messages
-            ProjectMessage::create([
-                'user_id' => $request->user()->id,
-                "project_id"=>  $project->id,
-                "type"=>  'file',
-                "location"=>  $path,
-            ]);
+            // //add files to project messages
+            // ProjectMessage::create([
+            //     'user_id' => $request->user()->id,
+            //     "project_id"=>  $project->id
+            // ]);
            }
         }
-        // event(new NewProjectRequestCreated($project));
+        else{
+            $type = 'comment';
+
+        }
+        // $project_users = DB::table('project_user')->where('project_id', $project->id )->where('user_id', '!=', $request->user()->id)->get();
+
+        // dd($project->id);
+
+
+        // foreach($project_users as $project_user){
+
+
+            $data = [
+                'user_id' => getActiveWorkSpace()->account_manager,
+                'type' => $type,
+                'project_id' => $project->id,
+                'project_message_id' => $project_message->id,
+                'commenter_id' => null
+            ];
+            $notification = new NotificationController();
+            $notification->store($data);
+        // }
+
+        
+        // event(new MessageSent($project_message));
 
         return $this->successResponse($project, 'Project created successfully', 201);
 
@@ -127,6 +153,7 @@ class ProjectRequestService
 
                 $record = ProjectDeliverable::create([
                     'project_id' => $request->project_id,
+                    'project_message_id' => $request->project_message_id,
                     'location' => $doc_link,
                     'title' => $name,
                     'user_id' => auth()->user()->id,

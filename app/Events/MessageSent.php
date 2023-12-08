@@ -4,10 +4,13 @@ namespace App\Events;
 
 use App\Models\User;
 use App\Models\ProjectMessage;
+use App\Models\ProjectDeliverable;
 use Illuminate\Broadcasting\Channel;
 use Illuminate\Queue\SerializesModels;
+use App\Http\Resources\ChatReplyResource;
 use Illuminate\Broadcasting\PrivateChannel;
 use Illuminate\Broadcasting\PresenceChannel;
+use App\Http\Resources\ProjectMessageResource;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
@@ -21,13 +24,16 @@ class MessageSent implements ShouldBroadcast
      *
      * @return void
      */
-    public $user;
     public $project_message;
 
-    public function __construct(User $user, ProjectMessage $project_message)
+    public function __construct(ProjectMessage $project_message)
     {
-        $this->user = $user;
         $this->project_message = $project_message;
+
+        $this->project_message = ProjectMessage::with(['user', 'reply.user'])->withCount('reply')->whereId($this->project_message->id)->first();
+
+
+
     }
 
     /**
@@ -49,10 +55,15 @@ class MessageSent implements ShouldBroadcast
 
     public function broadcastWith()
     {
-        $data = [
-            'message' => $this->project_message,
-            'user_id' => $this->user->id,
-        ];
-        return ['data' => $data];
+        $authorr_id = User::whereHas('author', function($q) {
+            $q->whereId($this->project_message->project_id);
+        })->first()->id;
+
+        $this->project_message->files = ProjectDeliverable::where('project_message_id',$this->project_message->id )->get()->pluck('location')->toArray();
+        $this->project_message->reply = ($this->project_message->reply) ? ChatReplyResource::collection($this->project_message->reply) : [];
+        $this->project_message->author = ($authorr_id == $this->project_message->user_id)? true : false;
+    
+        return ['data' => $this->project_message];
+
     }
 }

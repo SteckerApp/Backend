@@ -123,4 +123,9 @@ class User extends Authenticatable
     {
         return $this->belongsToMany(ProjectRequest::class, 'project_user', 'user_id', 'project_id');
     }
+
+    public function author()
+    {
+        return $this->belongsTo(ProjectRequest::class, 'id', 'created_by');
+    }
 }

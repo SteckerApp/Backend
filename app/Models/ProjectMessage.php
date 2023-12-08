@@ -20,5 +20,10 @@ class ProjectMessage extends Model
         return $this->belongsTo(ProjectRequest::class, 'project_id');
     }
 
+    public function reply()
+    {
+        return $this->hasMany(ProjectMessage::class, 'reply_id')->with('reply.user');
+    }
+
 
 }

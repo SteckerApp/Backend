@@ -16,8 +16,9 @@ return new class extends Migration
         Schema::create('project_deliverables', function (Blueprint $table) {
             $table->id();
             $table->foreignId('project_id')->references('id')->on('project_requests');
-            $table->string('title');
+            $table->string('title')->nullable();
             $table->longText('location');
+            $table->foreignId('project_message_id')->nullable()->references('id')->on('project_messages');
             $table->foreignId('user_id')->references('id')->on('users');
             $table->timestamps();
             $table->softDeletes();
