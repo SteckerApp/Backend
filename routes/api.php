@@ -162,7 +162,9 @@ Route::middleware('auth:sanctum')->group(function () {
         });
 
         Route::prefix('requests')->group(function () {
-            Route::get('/', [ProjectRequestController::class, 'index'])->middleware(['can:client can view requests']);
+            Route::get('/', [ProjectRequestController::class, 'index'])
+            // ->middleware(['can:client can view requests'])
+            ;
             Route::get('/{id}', [ProjectRequestController::class, 'show'])->middleware(['can:client can view requests']);
             Route::post('/', [ProjectRequestController::class, 'store'])
             //->middleware('can:client can create request','check_subscription')
