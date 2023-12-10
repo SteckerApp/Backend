@@ -15,7 +15,7 @@ class NotificationController extends Controller
     use HandleResponse;
     public function fetchNotifications()
     {
-        $notifications = Notification::where([
+        $notifications = Notification::with(['message', 'commenter', 'project'])->where([
             'user_id'=> auth()->user()->id,
             'read'=> 'false'
         ])->get();
@@ -34,19 +34,30 @@ class NotificationController extends Controller
             "commenter_id" => $data['commenter_id']
         ]);
 
-        $notification = Notification::find($notification->id);
+        $notification = Notification::with(['message', 'commenter', 'project'])->find($notification->id);
         event(new NotificationSent($notification));
     }
 
     public function markAllAsRead(Request $request)
     {
-        $notifications = Notification::where([
-            'user_id'=> auth()->user()->id,
-            'read'=> 'false'
-        ])->update([
-            'read'=> 'true'
-        ]);
-
+        if($request->project_id){
+            $notifications = Notification::where([
+                'user_id'=> auth()->user()->id,
+                'project_id'=> $request->project_id,
+                'read'=> 'false'
+            ])->update([
+                'read'=> 'true'
+            ]);
+        }
+        else{
+            $notifications = Notification::where([
+                'user_id'=> auth()->user()->id,
+                'read'=> 'false'
+            ])->update([
+                'read'=> 'true'
+            ]);
+        }
+       
         return $this->successResponse($notifications , 'Notifications Updated Successfully', 200);
     }
 

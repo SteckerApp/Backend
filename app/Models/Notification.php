@@ -22,7 +22,7 @@ class Notification extends Model
 
     public function message()
     {
-        return $this->belongsTo(ProjectMessage::class, 'commenter_id');
+        return $this->belongsTo(ProjectMessage::class, 'project_message_id');
     }
 
 }
