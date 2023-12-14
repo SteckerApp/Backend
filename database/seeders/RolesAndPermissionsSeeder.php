@@ -39,13 +39,13 @@ class RolesAndPermissionsSeeder extends Seeder
 
         // Permission::create(['name' => 'client can manage teams', 'ability' => 'manage_teams','guard_name' => 'sanctum']);
 
-        $role = Role::create(['name' => 'client','guard_name' => 'sanctum']);
+        $role = Role::create(['name' => 'client','guard_name' => 'web']);
         Permission::all()->each(function($permission) use($role) {
             $role->givePermissionTo($permission->name);
         });
 
 
-        $role = Role::create(['name' => 'admin','guard_name' => 'sanctum']);
+        $role = Role::create(['name' => 'admin','guard_name' => 'web']);
 
         $permission = Permission::create(['name' => 'view workspace and board', 'ability' => 'view_workspace_and_board','guard_name' => 'sanctum', 'permission_group_id' => '1' ]);
         $role->givePermissionTo($permission->name);
