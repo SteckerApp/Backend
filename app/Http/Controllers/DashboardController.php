@@ -134,7 +134,7 @@ class DashboardController extends Controller
             $requestDetails = AdminCompany::with([
                 'company:id,name', 'company.allCompanyRequest', 'company.activeDefaultSubscripition',
                 'company.pm.user', 'company.designer.user', 'company.owner'
-            ])->latest()->limi(6)->get();
+            ])->latest()->limit(6)->get();
 
             $requestDetails = $requestDetails->each(function ($company) use ($workspacePermission) {
                 $workspacePermission->push([
