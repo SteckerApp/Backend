@@ -50,7 +50,7 @@ class Company extends Model
 
     public function activeDefaultSubscripition()
     {
-        return $this->belongsToMany(Subscription::class, 'company_Subscription')->orderBy('payment_date', 'desc')->where(['status' => 'active' , 'payment_status' => 'paid', 'default' => 'yes']);
+        return $this->belongsToMany(Subscription::class, 'company_subscription')->orderBy('payment_date', 'desc')->where(['company_subscription.status' => 'active' , 'company_subscription.payment_status' => 'paid', 'company_subscription.default' => 'yes']);
     }
 
     public function Subscripitions()
