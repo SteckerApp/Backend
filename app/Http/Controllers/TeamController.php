@@ -31,7 +31,7 @@ class TeamController extends Controller
 
         $teams = Company::whereId($company_id)
             ->with('users.roles')
-            ->get();
+            ->first();
 
         return $this->successResponse($teams);
     }
