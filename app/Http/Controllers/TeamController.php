@@ -22,8 +22,8 @@ class TeamController extends Controller
     public function index()
     {
 
-        if(request()->project_id){
-            $company_id =  ProjectRequest::whereId(request()->project_id)->first()->company_id;
+        if(request()->company_id){
+            $company_id =  request()->company_id;
         }
         else{
             $company_id = getActiveWorkSpace()->id;
