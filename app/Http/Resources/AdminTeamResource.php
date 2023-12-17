@@ -26,7 +26,7 @@ class AdminTeamResource extends JsonResource
             'avatar' => $this->avatar,
             'code' => $this->code,
             'workspaces' => CompanyUser::where('user_id',$this->id)->count(),
-            'roles' => $this->getRoleNames(),
+            'roles' => $this->roles,
 
 
           
