@@ -9,6 +9,7 @@ use App\Models\Invite;
 use App\Models\Company;
 use App\Mail\InvitationMail;
 use App\Models\CompanyUser;
+use App\Models\ProjectRequest;
 use Illuminate\Http\Request;
 use App\Trait\HandleResponse;
 use Illuminate\Support\Facades\DB;
@@ -21,7 +22,14 @@ class TeamController extends Controller
     public function index()
     {
 
-        $teams = Company::whereId(getActiveWorkSpace()->id)
+        if(request()->project_id){
+            $company_id =  ProjectRequest::whereId(request()->project_id)->first()->company_id;
+        }
+        else{
+            $company_id = getActiveWorkSpace()->id;
+        }
+
+        $teams = Company::whereId($company_id)
             ->with('users.roles')
             ->get();
 

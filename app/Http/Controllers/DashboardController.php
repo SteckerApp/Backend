@@ -18,11 +18,9 @@ class DashboardController extends Controller
 
     public function home(Request $request)
     {
-
         $authUser = auth()->user();
 
         if ($authUser->user_type == 'client') {
-
             //set workspace
             $workspaces = $authUser->allAttachedCompany;
 
@@ -33,8 +31,8 @@ class DashboardController extends Controller
             });
 
             $current = $workspaces->shift();
-            setActiveWorkSpace($current, true);
 
+            setActiveWorkSpace($current, true);
             $current->owner = CompanyUser::where([
                 'user_id'=> $authUser->id,
                 'company_id'=> getActiveWorkSpace()->id,
@@ -126,7 +124,6 @@ class DashboardController extends Controller
             in_array($authUser->user_type, config('auth.admin'))
         ) {
 
-
             // pm and designer
 
             $workspacePermission = collect([]);
@@ -135,6 +132,7 @@ class DashboardController extends Controller
                 'company:id,name', 'company.allCompanyRequest', 'company.activeDefaultSubscripition',
                 'company.pm.user', 'company.designer.user', 'company.owner'
             ])->latest()->limit(6)->get();
+
 
             $requestDetails = $requestDetails->each(function ($company) use ($workspacePermission) {
                 $workspacePermission->push([
