@@ -67,12 +67,16 @@ class ProjectMessageController extends Controller
 
             $this->notify($request,$message,$request->project_id,$type);
         }
-
-        if($request->reply){
+        else{
             $type='comment';
             $this->notify($request,$message,$request->project_id,$type);
-            
         }
+
+        // if($request->reply){
+        //     $type='comment';
+        //     $this->notify($request,$message,$request->project_id,$type);
+            
+        // }
         // broadcast(new MessageSent($user, $message))->toOthers();
         event(new MessageSent($message));
 
