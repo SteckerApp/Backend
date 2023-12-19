@@ -40,13 +40,17 @@ class ProjectUserController extends Controller
 
 
         // First, retrieve the project instance
-        $project_users = User::whereHas('projectUser', function($q) use($project_id){
-            $q->where('project_id', $project_id);
+        // $project_users = User::whereHas('projectUser', function($q) use($project_id){
+        //     $q->where('project_id', $project_id);
+        // })->get();
+
+        $company_users = User::whereHas('companyUser', function($q) use($project){
+            $q->where('company_id', $project->company_id);
         })->get();
         //remove pm since pm is already part of project users
         $users = User::where('user_type','admin')->whereNotIn('id', [$project->pm])->get();
 
-        $result = $project_users->merge($users);
+        $result = $company_users->merge($users);
         
 
         return $this->successResponse( $result, 'Users fetched successfully', 200);

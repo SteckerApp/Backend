@@ -124,6 +124,11 @@ class User extends Authenticatable
         return $this->hasMany(ProjectUser::class);
     }
 
+    public function companyUser()
+    {
+        return $this->hasMany(CompanyUser::class);
+    }
+
     public function project_requests()
     {
         return $this->belongsToMany(ProjectRequest::class, 'project_user', 'user_id', 'project_id');

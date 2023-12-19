@@ -58,7 +58,7 @@ class CompanyService
                 'role' => 'admin',
             ]);
 
-            $request->user()->givePermissionTo('admin can manage subscription');
+            // $request->user()->givePermissionTo('admin can manage subscription');
 
             DB::commit();
 
