@@ -42,6 +42,7 @@ class ProjectRequestController extends Controller
         ($request->approved) ? $projects =  $projects->where('status', 'designer_approved')->orWhere('status', 'pm_approved')->orWhere('status', 'completed'):"";
         ($request->perPage) ? $projects =  $projects->paginate($perPage) : $projects = $projects->get();
 
+
         return $this->successResponse($projects, 'Projects Fetched Succesfully', 200);
     }
 
