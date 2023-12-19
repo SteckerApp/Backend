@@ -15,7 +15,7 @@ class NotificationController extends Controller
     use HandleResponse;
     public function fetchNotifications()
     {
-        $notifications = Notification::with(['message', 'commenter', 'project'])->where([
+        $notifications = Notification::with(['message', 'commenter', 'project.uploadedFiles'])->where([
             'user_id'=> auth()->user()->id,
             'read'=> 'false'
         ])->get();
@@ -34,7 +34,7 @@ class NotificationController extends Controller
             "commenter_id" => $data['commenter_id']
         ]);
 
-        $notification = Notification::with(['message', 'commenter', 'project'])->find($notification->id);
+        $notification = Notification::with(['message', 'commenter', 'project.uploadedFiles'])->find($notification->id);
         event(new NotificationSent($notification));
     }
 
