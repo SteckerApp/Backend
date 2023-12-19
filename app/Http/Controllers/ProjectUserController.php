@@ -48,7 +48,9 @@ class ProjectUserController extends Controller
             $q->where('company_id', $project->company_id);
         })->get();
         //remove pm since pm is already part of project users
-        $users = User::where('user_type','admin')->whereNotIn('id', [$project->pm])->get();
+        $users = User::where('user_type','admin')
+        // ->whereNotIn('id', [$project->pm])
+        ->get();
 
         $result = $company_users->merge($users);
         

@@ -121,7 +121,7 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::post('/set_workspace/{company_id}', [DashboardController::class, 'setWorkspace']);
 
         Route::prefix('brand')
-        ->middleware(['can:client can manage brand'])
+        // ->middleware(['can:client can manage brand'])
        // ->middleware(['can:viewAny,App\Models\Brand' , 'check_subscription'])
         ->group(function () {
             Route::get('/', [BrandController::class, 'index']);
