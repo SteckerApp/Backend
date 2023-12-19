@@ -17,10 +17,10 @@ class CompanyUserTableSeeder extends Seeder
     {
         $company_user = array(
             array('id' => '1','user_id' => '1','company_id' => '1','role' => 'admin','created_at' => '2022-09-23 00:04:31','updated_at' => NULL),
-            array('id' => '2','user_id' => '1','company_id' => '2','role' => 'staff','created_at' => '2022-09-23 00:04:31','updated_at' => NULL),
-            array('id' => '3','user_id' => '1','company_id' => '3','role' => 'staff','created_at' => '2022-09-23 00:04:31','updated_at' => NULL)
+            array('id' => '2','user_id' => '2','company_id' => '2','role' => 'staff','created_at' => '2022-09-23 00:04:31','updated_at' => NULL),
+            array('id' => '3','user_id' => '3','company_id' => '3','role' => 'staff','created_at' => '2022-09-23 00:04:31','updated_at' => NULL),
+            array('id' => '4','user_id' => '4','company_id' => '3','role' => 'staff','created_at' => '2022-09-23 00:04:31','updated_at' => NULL)
           );
-
         DB::table('company_user')->insert($company_user);
 
     }

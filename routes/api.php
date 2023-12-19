@@ -115,7 +115,7 @@ Route::middleware('auth:sanctum')->group(function () {
     // Route::resource('brands', BrandController::class);
 
     Route::prefix('dashboard')
-   // ->middleware('check_workspace')
+   ->middleware('check_workspace')
     ->group(function () {
         Route::get('/', [DashboardController::class, 'home']);
         Route::post('/set_workspace/{company_id}', [DashboardController::class, 'setWorkspace']);
@@ -147,7 +147,7 @@ Route::middleware('auth:sanctum')->group(function () {
         });
         // ->middleware(['permission:client can managment subscription'])
         Route::prefix('plan')
-        ->middleware(['can:admin can manage subscription'])
+        // ->middleware(['can:admin can manage subscription'])
         ->group(function () {
             Route::get('/', [SubscriptionController::class, 'activeSub']);
             Route::get('/history', [SubscriptionController::class, 'list']);
@@ -187,6 +187,8 @@ Route::middleware('auth:sanctum')->group(function () {
 
             Route::prefix('users')->group(function () {
                 Route::post('/', [ProjectUserController::class, 'addProjectUser']);
+                Route::get('/team/{project_id}', [ProjectUserController::class, 'getProjectTeam']);
+
             });
         });
 
