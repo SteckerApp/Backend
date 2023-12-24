@@ -25,5 +25,10 @@ class ProjectMessage extends Model
         return $this->hasMany(ProjectMessage::class, 'reply_id')->with('reply.user');
     }
 
+    public function attachment()
+    {
+        return $this->hasMany(ProjectDeliverable::class, 'project_message_id');
+    }
+
 
 }
