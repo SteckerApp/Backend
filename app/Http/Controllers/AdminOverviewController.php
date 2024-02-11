@@ -37,7 +37,7 @@ class AdminOverviewController extends Controller
         $new_projects = Company::whereHas('projects', function($q){
                             $q->where('status', 'todo');
                         });
-        if($request->user()->hasPermissionTo('view all workspace')){
+        if($request->user()->hasPermissionTo('view all workspace', 'web')){
             $new_projects =  $new_projects->get();
         }
         else{
