@@ -60,7 +60,8 @@ class BrandController extends Controller
             'description' => $request->description,
             'website' => $request->website,
             'industry' => $request->industry,
-            'colors' => $request->colors
+            'colors' => $request->colors,
+            'audience' => $request->audience
         ]);
         //Upload Brand Documents
         if ($request->hasfile('attachments')) {
