@@ -24,6 +24,7 @@ class Brand extends Model
 
     protected $casts = [
         'created_at' => 'datetime',
+        'colors' => 'array'
     ];
 
 

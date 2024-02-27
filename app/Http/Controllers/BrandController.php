@@ -62,7 +62,6 @@ class BrandController extends Controller
             'industry' => $request->industry,
             'colors' => $request->colors
         ]);
-
         //Upload Brand Documents
         if ($request->hasfile('attachments')) {
             foreach ($request->file('attachments') as $key => $file) {
