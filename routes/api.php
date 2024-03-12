@@ -168,7 +168,9 @@ Route::middleware('auth:sanctum')->group(function () {
             ;
             Route::get('/{id}', [ProjectRequestController::class, 'show'])->middleware(['can:client can view requests']);
             Route::post('/', [ProjectRequestController::class, 'store'])
-            //->middleware('can:client can create request','check_subscription')
+            ->middleware(
+            //    'can:client can create request',
+                'check_subscription')
             ;
             Route::put('/{id}', [ProjectRequestController::class, 'update'])->middleware(['can:client can edit request']);
             Route::post('/set_status', [ProjectRequestController::class, 'setStatus'])
