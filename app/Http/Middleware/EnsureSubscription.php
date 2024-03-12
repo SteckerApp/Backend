@@ -31,6 +31,6 @@ class EnsureSubscription
         return response()->json([
             'message' => 'User subscription expired',
             'reason' => 'subscription'
-        ], 308);
+        ], 400);
     }
 }
