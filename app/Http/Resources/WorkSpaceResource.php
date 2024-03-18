@@ -52,6 +52,7 @@ class WorkSpaceResource extends JsonResource
             'subscription' => $activeSubscription->subscription,
             'company_users' => $company_users,
             'admin_users' => $data,
+            'project_manager' => $this->project_manager,
             'last_request_date' =>  ProjectRequest::whereCompanyId($this->id)->latest()->first()->created_at,
         ];
     }

@@ -83,10 +83,10 @@ class WorkspaceController extends Controller
 
     public function listWorkSpace(Request $request)
     {
-        $new = Company::whereHas('projects', function($q){
+        $new = Company::with('project_manager')->whereHas('projects', function($q){
                 $q->where('status', 'todo');
             })->get();
-        $others = Company::whereHas('projects', function($q){
+        $others = Company::with('project_manager')->whereHas('projects', function($q){
             $q->whereNot('status', 'todo');
         })->get();
 
