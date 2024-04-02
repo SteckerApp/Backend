@@ -21,7 +21,7 @@ class RolesAndPermissionsController extends Controller
 
     public function getAllRoles(Request $request,)
     {
-        $roles = Role::with('permissions')->get();
+        $roles = Role::with('permissions')->whereNot('name', 'client')->get();
         return $this->successResponse($roles, 'Roles retrieved successfully!', 200);
     }
 
