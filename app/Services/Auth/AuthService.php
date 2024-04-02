@@ -33,27 +33,41 @@ class AuthService
             //generate verification code
             $verificationCode = config('keys.verification.code');
 
+            switch ($request->user_type) {
+                case 'client':
+                  $usertype = UserType::CLIENT;
+                    break;
+                case 'affiliate':
+                    $usertype = UserType::AFFLIATE;
+
+                    break;
+                case 'admin':
+                    $usertype = UserType::ADMIN;
+
+                    break;
+            }
+
             $request->merge([
                 'password' => Hash::make($request->password),
                 'verification_token' => $verificationCode,
-                'user_type' => UserType::CLIENT
+                'user_type' => $usertype
             ]);
 
             // create user
             $user = User::create($request->all());
 
             //take of invited
-            if ($request->has('invited')) {
+            if ($request->has('invitation')) {
 
-                if ($request->invited == 'company' && !empty($request->invited_code)) {
-                    $invite = Invite::where('id', $request->invited_code)->first();
+                if ($request->invitation == 'client' && !empty($request->invitation_id)) {
+                    $invite = Invite::where('id', $request->invitation_id)->first();
 
-                    $user->syncPermissions($invite->preset);
+                    // $user->syncPermissions($invite->preset);
 
                     DB::table('company_user')->insert([
                         'user_id' => $user->id,
                         'company_id' => $invite->company_id,
-                        'role' => 'member',
+                        'role' => $invite->role,
                     ]);
 
                     $invite->update([
@@ -63,26 +77,37 @@ class AuthService
 
 
 
-                if ($request->invited == 'affilate' && !empty($request->invited_code)) {
+                if ($request->invitation == 'affiliate' && !empty($request->refferal_code)) {
 
-                    $referral = User::where('referral_code', $request->invited_code)->first();
+                    $referral = User::where('referral_code', $request->invitation_code)->first();
 
                     if ($referral) {
                         Affiliate::create([
                             'referral_id' => $referral->id,
-                            'user_id' => $user->id,
+                            'user_id' => $user->id
                         ]);
                     }
-
-                    $user->assignRole('client');
+                    // $user->assignRole('client');
                 }
+
+                if ($request->invitation == 'admin' && !empty($request->invitation_id)) {
+                    $invite = Invite::where('id', $request->invitation_id)->first();
+
+                    $user->assignRole($invite->role);
+
+                    $invite->update([
+                        'status' => 'joined'
+                    ]);
+                }
+
+                
             }
-            else if($request->has('role')){
-                $user->assignRole($request->role);
-            }
-            else {
-                $user->assignRole('client');
-            }
+            // else if($request->has('role')){
+            //     $user->assignRole($request->role);
+            // }
+            // else {
+            //     $user->assignRole('client');
+            // }
 
             //set referral code
 

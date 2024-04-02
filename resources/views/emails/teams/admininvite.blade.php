@@ -1,12 +1,11 @@
 @component('mail::message')
 # Invitation Mail
 
-Hi {{ config('app.name') }}, 
+Hi {{ $name }}, 
 
-You have been invited to join stecker as an .
-
-@component('mail::button', ['url' => ''])
-Button Text
+You have been invited to join stecker as {{ $invite->role }} by {{$company}}.
+@component('mail::button', ['url' => $url])
+Accept Invitation
 @endcomponent
 
 Thanks,<br>

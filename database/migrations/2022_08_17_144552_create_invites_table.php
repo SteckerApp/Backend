@@ -19,11 +19,12 @@ return new class extends Migration
             $table->string('email');
             $table->string('role')->nullable();
             $table->foreignId('invite_by')->references('id')->on('users');
-            $table->foreignId('company_id')->references('id')->on('companies');
+            $table->foreignId('company_id')->nullable()->references('id')->on('companies');
             $table->json('preset')->nullable();
             $table->string('status')->default('pending');
             $table->string('platform')->default('new-user');
             $table->json('payment')->nullable();
+            $table->enum('type', ['admin','client', 'affiliate'])->default('client');
             $table->timestamps();
         });
     }

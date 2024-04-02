@@ -19,12 +19,21 @@ class InvitationMail extends Mailable
     public $name;
     public $company;
     public $owner;
+    public $type;
+    public $invite;
+    public $url;
 
-    public function __construct($name, $company, $owner)
+
+
+    public function __construct($name, $company, $owner, $type, $invite)
     {
         $this->name = $name;
         $this->company = $company;
         $this->owner = $owner;
+        $this->type = $type;
+        $this->invite = $invite;
+        $this->url = url('/register?invitation='.$invite->role.'&invitation_id='.$invite->id);
+
     }
 
     /**
@@ -34,6 +43,13 @@ class InvitationMail extends Mailable
      */
     public function build()
     {
-        return $this->markdown('emails.teams.invite');
+        switch ($this->type) {
+            case 'client':
+                return $this->markdown('emails.teams.invite');
+                break;
+            case 'admin':
+                return $this->markdown('emails.teams.admininvite');
+                break;
+        }
     }
 }

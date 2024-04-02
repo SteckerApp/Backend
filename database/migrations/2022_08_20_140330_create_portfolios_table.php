@@ -15,7 +15,9 @@ return new class extends Migration
     {
         Schema::create('portfolios', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('portfolio_category_id')->constrained();
+            $table->foreignId('portfolio_category_id')
+            ->constrained()
+            ->onDelete('cascade');
             $table->string('location');
             $table->enum('type', ['image','video'])->default('image');
             $table->string('thumbnail')->nullable();

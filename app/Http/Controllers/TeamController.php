@@ -150,7 +150,7 @@ class TeamController extends Controller
 
         $register = (User::where('email', $request->email)->exists()) ?  'registered' : 'new-user';
 
-        Invite::updateOrCreate(
+       $invite = Invite::updateOrCreate(
             [
                 'email' => $request->email,
                 'company_id' => getActiveWorkSpace()->id,
@@ -165,42 +165,55 @@ class TeamController extends Controller
             ]
         );
 
-        $this->sendInvitationMail($request->email, $request->name, getActiveWorkSpace()->name, $request->user()->first_name);
+        $this->sendInvitationMail($request->email, $request->name, getActiveWorkSpace()->name, $request->user()->first_name, 'client', $invite);
 
-        return $this->successResponse(null, 'Invitation mail sends successfully');
+        return $this->successResponse(null, 'Invitation mail sent successfully');
     }
 
 
-    protected function sendInvitationMail($email, $name, $company, $owner)
+    protected function sendInvitationMail($email, $name, $company, $owner, $type, $invite)
     {
         $mail = Mail::to($email);
         // send mail of verification code
         if (env('APP_SYSTEM_STACK') == 'queue') {
-            $mail->queue(new InvitationMail($name, $company, $owner));
+            $mail->queue(new InvitationMail($name, $company, $owner, $type, $invite));
         } else {
-            $mail->send(new InvitationMail($name, $company, $owner));
+            $mail->send(new InvitationMail($name, $company, $owner, $type, $invite));
         }
     }
 
     protected function inviteAdmin(Request $request)
     {
-        // $this->validate($request, [
-        //     'email' => 'required|email',
-        //     'role' => 'required|string'
-        // ]);
+        $this->validate($request, [
+            'email' => 'required|email',
+            'role' => 'required|string|exists:roles,name'
+        ]);
 
-        $mail = Mail::to($request->email);
+        $emailCheck = User::where('email', $request->email)->exists();
 
-        $url = "";
+        if ($emailCheck) {
+            return $this->errorResponse(null, 'User already has an account with email address');
+        }
 
-        // send mail of verification code
-        // if (env('APP_SYSTEM_STACK') == 'queue') {
-        //     $mail->queue(new AdminInvitationMail($request->email, $request->role, $url));
-        // } else {
-        //     $mail->send(new AdminInvitationMail($request->email, $request->role, $url));
-        // }
+        $register = (User::where('email', $request->email)->exists()) ?  'registered' : 'new-user';
 
-        return $this->successResponse("", 'Invitation mail sent successfully');
+        $invite = Invite::updateOrCreate(
+            [
+                'email' => $request->email,
+            ],
+            [
+                'name' => 'Stecker Admin',
+                'role' => $request->role,
+                'invite_by' => $request->user()->id,
+                'status' => 'pending',
+                'type' => 'admin'
+            ]
+        );
+
+        $this->sendInvitationMail($request->email, 'Stecker Admin', 'Stecker', $request->user()->first_name, 'admin', $invite);
+
+
+        return $this->successResponse(null, 'Invitation mail sent successfully');
 
     }
 }
