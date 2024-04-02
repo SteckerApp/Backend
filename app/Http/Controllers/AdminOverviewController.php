@@ -71,7 +71,7 @@ class AdminOverviewController extends Controller
                         $query->whereMonth('created_at', Carbon::now()->month);
                     })
                     ->count();
-        $users = User::when($request->input('date_from'), function ($query) use ($request) {
+        $users = User::whereDoesntHave('companySubscription')->where('user_type', 'client')->when($request->input('date_from'), function ($query) use ($request) {
                         $query->whereDate('created_at', '>=', Carbon::parse($request->input('date_from')));
                     })
                     ->when($request->input('date_to'), function ($query) use ($request) {
@@ -285,6 +285,9 @@ class AdminOverviewController extends Controller
                                 ->orWhere('last_name', 'like', '%' . $request->input('search') . '%')
                                 ->orWhere('users.email', 'like', '%' . $request->input('search') . '%');
                         });
+                    })
+                    ->whereHas('user', function ($query) use ($request) {
+                        $query->where('user_type', 'client');
                     })
                     ->groupBy('user_id')
                     ->paginate($page);
