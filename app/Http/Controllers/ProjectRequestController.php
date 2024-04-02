@@ -53,7 +53,7 @@ class ProjectRequestController extends Controller
         $projects = ProjectRequest::where([
             'company_id' => $request->company_id,
         ])
-        ->with(['uploadedFiles', 'pm', 'designer', 'projectUser', 'brand', 'created_by'])->orderBy('created_at', 'desc');
+        ->with(['uploadedFiles', 'pm', 'designer', 'projectUser', 'brand.brandDocuments', 'created_by'])->orderBy('created_at', 'desc');
 
         ($request->todo) ? $projects =  $projects->where('status', 'todo') :"";
         ($request->on_going) ? $projects =  $projects->where('status', 'on_going') :"";

@@ -206,7 +206,7 @@ Route::middleware('auth:sanctum')->group(function () {
     });
 
     Route::get('/auth/user/profile', [UserController::class, 'profile']);
-    Route::post('/auth/user/profile', [UserController::class, 'updateProfile']);
+    Route::put('/auth/user/profile', [UserController::class, 'updateProfile']);
 
     Route::prefix('admin')->group(function () {
         Route::get('/', [DashboardController::class, 'home']);
