@@ -32,7 +32,7 @@ class InvitationMail extends Mailable
         $this->owner = $owner;
         $this->type = $type;
         $this->invite = $invite;
-        $this->url = url('/register?invitation='.$invite->role.'&invitation_id='.$invite->id);
+        $this->url = env('APP_URL').'/register?invitation='.$invite->role.'&invitation_id='.$invite->id;
 
     }
 
