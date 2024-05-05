@@ -6,6 +6,7 @@ use App\Models\User;
 use App\Models\Company;
 use App\Trait\HandleResponse;
 use Illuminate\Support\Facades\DB;
+use Spatie\Permission\Models\Role;
 use Spatie\Permission\Models\Permission;
 
 class CompanyService
@@ -32,7 +33,6 @@ class CompanyService
             $accountManagerPermission = Permission::where('name', 'lias with customers')
             ->first();
             $accountManagers = User::permission($accountManagerPermission)->get();
-            
             //  select the account manager with the least number of company assignments             
             $accountManagerIds = $accountManagers->pluck('id');
 
@@ -59,7 +59,9 @@ class CompanyService
             ]);
 
             // $request->user()->givePermissionTo('admin can manage subscription');
-            $request->user()->assignRole('client');
+            // $request->user()->assignRole('client');
+            $roles = Role::whereIn('id', [1])->get();
+            $request->user()->syncRoles($roles);
 
 
             DB::commit();
