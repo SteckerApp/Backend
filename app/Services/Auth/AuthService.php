@@ -33,7 +33,7 @@ class AuthService
             //generate verification code
             $verificationCode = config('keys.verification.code');
 
-            switch ($request-> c) {
+            switch ($request->usertype) {
                 case 'client':
                   $usertype = UserType::CLIENT;
                     break;
