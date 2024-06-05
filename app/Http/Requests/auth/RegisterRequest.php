@@ -28,8 +28,8 @@ class RegisterRequest extends FormRequest
             'last_name' => 'required|string|max:100',
             'email' => 'required|string|email|max:255|unique:users,email',
             'password' => 'required|string|min:6',
-            'invited' => 'sometimes|string|in:company,affilate',
-            'invited_code' => 'sometimes|string|required_with:invited',
+            // 'invited' => 'sometimes|string|in:company,affilate',
+            // 'invited_code' => 'sometimes|string|required_with:invited',
         ];
     }
 }

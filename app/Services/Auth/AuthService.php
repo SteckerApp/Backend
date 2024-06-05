@@ -133,7 +133,9 @@ class AuthService
         return $this->successResponse(
             [
                 'token' => $token,
-                'user' =>  new RegisterdResource($user)
+                'user' =>  new RegisterdResource($user),
+                'permissions'=> PermissionsResource::collection($user->getAllPermissions()),
+                'roles'=>$user->getRoleNames()
             ],
             'Account Registration successful'
         );

@@ -36,7 +36,7 @@ class RolesAndPermissionsController extends Controller
 
     public function createRole(Request $request,)
     {
-        $role = Role::create(['name' => $request->input('role_name'),'guard_name' => 'sanctum']);
+        $role = Role::create(['name' => $request->input('role_name'),'guard_name' => 'web']);
 
 
         $permissionIds = $request->input('permission_ids'); 
@@ -49,25 +49,33 @@ class RolesAndPermissionsController extends Controller
     }
 
     public function editRole(Request $request, $role_id)
-    {
-        $role = Role::find($role_id);
+{
+    $role = Role::where('id', $role_id)->guard('web')->first();
 
-        if (!$role) {
-            // Handle role not found error
-            return $this->errorResponse(false, 'Rolenot found!', 404);
-        }
-
-        $permissionIds = $request->input('permission_ids'); 
-
-        $permissions = Permission::whereIn('id', $permissionIds)->get();
-
-        $role->syncPermissions($permissions);
-
-        $role->name = $request->role_name;
-        $role->save();
-
-        return $this->successResponse($role, 'Roles updated successfully!', 201);
+    if (!$role) {
+        // Handle role not found error
+        return $this->errorResponse(false, 'Role not found!', 404);
     }
+
+    $permissionIds = $request->input('permission_ids', []); // Initialize as empty array if not provided
+
+    // Detach existing permissions from the role
+    $role->permissions()->detach();
+
+    // Attach the new set of permissions to the role
+    foreach ($permissionIds as $permissionId) {
+        $permission = Permission::where('id', $permissionId)->guard('sanctum')->first();
+        if ($permission) {
+            $role->givePermissionTo($permission);
+        }
+    }
+
+    $role->name = $request->role_name;
+    $role->save();
+
+    return $this->successResponse($role, 'Role updated successfully!', 200);
+}
+
 
     public function changeRole(Request $request)
     {
