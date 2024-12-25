@@ -18,13 +18,13 @@ class EnsureActiveWorkSpace
     {
         $authUser = $request->user();
 
-        if (!getActiveWorkSpace() && $authUser->user_type == 'client') {
+        if (!getActiveWorkSpace($request->user()->id) && $authUser->user_type == 'client') {
 
             $workspaces = $authUser->companies;
 
             $current = $workspaces->shift();
 
-            setActiveWorkSpace($current, true);
+            setActiveWorkSpace($current, $request->user()->id, true);
         }
         
         return $next($request);

@@ -65,7 +65,7 @@ class CartController extends Controller
                 'duration' => $subscription->type,
                 'unit' => 1,
                 'total' => $subscription->price,
-                'company_id'=> getActiveWorkSpace() ? getActiveWorkSpace()->id : $company_id
+                'company_id'=> getActiveWorkSpace($request->user()->id) ? getActiveWorkSpace($request->user()->id)->id : $company_id
             ]);
             DB::commit();
 

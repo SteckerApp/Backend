@@ -21,7 +21,7 @@ class EnsureSubscription
 
         $checkSub = $request->user()->companySubscription()
         ->where([
-            'company_id' => getActiveWorkSpace()->id, 'status' => 'active', 'payment_status' => 'paid'
+            'company_id' => getActiveWorkSpace($request->user()->id)->id, 'status' => 'active', 'payment_status' => 'paid'
             ])
             ->whereDate('end_date', '>=', Carbon::now())
             ->exists();

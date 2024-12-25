@@ -118,24 +118,24 @@ class RolesAndPermissionsSeeder extends Seeder
         $permission = Permission::create(['name' => 'update team member role', 'ability' => 'update_team_member_role','guard_name' => 'web', 'permission_group_id' => '7' ]);
         $role->givePermissionTo($permission->name);
 
-        // //assign admin to the first user
-        // $user = User::find(1);
-        // $role = Role::whereName('admin')->first();
-        // $user->assignRole($role);
+        //assign admin to the first user
+        $user = User::find(1);
+        $role = Role::whereName('admin')->first();
+        $user->assignRole($role);
 
-        // //assign client to the second user
-        // $user = User::find(2);
-        // $role = Role::whereName('client')->first();
-        // $user->assignRole($role);
+        //assign client to the second user
+        $user = User::find(2);
+        $role = Role::whereName('client')->first();
+        $user->assignRole($role);
 
 
-        // $user = User::find(3);
-        // $permission = Permission::whereName('lias with customers')->first();
-        // $user->givePermissionTo($permission);
+        $user = User::find(3);
+        $permission = Permission::whereName('lias with customers')->first();
+        $user->givePermissionTo($permission);
 
-        // $user = User::find(4);
-        // $permission = Permission::whereName('lias with customers')->first();
-        // $user->givePermissionTo($permission);
+        $user = User::find(4);
+        $permission = Permission::whereName('lias with customers')->first();
+        $user->givePermissionTo($permission);
 
     }
 }

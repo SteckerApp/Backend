@@ -32,14 +32,14 @@ class DashboardController extends Controller
 
             $current = $workspaces->shift();
 
-            setActiveWorkSpace($current, true);
+            setActiveWorkSpace($current, auth()->user()->id, true);
             $current->owner = CompanyUser::where([
                 'user_id'=> $authUser->id,
-                'company_id'=> getActiveWorkSpace()->id,
+                'company_id'=> getActiveWorkSpace($request->user()->id)->id,
             ])->first()->company->owner->first();
 
 
-            $userRole = DB::table('company_user')->where(['company_id' => getActiveWorkSpace()->id, 'user_id' => $authUser->id])->first();
+            $userRole = DB::table('company_user')->where(['company_id' => getActiveWorkSpace($request->user()->id)->id, 'user_id' => $authUser->id])->first();
 
             // personal details
             $personal = [
@@ -176,10 +176,9 @@ class DashboardController extends Controller
 
     public function setWorkspace(Request $request, $company_id)
     {
-
         $company = Company::whereId($company_id)->first();
 
-        setActiveWorkSpace($company, true);
+        setActiveWorkSpace($company, $request->user()->id, true);
 
         return $this->successResponse($company, "Workspace activated successfully");
     }

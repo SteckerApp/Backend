@@ -1,6 +1,7 @@
 <?php
 
 use App\Models\Cart;
+use App\Models\CompanyUser;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Session;
@@ -54,18 +55,42 @@ function generateReference(): string
 }
 
 
-function getActiveWorkSpace()
+// function getActiveWorkSpace()
+// {
+//     return Session::get('current_workspace') ?? false;
+// }
+function getActiveWorkSpace($userId)
 {
-    return Session::get('current_workspace') ?? false;
+
+    $company_user = CompanyUser::where([
+        "user_id" => $userId,
+        "active_status" => true
+    ])->with("company")->first();
+
+
+    return $company_user->company ?? false;
 }
 
-function setActiveWorkSpace($workspace, $change = false)
+function setActiveWorkSpace($workspace, $userId, $change = false)
 {
     if ($change) {
-        Session::put('current_workspace', $workspace);
+        //deactivate all workspaces
+        CompanyUser::where([
+            "user_id" => $userId,
+        ])->update([
+            "active_status" => false,
+        ]);
+
+        //activate current workspace
+        CompanyUser::where([
+            "user_id" => $userId,
+            "company_id" => $workspace->id
+        ])->update([
+            "active_status" => true,
+        ]);
     }
 
-    $current = getActiveWorkSpace();
+    $current = getActiveWorkSpace($userId);
     return $current;
 }
 

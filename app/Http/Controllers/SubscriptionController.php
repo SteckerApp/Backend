@@ -158,7 +158,7 @@ class subscriptionController extends Controller
 
     public function activeSub(Request $request)
     {
-        $company = Company::whereId(getActiveWorkSpace()->id)->first();
+        $company = Company::whereId(getActiveWorkSpace($request->user()->id)->id)->first();
         // dd($company->activeSubscripitions()->select(['subscriptions.*', 'company_subscription.end_date', 'company_subscription.type'])->where('subscriptions.default', true)->toSql());
         return $this->successResponse(
             [
@@ -196,7 +196,7 @@ class subscriptionController extends Controller
 
     public function list(Request $request)
     {
-        $company = Company::whereId(getActiveWorkSpace()->id)->first();
+        $company = Company::whereId(getActiveWorkSpace($request->user()->id)->id)->first();
         return $this->successResponse(
             $company->activeSubscripitions()->paginate(20)
         );
@@ -205,7 +205,7 @@ class subscriptionController extends Controller
     public function three_days_expiration_reminder(Request $request)
     {
         $subscription = CompanySubscription::where([
-            'company_id' => getActiveWorkSpace()->id
+            'company_id' => getActiveWorkSpace($request->user()->id)->id
         ])
         ->whereHas('subscription', function ($q) {
             $q->where('default', true);
@@ -260,7 +260,7 @@ class subscriptionController extends Controller
     public function cancelSubscription(Request $request)
     {
         $subscription = CompanySubscription::where([
-            'company_id' => getActiveWorkSpace()->id,
+            'company_id' => getActiveWorkSpace($request->user()->id)->id,
             'subscription_id' => $request->subscription_id,
             'payment_status' => "paid",
             'status' => "active"
@@ -277,7 +277,7 @@ class subscriptionController extends Controller
 
     public function autoRenew(Request $request)
     {
-        Company::whereId(getActiveWorkSpace()->id)->update(
+        Company::whereId(getActiveWorkSpace($request->user()->id)->id)->update(
             [
                 "auto_renew"=> $request->auto_renew
             ]
@@ -289,7 +289,7 @@ class subscriptionController extends Controller
 
     public function removeCard(Request $request)
     {
-        Company::whereId(getActiveWorkSpace()->id)->update(
+        Company::whereId(getActiveWorkSpace($request->user()->id)->id)->update(
             [
                 "card_authorization"=> null
             ]

@@ -22,7 +22,7 @@ class ProjectRequestService
 
         $user = auth()->user();
         $attachments = [];
-        $company_id =  getActiveWorkSpace()->id;
+        $company_id =  getActiveWorkSpace($request->user()->id)->id;
         // $user_id = $request->user()->id;
         $subscription_id = CompanySubscription::where([
             'company_id' => $company_id,
@@ -63,8 +63,8 @@ class ProjectRequestService
             'title' => $request->title,
             'description' => $request->description,
             'dimension' => $request->dimension,
-            'company_id' => getActiveWorkSpace()->id,
-            'pm_id' => getActiveWorkSpace()->account_manager,
+            'company_id' => getActiveWorkSpace($request->user()->id)->id,
+            'pm_id' => getActiveWorkSpace($request->user()->id)->account_manager,
             'example_links' => $request->example_links ? $request->example_links : null,
             'example_uploads' => json_encode($example_uploads),
             'colors' => $request->colors,
@@ -120,7 +120,7 @@ class ProjectRequestService
 
 
             $data = [
-                'user_id' => getActiveWorkSpace()->account_manager,
+                'user_id' => getActiveWorkSpace($request->user()->id)->account_manager,
                 'type' => $type,
                 'project_id' => $project->id,
                 'project_message_id' => $project_message->id,

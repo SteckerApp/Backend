@@ -32,7 +32,7 @@ class ProjectRequestController extends Controller
 
         $projects = ProjectRequest::where([
             'user_id' => $request->user()->id,
-            'company_id' => getActiveWorkSpace()->id,
+            'company_id' => getActiveWorkSpace($request->user()->id)->id,
         ])
         ->with(['uploadedFiles', 'pm', 'designer', 'projectUser', 'brand.brandDocuments', 'created_by']);
 

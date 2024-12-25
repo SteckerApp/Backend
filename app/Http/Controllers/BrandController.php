@@ -29,7 +29,7 @@ class BrandController extends Controller
     {
         $perPage = ($request->perPage) ?? 20;
         $brands = Brand::with('brandDocuments')->whereCompanyId(
-            getActiveWorkSpace()->id
+            getActiveWorkSpace($request->user()->id)->id
         );
 
         $brands = $brands->paginate($perPage);
@@ -56,7 +56,7 @@ class BrandController extends Controller
 
         $brand = Brand::create([
             'name' => $request->name,
-            'company_id' => getActiveWorkSpace()->id,
+            'company_id' => getActiveWorkSpace($request->user()->id)->id,
             'description' => $request->description,
             'website' => $request->website,
             'industry' => $request->industry,
@@ -90,7 +90,7 @@ class BrandController extends Controller
      */
     public function show(Request $request, $id)
     {
-        $brand = Brand::with('brandDocuments')->whereIdAndCompanyId($id, getActiveWorkSpace()->id)->firstOrFail();
+        $brand = Brand::with('brandDocuments')->whereIdAndCompanyId($id, getActiveWorkSpace($request->user()->id)->id)->firstOrFail();
 
         return $this->successResponse($brand, 'Brand fetch successfully', 200);
     }
@@ -105,7 +105,7 @@ class BrandController extends Controller
     public function update(Request $request, $id)
     {
 
-        $brand = Brand::whereIdAndCompanyId($id, getActiveWorkSpace()->id)
+        $brand = Brand::whereIdAndCompanyId($id, getActiveWorkSpace($request->user()->id)->id)
             ->firstOrFail();
 
         tap($brand, function ($collection) use ($brand, $request) {
@@ -133,7 +133,7 @@ class BrandController extends Controller
      */
     public function destroy(Request $request, $id)
     {
-        $brand = Brand::whereIdAndCompanyId($id, getActiveWorkSpace()->id)
+        $brand = Brand::whereIdAndCompanyId($id, getActiveWorkSpace($request->user()->id)->id)
             ->firstOrFail();
 
         $brand->delete();

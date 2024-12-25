@@ -19,14 +19,14 @@ class TeamController extends Controller
 {
     use HandleResponse;
 
-    public function index()
+    public function index(Request $request)
     {
 
         if(request()->company_id){
             $company_id =  request()->company_id;
         }
         else{
-            $company_id = getActiveWorkSpace()->id;
+            $company_id = getActiveWorkSpace($request->user()->id)->id;
         }
 
         $teams = Company::whereId($company_id)
@@ -81,10 +81,10 @@ class TeamController extends Controller
     }
 
 
-    public function delete($id)
+    public function delete(Request $request, $id)
     {
 
-        DB::table('company_user')->where('company_id', getActiveWorkSpace()->id)
+        DB::table('company_user')->where('company_id', getActiveWorkSpace($request->user()->id)->id)
             ->where('user_id', $id)->delete();
         return $this->successResponse(null, 'member deleted successfully!');
     }
@@ -142,7 +142,7 @@ class TeamController extends Controller
             'preset.*' => 'sometimes|string|exists:permissions,name'
         ]);
 
-        $emailCheck = Company::whereId(getActiveWorkSpace()->id)->first()->users()->where('email', $request->email)->exists();
+        $emailCheck = Company::whereId(getActiveWorkSpace($request->user()->id)->id)->first()->users()->where('email', $request->email)->exists();
 
         if ($emailCheck) {
             return $this->errorResponse(null, 'User already added to this workspace');
@@ -153,7 +153,7 @@ class TeamController extends Controller
        $invite = Invite::updateOrCreate(
             [
                 'email' => $request->email,
-                'company_id' => getActiveWorkSpace()->id,
+                'company_id' => getActiveWorkSpace($request->user()->id)->id,
             ],
             [
                 'name' => $request->name,
@@ -165,7 +165,7 @@ class TeamController extends Controller
             ]
         );
 
-        $this->sendInvitationMail($request->email, $request->name, getActiveWorkSpace()->name, $request->user()->first_name, 'client', $invite);
+        $this->sendInvitationMail($request->email, $request->name, getActiveWorkSpace($request->user()->id)->name, $request->user()->first_name, 'client', $invite);
 
         return $this->successResponse(null, 'Invitation mail sent successfully');
     }
