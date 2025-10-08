@@ -24,7 +24,7 @@ class TagRequest extends FormRequest
     public function rules()
     {
         return [
-            'category' => 'required|exists:tag_categories,id',
+            'category' => 'required|unique:tag_categories,name|max:255',
             'length' => 'required|integer|min:0',
             'width' => 'required|integer|min:0',
             'service_name' => 'required|string|max:255'

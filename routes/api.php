@@ -208,7 +208,7 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::prefix('services')->controller(TagController::class)->group(function () {
             Route::get('', 'allTags');
             Route::post('/create', 'createTag');
-            Route::post('/details/{id}', 'viewTag');
+            Route::get('/details/{id}', 'viewTag');
             Route::post('/update/{id}', 'editTag');
             Route::delete('/delete/{id}', 'deleteTag');
 

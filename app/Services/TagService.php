@@ -43,7 +43,7 @@ class TagService
 
         $data = new TagResource($service);
 
-        return $this->successResponse($data, 'Plan details');
+        return $this->successResponse($data, 'Service details');
     }
 
     public function editTag($request, $id)
@@ -66,7 +66,11 @@ class TagService
 
     public function deleteTag($id)
     {
-        $tag = Tag::findOrFail($id);
+        $tag = Tag::find($id);
+
+        if (! $tag) {
+            return $this->errorResponse(false, 'service not found', 404);
+        }
 
         $tag->delete();
 
@@ -107,7 +111,11 @@ class TagService
 
     public function deleteCategory($id)
     {
-        $category = Tag::findOrFail($id);
+         $category = TagCategory::select('id', 'name')->find($id);
+
+        if (! $category) {
+            return $this->errorResponse(false, 'Category not found', 404);
+        }
 
         if ($category->tags()->exists()) {
             return $this->errorResponse(false, 'Category cannot be deleted because it has active services', 400);

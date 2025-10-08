@@ -18,9 +18,7 @@ class TagController extends Controller
 
     public function allTags()
     {
-        $services = Tag::latest()->get();
-
-        return $this->successResponse(TagResource::collection($services), 'All services');
+        return $this->tagService->allTags();
     }
 
     public function createTag(TagRequest $request)
@@ -33,7 +31,7 @@ class TagController extends Controller
         return $this->tagService->viewTag($id);
     }
 
-    public function editTag($request, $id)
+    public function editTag(Request $request, $id)
     {
         return $this->tagService->editTag($request, $id);
     }
@@ -53,7 +51,7 @@ class TagController extends Controller
         return $this->tagService->viewCategory($id);
     }
 
-    public function editCategory($request, $id)
+    public function editCategory(Request $request, $id)
     {
         return $this->tagService->editCategory($request, $id);
     }
