@@ -19,7 +19,7 @@ class TagController extends Controller
         return $this->successResponse(TagResource::collection($services), 'All services');
     }
 
-    public function createService($request)
+    public function createTag($request)
     {
         $category = TagCategory::create([
             'name' => $request->category,
