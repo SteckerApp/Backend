@@ -4,13 +4,17 @@ namespace App\Http\Controllers;
 
 use App\Models\Tag;
 use App\Models\TagCategory;
+use App\Services\TagService;
 use Illuminate\Http\Request;
 use App\Trait\HandleResponse;
+use App\Http\Requests\TagRequest;
 use App\Http\Resources\TagResource;
 
 class TagController extends Controller
 {
-    use HandleResponse;
+    public function __construct(
+        protected TagService $tagService
+    ) {}
 
     public function allTags()
     {
@@ -19,103 +23,43 @@ class TagController extends Controller
         return $this->successResponse(TagResource::collection($services), 'All services');
     }
 
-    public function createTag($request)
+    public function createTag(TagRequest $request)
     {
-        $category = TagCategory::create([
-            'name' => $request->category,
-        ]);
-
-        Tag::create([
-            'category_id' => $category->id,
-            'name' => $request->service_name,
-            'length' => $request->length,
-            'width' => $request->width
-        ]);
-
-        return $this->successResponse([], 'Service added successfully', 201);
+        return $this->tagService->createTag($request);
     }
 
     public function viewTag($id)
     {
-        $service = Tag::find($id);
-        if (! $service) {
-            return $this->error(null, 'service not found', 404);
-        }
-
-        $data = new TagResource($service);
-
-        return $this->success($data, 'Plan details');
+        return $this->tagService->viewTag($id);
     }
 
     public function editTag($request, $id)
     {
-        $tag = Tag::find($id);
-
-        if (! $tag) {
-            return $this->error(null, 'service not found', 404);
-        }
-
-        $tag->update([
-            'category_id' => $request->category_id,
-            'name' => $request->service_name,
-            'length' => $request->length,
-            'width' => $request->width
-        ]);
-
-        return $this->successResponse(null, 'Details updated successfully');
+        return $this->tagService->editTag($request, $id);
     }
 
     public function deleteTag($id)
     {
-        $tag = Tag::findOrFail($id);
-
-        $tag->delete();
-
-        return $this->successResponse(null, 'Service deleted successfully.');
+        return $this->tagService->deleteTag($id);
     }
 
     public function allTagCategories()
     {
-        $categories = TagCategory::select('id', 'name')->latest()->get();
-
-        return $this->successResponse($categories, 'All Categories');
+        return $this->tagService->allTagCategories();
     }
 
     public function viewCategory($id)
     {
-        $category = TagCategory::select('id', 'name')->find($id);
-        if (! $category) {
-            return $this->error(null, 'Category not found', 404);
-        }
-
-        return $this->successResponse($category, 'Category details');
+        return $this->tagService->viewCategory($id);
     }
 
     public function editCategory($request, $id)
     {
-        $category = TagCategory::select('id', 'name')->find($id);
-
-        if (! $category) {
-            return $this->error(null, 'Category not found', 404);
-        }
-
-        $category->update([
-            'name' => $request->category,
-        ]);
-
-        return $this->successResponse(null, 'Details updated successfully');
+        return $this->tagService->editCategory($request, $id);
     }
 
     public function deleteCategory($id)
     {
-        $category = Tag::findOrFail($id);
-
-        if ($category->tags()->exists()) {
-            return $this->errorResponse(false, 'Category cannot be deleted because it has active services', 400);
-        }
-
-        $category->delete();
-
-        return $this->successResponse(null, 'Category deleted successfully.');
+        return $this->tagService->deleteCategory($id);
     }
 }
