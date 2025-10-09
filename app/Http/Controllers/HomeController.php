@@ -27,4 +27,5 @@ class HomeController extends Controller
             'output' => Artisan::output(),
         ]);
     }
+    
 }
