@@ -100,7 +100,7 @@ class AuthService
                     ]);
                 }
 
-                
+
             }
             // else if($request->has('role')){
             //     $user->assignRole($request->role);

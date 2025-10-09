@@ -3,6 +3,7 @@
 use Illuminate\Http\Request;
 use App\Models\ProjectRequest;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\TagController;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\TeamController;
 use App\Http\Controllers\BrandController;
@@ -205,6 +206,21 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::put('/auth/user/profile', [UserController::class, 'updateProfile']);
 
     Route::prefix('admin')->group(function () {
+
+        Route::prefix('services')->controller(TagController::class)->group(function () {
+            Route::get('', 'allTags');
+            Route::post('/create', 'createTag');
+            Route::get('/details/{id}', 'viewTag');
+            Route::post('/update/{id}', 'editTag');
+            Route::delete('/delete/{id}', 'deleteTag');
+
+            Route::prefix('category')->group(function () {
+                Route::get('', 'allTagCategories');
+                Route::post('/details/{id}', 'viewCategory');
+                Route::post('/update/{id}', 'editCategory');
+                Route::delete('/delete/{id}', 'deleteCategory');
+            });
+        });
         Route::get('/', [DashboardController::class, 'home']);
 
         Route::prefix('promo')
