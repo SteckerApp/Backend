@@ -17,7 +17,7 @@ use App\Http\Controllers\AffiliateController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\PortfolioController;
 use App\Http\Controllers\WorkspaceController;
-use App\Http\Controllers\Api\V1\HomeController;
+use App\Http\Controllers\HomeController;
 use App\Http\Controllers\api\v1\TestController;
 use App\Http\Controllers\ProjectUserController;
 use App\Http\Controllers\NotificationController;

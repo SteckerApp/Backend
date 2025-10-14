@@ -79,7 +79,7 @@ class TagService
 
     public function allTagCategories()
     {
-        $categories = TagCategory::select('id', 'name')->latest()->get();
+        $categories = TagCategory::select('id', 'name')->with('tags')->latest()->get();
 
         return $this->successResponse($categories, 'All Categories');
     }

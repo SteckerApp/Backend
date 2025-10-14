@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Api\V1;
+namespace App\Http\Controllers;
 
 use App\Models\Country;
 use Illuminate\Http\Request;
@@ -27,5 +27,5 @@ class HomeController extends Controller
             'output' => Artisan::output(),
         ]);
     }
-    
+
 }
