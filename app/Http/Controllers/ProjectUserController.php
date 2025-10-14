@@ -22,7 +22,7 @@ class ProjectUserController extends Controller
             'users' => 'required|array',
             'users.*' => 'numeric',
         ]);
-   
+
         // First, retrieve the project instance
         $project = ProjectRequest::findOrFail($request->project_id);
 
@@ -34,7 +34,7 @@ class ProjectUserController extends Controller
 
     public function getProjectTeam(Request $request, $project_id)
     {
-       
+
         $project = ProjectRequest::findOrFail($project_id);
 
 
@@ -50,10 +50,10 @@ class ProjectUserController extends Controller
         //remove pm since pm is already part of project users
         $users = User::where('user_type','admin')
         // ->whereNotIn('id', [$project->pm])
-        ->get();
+        ->where('service_id', $project->service_id)->get();
 
         $result = $company_users->merge($users);
-        
+
 
         return $this->successResponse( $result, 'Users fetched successfully', 200);
     }

@@ -42,6 +42,7 @@ class User extends Authenticatable
         'currency',
         'referral_code',
         'verification_token',
+        'service_id'
     ];
 
     /**

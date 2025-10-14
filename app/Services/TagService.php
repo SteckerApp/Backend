@@ -20,18 +20,22 @@ class TagService
 
     public function createTag($request)
     {
-        $category = TagCategory::create([
-            'name' => $request->category,
-        ]);
-
         Tag::create([
-            'category_id' => $category->id,
+            'category_id' => $request->category_id,
             'name' => $request->service_name,
             'length' => $request->length,
             'width' => $request->width
         ]);
 
         return $this->successResponse([], 'Service added successfully', 201);
+    }
+    public function createTagCategory($request)
+    {
+        TagCategory::create([
+            'name' => $request->category,
+        ]);
+
+        return $this->successResponse([], 'Category added successfully', 201);
     }
 
     public function viewTag($id)

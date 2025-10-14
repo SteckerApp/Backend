@@ -216,6 +216,7 @@ Route::middleware('auth:sanctum')->group(function () {
 
             Route::prefix('category')->group(function () {
                 Route::get('', 'allTagCategories');
+                Route::post('/create', 'createTagCategory');
                 Route::post('/details/{id}', 'viewCategory');
                 Route::post('/update/{id}', 'editCategory');
                 Route::delete('/delete/{id}', 'deleteCategory');

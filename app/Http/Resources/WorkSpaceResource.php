@@ -28,7 +28,7 @@ class WorkSpaceResource extends JsonResource
         $company_users = CompanyUser::with('user')->whereHas('user', function($q){
             $q->where('user_type', 'admin');
         })->whereCompanyId($this->id)->get();
-        
+
         $admin_users = User::with('roles')->where('user_type', 'admin')->get();
         $data = ['user'=> $admin_users];
 

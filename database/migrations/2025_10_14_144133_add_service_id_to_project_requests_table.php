@@ -13,8 +13,8 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::table('subscriptions', function (Blueprint $table) {
-            $table->unsignedBigInteger('service_id')->nullable();
+        Schema::table('project_requests', function (Blueprint $table) {
+             $table->unsignedBigInteger('service_id')->nullable();
         });
     }
 
@@ -25,8 +25,8 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::table('subscriptions', function (Blueprint $table) {
-            $table->dropColumn(['service_id']);
+        Schema::table('project_requests', function (Blueprint $table) {
+              $table->dropColumn(['service_id']);
         });
     }
 };
