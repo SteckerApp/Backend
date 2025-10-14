@@ -9,6 +9,7 @@ use Illuminate\Http\Request;
 use App\Trait\HandleResponse;
 use App\Http\Requests\TagRequest;
 use App\Http\Resources\TagResource;
+use App\Http\Requests\TagCategoryRequest;
 
 class TagController extends Controller
 {
@@ -46,6 +47,10 @@ class TagController extends Controller
         return $this->tagService->allTagCategories();
     }
 
+    public function createTagCategory(TagCategoryRequest $request)
+    {
+        return $this->tagService->createTagCategory($request);
+    }
     public function viewCategory($id)
     {
         return $this->tagService->viewCategory($id);

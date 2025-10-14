@@ -19,6 +19,7 @@ class ProjectRequest extends Model
         'brand_id',
         'user_id',
         'subscription_id',
+        'service_id',
         'updated_at'
     ];
     protected $casts = [
@@ -102,6 +103,6 @@ class ProjectRequest extends Model
         return json_decode($value);
     }
 
-    
+
 
 }
