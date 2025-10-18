@@ -10,6 +10,8 @@ use App\Models\Company;
 use App\Mail\InvitationMail;
 use App\Models\CompanyUser;
 use App\Models\ProjectRequest;
+use App\Models\Tag;
+use App\Models\TagCategory;
 use Illuminate\Http\Request;
 use App\Trait\HandleResponse;
 use Illuminate\Support\Facades\DB;
@@ -164,7 +166,7 @@ class TeamController extends Controller
             ]
         );
 
-        $this->sendInvitationMail($request->email, $request->name, getActiveWorkSpace($request->user()->id)->name, $request->user()->first_name, 'client', $invite);
+        $this->sendInvitationMail($request->email, $request->name, getActiveWorkSpace($request->user()->id)->name, $request->user()->first_name, 'client', $invite,null);
 
         return $this->successResponse(null, 'Invitation mail sent successfully');
     }
@@ -184,12 +186,12 @@ class TeamController extends Controller
     protected function inviteAdmin(Request $request)
     {
         $this->validate($request, [
-            'service_id' => 'required|string|exists:tag_categories,id',
+            'service_id' => 'required|exists:tag_categories,id',
             'email' => 'required|email',
             'role' => 'required|string|exists:roles,name'
         ]);
 
-        $serviceCheck = User::findOrFail($request->service_id);
+        $serviceCheck = TagCategory::findOrFail($request->service_id);
 
         $emailCheck = User::where('email', $request->email)->exists();
 
