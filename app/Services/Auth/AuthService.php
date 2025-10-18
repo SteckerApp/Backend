@@ -50,7 +50,8 @@ class AuthService
             $request->merge([
                 'password' => Hash::make($request->password),
                 'verification_token' => $verificationCode,
-                'user_type' => $usertype
+                'user_type' => $usertype,
+                'service_id' => $request->service_id ?? null
             ]);
 
             // create user
