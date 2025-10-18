@@ -26,7 +26,7 @@ class ProjectRequestService
         // $user_id = $request->user()->id;
         $subscription_id = CompanySubscription::where([
             'company_id' => $company_id,
-            'status' => 'active', 
+            'status' => 'active',
             'payment_status' => 'paid'
             ])->first()->subscription_id;
 
@@ -68,6 +68,7 @@ class ProjectRequestService
             'example_links' => $request->example_links ? $request->example_links : null,
             'example_uploads' => json_encode($example_uploads),
             'colors' => $request->colors,
+            'service_id' => $request->service_id,
             'created_by' => $request->user()->id,
             'deliverables' => $request->deliverables ?  $request->deliverables : null,
             'date' => Carbon::now()
@@ -84,7 +85,7 @@ class ProjectRequestService
             "message"=>  $request->description,
         ]);
 
-        
+
         if($example_uploads)
         {
             $type = 'attachment';
@@ -97,7 +98,7 @@ class ProjectRequestService
                    "project_id"=>  $project->id,
                    "project_message_id"=>  $project_message->id,
                    "title"=>  $fileName,
-                   "location"=>  $path, 
+                   "location"=>  $path,
                 'user_id' => $request->user()->id,
                ]);
             // //add files to project messages
@@ -130,7 +131,7 @@ class ProjectRequestService
             $notification->store($data);
         // }
 
-        
+
         // event(new MessageSent($project_message));
 
         return $this->successResponse($project, 'Project created successfully', 201);

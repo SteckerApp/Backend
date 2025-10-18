@@ -10,6 +10,8 @@ use App\Models\Company;
 use App\Mail\InvitationMail;
 use App\Models\CompanyUser;
 use App\Models\ProjectRequest;
+use App\Models\Tag;
+use App\Models\TagCategory;
 use Illuminate\Http\Request;
 use App\Trait\HandleResponse;
 use Illuminate\Support\Facades\DB;
@@ -22,10 +24,9 @@ class TeamController extends Controller
     public function index(Request $request)
     {
 
-        if(request()->company_id){
+        if (request()->company_id) {
             $company_id =  request()->company_id;
-        }
-        else{
+        } else {
             $company_id = getActiveWorkSpace($request->user()->id)->id;
         }
 
@@ -150,7 +151,7 @@ class TeamController extends Controller
 
         $register = (User::where('email', $request->email)->exists()) ?  'registered' : 'new-user';
 
-       $invite = Invite::updateOrCreate(
+        $invite = Invite::updateOrCreate(
             [
                 'email' => $request->email,
                 'company_id' => getActiveWorkSpace($request->user()->id)->id,
@@ -165,29 +166,32 @@ class TeamController extends Controller
             ]
         );
 
-        $this->sendInvitationMail($request->email, $request->name, getActiveWorkSpace($request->user()->id)->name, $request->user()->first_name, 'client', $invite);
+        $this->sendInvitationMail($request->email, $request->name, getActiveWorkSpace($request->user()->id)->name, $request->user()->first_name, 'client', $invite,null);
 
         return $this->successResponse(null, 'Invitation mail sent successfully');
     }
 
 
-    protected function sendInvitationMail($email, $name, $company, $owner, $type, $invite)
+    protected function sendInvitationMail($email, $name, $company, $owner, $type, $invite, $service = null)
     {
         $mail = Mail::to($email);
         // send mail of verification code
         if (env('APP_SYSTEM_STACK') == 'queue') {
-            $mail->queue(new InvitationMail($name, $company, $owner, $type, $invite));
+            $mail->queue(new InvitationMail($name, $company, $owner, $type, $invite, $service));
         } else {
-            $mail->send(new InvitationMail($name, $company, $owner, $type, $invite));
+            $mail->send(new InvitationMail($name, $company, $owner, $type, $invite, $service));
         }
     }
 
     protected function inviteAdmin(Request $request)
     {
         $this->validate($request, [
+            'service_id' => 'required|exists:tag_categories,id',
             'email' => 'required|email',
             'role' => 'required|string|exists:roles,name'
         ]);
+
+        $serviceCheck = TagCategory::findOrFail($request->service_id);
 
         $emailCheck = User::where('email', $request->email)->exists();
 
@@ -210,10 +214,9 @@ class TeamController extends Controller
             ]
         );
 
-        $this->sendInvitationMail($request->email, 'Stecker Admin', 'Stecker', $request->user()->first_name, 'admin', $invite);
+        $this->sendInvitationMail($request->email, 'Stecker Admin', 'Stecker', $request->user()->first_name, 'admin', $invite, $serviceCheck);
 
 
         return $this->successResponse(null, 'Invitation mail sent successfully');
-
     }
 }

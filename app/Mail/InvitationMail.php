@@ -2,10 +2,11 @@
 
 namespace App\Mail;
 
+use App\Models\TagCategory;
 use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Contracts\Queue\ShouldQueue;
 
 class InvitationMail extends Mailable
 {
@@ -21,19 +22,20 @@ class InvitationMail extends Mailable
     public $owner;
     public $type;
     public $invite;
+    public $service;
     public $url;
 
 
 
-    public function __construct($name, $company, $owner, $type, $invite)
+    public function __construct($name, $company, $owner, $type, $invite, TagCategory $service)
     {
         $this->name = $name;
         $this->company = $company;
         $this->owner = $owner;
         $this->type = $type;
         $this->invite = $invite;
-        $this->url = env('APP_URL').'/register?invitation='.$invite->role.'&invitation_id='.$invite->id;
-
+        $this->service = $service;
+        $this->url = env('APP_URL') . '/register?invitation=' . $invite->role . '&invitation_id=' . $invite->id . '&tag_id=' . $service->id;
     }
 
     /**

@@ -29,7 +29,7 @@ class PlansController extends Controller
 
         $subscriptions= PlansResource::collection($subscriptions);
 
-      
+
         return $this->successResponse($subscriptions, 'Plans retrive successfully!', 200);
     }
 
@@ -106,6 +106,7 @@ class PlansController extends Controller
             'title' => $request->title,
             'description' => $request->description,
             'metadata' => $request->features,
+            'service_id' => $request->service_id,
             'price' => $request->price_naira_monthly,
             'type' => "monthly",
             'default' => true,
@@ -120,6 +121,7 @@ class PlansController extends Controller
             'title' => $request->title,
             'description' => $request->description,
             'metadata' => $request->features,
+            'service_id' => $request->service_id,
             'price' => $request->price_dollar_monthly,
             'type' => "monthly",
             'default' => true,
@@ -134,6 +136,7 @@ class PlansController extends Controller
             'title' => $request->title,
             'description' => $request->description,
             'metadata' => $request->features,
+            'service_id' => $request->service_id,
             'price' => $request->price_naira_quarterly,
             'type' => "quarterly",
             'default' => true,
@@ -148,6 +151,7 @@ class PlansController extends Controller
             'title' => $request->title,
             'description' => $request->description,
             'metadata' => $request->features,
+            'service_id' => $request->service_id,
             'price' => $request->price_dollar_quarterly,
             'type' => "quarterly",
             'default' => true,
@@ -162,6 +166,7 @@ class PlansController extends Controller
             'title' => $request->title,
             'description' => $request->description,
             'metadata' => $request->features,
+            'service_id' => $request->service_id,
             'price' => $request->price_naira_bi_annually,
             'type' => "bi-annually",
             'default' => true,
@@ -176,6 +181,7 @@ class PlansController extends Controller
             'title' => $request->title,
             'description' => $request->description,
             'metadata' => $request->features,
+            'service_id' => $request->service_id,
             'price' => $request->price_dollar_bi_annually,
             'type' => "bi-annually",
             'default' => true,
@@ -190,6 +196,7 @@ class PlansController extends Controller
             'title' => $request->title,
             'description' => $request->description,
             'metadata' => $request->features,
+            'service_id' => $request->service_id,
             'price' => $request->price_naira_yearly,
             'type' => "annually",
             'default' => true,
@@ -205,6 +212,7 @@ class PlansController extends Controller
             'description' => $request->description,
             'metadata' => $request->features,
             'price' => $request->price_dollar_yearly,
+            'service_id' => $request->service_id,
             'type' => "annually",
             'default' => true,
             'info' => true,
@@ -254,8 +262,5 @@ class PlansController extends Controller
 
         return $this->successResponse($subscription, 'Subscription created successfully', 200);
     }
-
-
-
 
 }
