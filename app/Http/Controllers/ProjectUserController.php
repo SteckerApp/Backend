@@ -37,8 +37,6 @@ class ProjectUserController extends Controller
 
         $project = ProjectRequest::findOrFail($project_id);
 
-
-
         // First, retrieve the project instance
         // $project_users = User::whereHas('projectUser', function($q) use($project_id){
         //     $q->where('project_id', $project_id);

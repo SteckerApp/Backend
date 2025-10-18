@@ -21,6 +21,7 @@ class InvitationMail extends Mailable
     public $owner;
     public $type;
     public $invite;
+    public $service;
     public $url;
 
 
@@ -32,8 +33,8 @@ class InvitationMail extends Mailable
         $this->owner = $owner;
         $this->type = $type;
         $this->invite = $invite;
-        $this->url = env('APP_URL').'/register?invitation='.$invite->role.'&invitation_id='.$invite->id;
-
+        $this->service = $service;
+        $this->url = env('APP_URL') . '/register?invitation=' . $invite->role . '&invitation_id=' . $invite->id . '&tag_id=' . $service->id;
     }
 
     /**
