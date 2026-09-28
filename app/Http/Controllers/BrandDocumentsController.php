@@ -36,7 +36,7 @@ class BrandDocumentsController extends Controller
      */
     public function store(StoreBrandDocumentsRequest $request)
     {
-        //
+
     }
 
     /**
@@ -47,7 +47,7 @@ class BrandDocumentsController extends Controller
      */
     public function show(BrandDocuments $brandDocuments)
     {
-        //
+        
     }
 
     /**
