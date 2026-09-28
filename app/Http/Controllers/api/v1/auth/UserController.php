@@ -25,7 +25,6 @@ class UserController extends Controller
     {
         $this->authService = $authService;
     }
-
     public function index(Request $request)
     {
         $user = auth()->user();
@@ -33,9 +32,8 @@ class UserController extends Controller
             [
                 'user' =>  new RegisterdResource($user)
             ],
-        );   
+        );
     }
-
     public function register(RegisterRequest $request)
     {
         return $this->authService->createUser($request);
@@ -45,28 +43,23 @@ class UserController extends Controller
     {
         return $this->authService->resendVerification($request);
     }
-
     public function verifyEmail(VerifyEmailRequest $request)
     {
         return $this->authService->verifyEmail($request);
     }
-
     public function passwordReset(PasswordResetRequest $request)
     {
         return $this->authService->passwordReset($request);
     }
-
     public function resendPasswordReset(PasswordResetRequest $request)
     {
         return $this->authService->resendPasswordReset($request);
     }
 
-
     public function changePassword(ChangePasswordRequest $request)
     {
         return $this->authService->changePassword($request);
     }
-
     public function login(LoginRequest $request)
     {
         return $this->authService->login($request);

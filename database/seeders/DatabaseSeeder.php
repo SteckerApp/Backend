@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+use Database\Seeders\ServicesSeeder;
 use Illuminate\Database\Seeder;
 
 class DatabaseSeeder extends Seeder
@@ -45,6 +46,7 @@ class DatabaseSeeder extends Seeder
             PayoutSeeder::class,
             CouponSeeder::class,
             CoupunTransactionSeeder::class,
+            ServicesSeeder::class,
         ]);
     }
 }
