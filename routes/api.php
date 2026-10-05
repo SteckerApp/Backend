@@ -1,35 +1,36 @@
 <?php
 
-use Illuminate\Http\Request;
-use App\Models\ProjectRequest;
-use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\TagController;
-use App\Http\Controllers\CartController;
-use App\Http\Controllers\TeamController;
-use App\Http\Controllers\BrandController;
-use App\Http\Controllers\PlansController;
-use App\Http\Controllers\CouponController;
-use App\Http\Controllers\PayoutController;
-use App\Http\Controllers\CompanyController;
-use App\Http\Controllers\PaymentController;
-use App\Http\Controllers\UserBankController;
-use App\Http\Controllers\AffiliateController;
-use App\Http\Controllers\DashboardController;
-use App\Http\Controllers\PortfolioController;
-use App\Http\Controllers\WorkspaceController;
-use App\Http\Controllers\HomeController;
-use App\Http\Controllers\api\v1\TestController;
-use App\Http\Controllers\ProjectUserController;
-use App\Http\Controllers\NotificationController;
-use App\Http\Controllers\SubscriptionController;
-use App\Http\Controllers\UserCommentsController;
+use App\Http\Controllers\AdminCommentManagerController;
 use App\Http\Controllers\AdminOverviewController;
+use App\Http\Controllers\AffiliateController;
+use App\Http\Controllers\api\v1\auth\UserController;
+use App\Http\Controllers\api\v1\TestController;
+use App\Http\Controllers\BrandController;
+use App\Http\Controllers\CartController;
+use App\Http\Controllers\CompanyController;
+use App\Http\Controllers\CouponController;
+use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\HomeController;
+use App\Http\Controllers\NotificationController;
+use App\Http\Controllers\PaymentController;
+use App\Http\Controllers\PayoutController;
+use App\Http\Controllers\PlansController;
+use App\Http\Controllers\PortfolioCategoryController;
+use App\Http\Controllers\PortfolioController;
+use App\Http\Controllers\ProjectDeliverablesController;
 use App\Http\Controllers\ProjectMessageController;
 use App\Http\Controllers\ProjectRequestController;
-use App\Http\Controllers\api\v1\auth\UserController;
-use App\Http\Controllers\PortfolioCategoryController;
-use App\Http\Controllers\ProjectDeliverablesController;
+use App\Http\Controllers\ProjectUserController;
 use App\Http\Controllers\RolesAndPermissionsController;
+use App\Http\Controllers\SubscriptionController;
+use App\Http\Controllers\TagController;
+use App\Http\Controllers\TeamController;
+use App\Http\Controllers\UserBankController;
+use App\Http\Controllers\UserCommentsController;
+use App\Http\Controllers\WorkspaceController;
+use App\Models\ProjectRequest;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Route;
 
 /*
 |--------------------------------------------------------------------------
@@ -43,6 +44,10 @@ use App\Http\Controllers\RolesAndPermissionsController;
 */
 
 Route::post('/run-migration', [HomeController::class, 'migrate']);
+
+    Route::prefix('reviews')->group(function () {
+        Route::get('/', [HomeController::class, 'approvedComments']);
+    });
 
 Route::get('/', [TestController::class, 'index']);
 Route::post('/request_call', [NotificationController::class, 'requestCall']);
@@ -61,6 +66,7 @@ Route::post('/request_demo', [NotificationController::class, 'requestDemo']);
 //     return $request->user();
 // });
 
+
 Route::middleware('auth:sanctum')->group(function () {
 
     Route::prefix('user')->group(function () {
@@ -75,12 +81,9 @@ Route::middleware('auth:sanctum')->group(function () {
     });
 
     Route::prefix('comments')->group(function () {
-        Route::get('/', [UserCommentsController::class, 'index'])->withoutMiddleware('auth:sanctum');
-        Route::post('/', [UserCommentsController::class, 'store']);
-        Route::put('/{id}', [UserCommentsController::class, 'update']);
-        Route::put('/approve_comment/{id}', [UserCommentsController::class, 'approveComment']);
-        Route::delete('/{id}', [UserCommentsController::class, 'destroy']);
-    });
+        Route::post('/update/{id}', [UserCommentsController::class, 'update']);
+        Route::post('/create', [UserCommentsController::class, 'store']);
+       });
 
 
     Route::prefix('subscription')->group(function () {
@@ -314,6 +317,13 @@ Route::middleware('auth:sanctum')->group(function () {
             Route::post('/create_plan', [PlansController::class, 'createPlan']);
             Route::post('/create_addon', [PlansController::class, 'createAddon']);
         });
+        
+   Route::controller(AdminCommentManagerController::class)->prefix('reviews')->group(function () {
+        Route::get('/list','index');
+        Route::get('/details/{id}','commentDetails');
+        Route::put('/approve_comment/{id}','approveComment');
+        Route::delete('/delete/{id}','destroy');
+    });
     });
 
     Route::prefix('affilate')->group(function () {
