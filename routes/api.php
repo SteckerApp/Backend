@@ -67,7 +67,7 @@ Route::post('/request_demo', [NotificationController::class, 'requestDemo']);
 // });
 
 
-Route::middleware('auth:sanctum')->group(function () {
+Route::middleware(['auth:sanctum','verified'])->group(function () {
 
     Route::prefix('user')->group(function () {
         Route::get('/', [UserController::class, 'index']);
@@ -317,7 +317,7 @@ Route::middleware('auth:sanctum')->group(function () {
             Route::post('/create_plan', [PlansController::class, 'createPlan']);
             Route::post('/create_addon', [PlansController::class, 'createAddon']);
         });
-        
+
    Route::controller(AdminCommentManagerController::class)->prefix('reviews')->group(function () {
         Route::get('/list','index');
         Route::get('/details/{id}','commentDetails');
